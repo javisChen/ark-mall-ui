@@ -50,27 +50,26 @@ const onChange = ($event, value) => {
 <style scoped>
 
 #login-container {
-  display: flex;
   min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 #login-right {
   width: 100%;
   background-color: #fff;
   display: flex;
-  align-content: center;
   justify-content: center;
-  flex-direction: column;
+  flex-direction: row;
 }
 
 #login-form {
-  border: 1px solid red;
-  min-width: 400px;
-  height: 598px;
+  width: 400px;
+  height: 400px;
   background-color: #fff;
   border-radius: 4px;
   padding: 40px 20px;
-  margin: 0 auto 80px;
   box-shadow: 0 20px 50px 0 hsl(0deg 0% 64% / 10%);
 }
 
@@ -83,7 +82,6 @@ const onChange = ($event, value) => {
 
 .login-field-button-wrapper {
   width: 100%;
-  /*border: 1px solid red;*/
 }
 
 .login-btn {
@@ -116,6 +114,7 @@ const onChange = ($event, value) => {
   background-color: #f9f9f9;
   border: 0;
   padding: 15px;
+  width: 90%;
 }
 
 .login-field-input:focus {
