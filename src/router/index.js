@@ -3,12 +3,13 @@ import { defineAsyncComponent } from 'vue'
 
 export const routes = [
   {
-    path: '/',
-    component: defineAsyncComponent(() => import(`../components/HelloWorld.vue`)),
+    path: '/home',
+    name: 'home',
+    component: defineAsyncComponent(() => import(`../views/home/Home.vue`)),
   },
   {
     path: '/login',
-    component: defineAsyncComponent(() => import(`../views/Login.vue`)),
+    component: defineAsyncComponent(() => import(`../views/login/Login.vue`)),
   }
 ]
 

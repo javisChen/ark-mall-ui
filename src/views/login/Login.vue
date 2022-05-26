@@ -3,15 +3,22 @@
 import {login as loginReq} from '@/api/iam/login'
 import md5 from 'md5'
 
-import {reactive, ref, toRefs} from 'vue';
+import {reactive, ref, toRefs, computed} from 'vue';
+import {useRoute, useRouter} from 'vue-router';
+
+const route = useRoute();
+const router = useRouter();
 
 interface Login {
   username: string
   password: string
 }
 
+const loginBtnDisabled = computed(() => {
+    return !(data.login.username && data.login.password)
+})
+
 const data = reactive({
-  loginBtnDisabled: true,
   login: {
     username: '',
     password: '',
@@ -19,18 +26,15 @@ const data = reactive({
   doLogin: async () => {
     console.log(data.login)
     data.login.password = md5(data.login.password)
-    const result = await loginReq(data.login);
-    console.log(result)
+    // const result = await loginReq(data.login);
+    // console.log(result)
+    router.push({
+      name: 'home'
+    })
   },
-  onChange: ($event) => {
-    data.loginBtnDisabled = !(data.login.username && data.login.password)
-    console.log(data.loginBtnDisabled);
-  }
 })
 
 const {
-  loginBtnDisabled,
-  onChange,
   doLogin,
   login,
 } = toRefs(data)
