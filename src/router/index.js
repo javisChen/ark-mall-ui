@@ -12,7 +12,6 @@ export const routes = [
   }
 ]
 
-
 const router = createRouter({
   history: createWebHashHistory(),  // hash 模式，想要改为history 模式可以使用createWebHistory
   routes: routes

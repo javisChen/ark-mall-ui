@@ -1,5 +1,5 @@
 import axios from 'axios'
-import store from '@/store'
+// import store from '@/store'
 import storage from 'store'
 // import notification from 'ant-design-vue/es/notification'
 // import message from 'ant-design-vue/es/message'
@@ -34,16 +34,16 @@ const errorHandler = (error) => {
     // 从 localstorage 获取 token
     const token = storage.get(ACCESS_TOKEN)
     if (responseStatus === 403) {
-      notification.error({
-        message: '拒绝访问：权限不足',
-        // description: data.msg
-        description: '请联系管理员授权'
-      })
+      // notification.error({
+      //   message: '拒绝访问：权限不足',
+      //   // description: data.msg
+      //   description: '请联系管理员授权'
+      // })
     } else if (responseStatus === 404) {
-      notification.error({
-        message: '服务器找不到资源~',
-        description: data.msg
-      })
+      // notification.error({
+      //   message: '服务器找不到资源~',
+      //   description: data.msg
+      // })
     } else if (responseStatus === 401 && !(data.result && data.result.isLogin)) {
       notification.error({
         message: '认证已失效，请重新登录',
@@ -68,10 +68,10 @@ const errorHandler = (error) => {
 
       description = description || '服务器有点小问题，请稍等...'
 
-      message.error({
-        content: description,
-        duration: 4
-      })
+      // message.error({
+      //   content: description,
+      //   duration: 4
+      // })
     } else if (responseStatus === 503) {
       let msg
       if (response.data) {
@@ -79,15 +79,15 @@ const errorHandler = (error) => {
       } else {
         msg = response.statusText
       }
-      message.error({
-        content: msg,
-        duration: 10
-      })
+      // message.error({
+      //   content: msg,
+      //   duration: 10
+      // })
     } else {
-      message.error({
-        content: response.data.msg,
-        duration: 4
-      })
+      // message.error({
+      //   content: response.data.msg,
+      //   duration: 4
+      // })
     }
   }
   return Promise.reject(error)

@@ -1,22 +1,45 @@
 <script setup lang="ts">
-import {ref} from 'vue'
 
-const count = ref(0)
-const login = ref({})
-let loginBtnDisabled = ref(true)
+import {login as loginReq} from '@/api/iam/login'
+import md5 from 'md5'
 
-const doLogin = () => {
+import {reactive, ref, toRefs} from 'vue';
+
+interface Login {
+  username: string
+  password: string
 }
 
-const onChange = ($event, value) => {
-  loginBtnDisabled.value = !(login.value.username && login.value.password)
-}
+const data = reactive({
+  loginBtnDisabled: true,
+  login: {
+    username: '',
+    password: '',
+  },
+  doLogin: async () => {
+    console.log(data.login)
+    data.login.password = md5(data.login.password)
+    const result = await loginReq(data.login);
+    console.log(result)
+  },
+  onChange: ($event) => {
+    data.loginBtnDisabled = !(data.login.username && data.login.password)
+    console.log(data.loginBtnDisabled);
+  }
+})
+
+const {
+  loginBtnDisabled,
+  onChange,
+  doLogin,
+  login,
+} = toRefs(data)
+
+
 </script>
 
 <template>
   <div id="login-container">
-<!--    <div id="login-left">-->
-<!--    </div>-->
     <div id="login-right">
       <div id="login-form">
         <div></div>
@@ -29,17 +52,14 @@ const onChange = ($event, value) => {
 
         <div class="login-content">
           <div class="login-field-input-wrapper">
-            <input @keyup="onChange($event, value)"
-                   v-model="login.username" type="text" class="login-field-input" placeholder="用户名">
+            <input @keyup="onChange" v-model="login.username" type="text" class="login-field-input" placeholder="用户名">
           </div>
           <div class="login-field-input-wrapper">
-            <input @keyup="onChange($event, value)"
-                   v-model="login.password" type="text" class="login-field-input" placeholder="密码">
+            <input @keyup="onChange" v-model="login.password" type="text" class="login-field-input" placeholder="密码">
           </div>
           <div class="login-field-button-wrapper">
-            <button class="login-btn"
-                    :class="loginBtnDisabled ? ' login-btn-disabled': ''"
-                    @click="doLogin">登录</button>
+            <button class="login-btn" :class="loginBtnDisabled ? ' login-btn-disabled' : ''" @click="doLogin">登录
+            </button>
           </div>
         </div>
       </div>
@@ -48,7 +68,6 @@ const onChange = ($event, value) => {
 </template>
 
 <style scoped>
-
 #login-container {
   min-height: 100%;
   display: flex;
@@ -74,7 +93,7 @@ const onChange = ($event, value) => {
 }
 
 .tabs-nav-bottom {
-  background: rgba(0,0,0,0);
+  background: rgba(0, 0, 0, 0);
   border: 0;
   font-size: 22px;
   font-weight: 400;
@@ -121,5 +140,4 @@ const onChange = ($event, value) => {
   border: 0;
   outline: none;
 }
-
 </style>
