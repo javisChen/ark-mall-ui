@@ -56,10 +56,10 @@ const {
 
         <div class="login-content">
           <div class="login-field-input-wrapper">
-            <input @keyup="onChange" v-model="login.username" type="text" class="login-field-input" placeholder="用户名">
+            <input v-model="login.username" type="text" class="login-field-input" placeholder="用户名">
           </div>
           <div class="login-field-input-wrapper">
-            <input @keyup="onChange" v-model="login.password" type="text" class="login-field-input" placeholder="密码">
+            <input v-model="login.password" type="text" class="login-field-input" placeholder="密码">
           </div>
           <div class="login-field-button-wrapper">
             <button class="login-btn" :class="loginBtnDisabled ? ' login-btn-disabled' : ''" @click="doLogin">登录
