@@ -120,10 +120,35 @@ const {
     <div></div>
     <div class="header">
       <div class="top-bar">
-        1
+        <div class="container">
+          <div class="top-bar-navs">
+            <ul>
+              <li><a href="">小米商城</a></li>
+            </ul>
+          </div>
+          <div class="cart">
+            购物车（1）
+          </div>
+          <div class="info">
+            <ul>
+              <li>登录</li>
+              <li>注册</li>
+            </ul>
+          </div>
+        </div>
       </div>
       <div class="navs">
-        2
+        <div class="container">
+          <div class="header-logo">
+            <img src="../../assets/logo-mi.png" alt="">
+          </div>
+          <div class="header-nav">
+
+          </div>
+          <div class="header-search">
+
+          </div>
+        </div>
       </div>
     </div>
 
@@ -153,6 +178,54 @@ const {
     </div>
 
     <div class="content">
+      <div class="box">
+        <div class="box-hd">
+          <h2 class="title">手机</h2>
+        </div>
+        <div class="box-bd">
+          <div @mouseover="onMouseOver(item)"
+               @mouseout="onMouseOver(item)"
+               :class="{'product-hover': item.onHover}"
+               class="item"
+               v-for="(item, idx) in productList">
+            <a class="item-a-tag" href="#">
+              <div class="product-img">
+                <img width="160" height="160" src="src/assets/test-prod.webp" alt="">
+              </div>
+              <h3 class="title">{{ item.title }}</h3>
+              <p class="desc">{{ item.desc }}</p>
+              <p class="price">
+                <span class="num">{{ item.price }}</span>
+                <span>起</span>
+              </p>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="box">
+        <div class="box-hd">
+          <h2 class="title">手机</h2>
+        </div>
+        <div class="box-bd">
+          <div @mouseover="onMouseOver(item)"
+               @mouseout="onMouseOver(item)"
+               :class="{'product-hover': item.onHover}"
+               class="item"
+               v-for="(item, idx) in productList">
+            <a class="item-a-tag" href="#">
+              <div class="product-img">
+                <img width="160" height="160" src="src/assets/test-prod.webp" alt="">
+              </div>
+              <h3 class="title">{{ item.title }}</h3>
+              <p class="desc">{{ item.desc }}</p>
+              <p class="price">
+                <span class="num">{{ item.price }}</span>
+                <span>起</span>
+              </p>
+            </a>
+          </div>
+        </div>
+      </div>
       <div class="box">
         <div class="box-hd">
           <h2 class="title">手机</h2>
@@ -208,6 +281,8 @@ const {
   display: flex;
   flex-direction: row;
   justify-content: start;
+  align-items: center;
+  align-content: center;
 }
 
 .category-product-wrapper {
@@ -247,6 +322,9 @@ const {
   width: 234px;
   font-size: 14px;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .category-nav .category-product {
@@ -277,15 +355,101 @@ const {
   color: #fff;
 }
 
-.header .top-bar {
-  color: #b0b0b0;
-  background-color: #333333;
-  height: 40px;
+.header .navs {
+  height: 100px;
+  background-color: #FFFFFF;
+  display: flex;
+  justify-content: center;
 }
 
-.header .navs {
-  background-color: saddlebrown;
-  height: 100px;
+.header .navs .container {
+  width: 1226px;
+  height: 100%;
+  display: flex;
+
+}
+
+.header .navs .container .header-logo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.header .navs .container .header-search {
+}
+
+
+.header .navs .container .header-logo img {
+  float: left;
+  width: 56px;
+}
+
+.header .top-bar {
+  color: #b0b0b0;
+  height: 40px;
+  display: flex;
+  background-color: #333333;
+  justify-content: center;
+}
+
+.header .top-bar .container {
+  width: 1226px;
+}
+
+.header .top-bar .container .top-bar-navs {
+  float: left;
+  height: 100%;
+}
+
+.header .top-bar .container .top-bar-navs a:visited {
+  color: #b0b0b0;
+}
+
+.header .top-bar .container .top-bar-navs ul {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  height: 100%;
+}
+
+
+.header .top-bar .container .info {
+  float: right;
+  height: 100%;
+}
+
+.header .top-bar .container .info ul {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  height: 100%;
+}
+
+.header .top-bar .container .info ul li {
+  padding: 0 5px;
+  border-right: 1px solid grey;
+}
+
+.header .top-bar .container .info ul li:last-child {
+  border-right: 0;
+}
+
+.header .top-bar .container .cart {
+  color: #FFFFFF;
+  float: right;
+  width: 120px;
+  height: 100%;
+  margin-left: 15px;
+  font-size: 12px;
+  background-color: #ff6700;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .category {
@@ -293,6 +457,7 @@ const {
   height: 460px;
   display: flex;
   justify-content: center;
+  background-color: #FFFFFF;
 }
 
 .category a img {
