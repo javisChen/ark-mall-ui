@@ -1,7 +1,8 @@
 <script setup lang="ts">
 
-import {reactive, ref, toRefs, computed} from 'vue';
+import {reactive, toRefs} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
+import CommonTopBar from "../common/CommonTopBar.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -11,6 +12,14 @@ interface Login {
   password: string
 }
 
+const toInfoPage = (item: object) => {
+  router.push({
+    name: 'info',
+    query: {
+      id: 1,
+    },
+  })
+}
 const onMouseOver = (item: object) => {
   item.onHover = !item.onHover
 }
@@ -116,27 +125,9 @@ const {
 </script>
 
 <template>
+  <common-top-bar/>
   <div id="container">
-    <div></div>
     <div class="header">
-      <div class="top-bar">
-        <div class="container">
-          <div class="top-bar-navs">
-            <ul>
-              <li><a href="">小米商城</a></li>
-            </ul>
-          </div>
-          <div class="cart">
-            购物车（1）
-          </div>
-          <div class="info">
-            <ul>
-              <li>登录</li>
-              <li>注册</li>
-            </ul>
-          </div>
-        </div>
-      </div>
       <div class="navs">
         <div class="container">
           <div class="header-logo">
@@ -183,11 +174,13 @@ const {
           <h2 class="title">手机</h2>
         </div>
         <div class="box-bd">
-          <div @mouseover="onMouseOver(item)"
-               @mouseout="onMouseOver(item)"
-               :class="{'product-hover': item.onHover}"
-               class="item"
-               v-for="(item, idx) in productList">
+          <div
+              v-for="(item, idx) in productList"
+              @click.prevent="toInfoPage(item)"
+              @mouseover="onMouseOver(item)"
+              @mouseout="onMouseOver(item)"
+              :class="{'product-hover': item.onHover}"
+              class="item">
             <a class="item-a-tag" href="#">
               <div class="product-img">
                 <img width="160" height="160" src="src/assets/test-prod.webp" alt="">
@@ -318,7 +311,7 @@ const {
 }
 
 .category-nav .category-nav-wrapper {
-  background-color: rgba(105,101,101,.6);
+  background-color: rgba(105, 101, 101, .6);
   width: 234px;
   font-size: 14px;
   height: 100%;
@@ -384,28 +377,15 @@ const {
   width: 56px;
 }
 
-.header .top-bar {
-  color: #b0b0b0;
-  height: 40px;
-  display: flex;
-  background-color: #333333;
-  justify-content: center;
-}
-
-.header .top-bar .container {
+.top-bar .container {
   width: 1226px;
 }
 
-.header .top-bar .container .top-bar-navs {
-  float: left;
-  height: 100%;
-}
-
-.header .top-bar .container .top-bar-navs a:visited {
+.top-bar .container .top-bar-navs a:visited {
   color: #b0b0b0;
 }
 
-.header .top-bar .container .top-bar-navs ul {
+.top-bar .container .top-bar-navs ul {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -415,12 +395,7 @@ const {
 }
 
 
-.header .top-bar .container .info {
-  float: right;
-  height: 100%;
-}
-
-.header .top-bar .container .info ul {
+.top-bar .container .info ul {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -429,27 +404,13 @@ const {
   height: 100%;
 }
 
-.header .top-bar .container .info ul li {
+.top-bar .container .info ul li {
   padding: 0 5px;
   border-right: 1px solid grey;
 }
 
-.header .top-bar .container .info ul li:last-child {
+.top-bar .container .info ul li:last-child {
   border-right: 0;
-}
-
-.header .top-bar .container .cart {
-  color: #FFFFFF;
-  float: right;
-  width: 120px;
-  height: 100%;
-  margin-left: 15px;
-  font-size: 12px;
-  background-color: #ff6700;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
 }
 
 .category {
@@ -488,7 +449,7 @@ const {
 
 .product-hover {
   box-shadow: 1px 4px 20px #33333359;
-  transition: all  .20s  ease-in;
+  transition: all .20s ease-in;
 }
 
 .box .box-hd .title {
