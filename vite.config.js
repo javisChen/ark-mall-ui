@@ -19,7 +19,9 @@ export default defineConfig({
 
                 }
             }
-        }
+        },
+        hmr: true,
+        port: 8888
     },
     define: {
         process: {

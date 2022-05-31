@@ -26,8 +26,6 @@ const data = reactive({
   doLogin: async () => {
     console.log(data.login)
     data.login.password = md5(data.login.password)
-    // const result = await loginReq(data.login);
-    // console.log(result)
     router.push({
       name: 'home'
     })
@@ -46,14 +44,12 @@ const {
   <div id="login-container">
     <div id="login-right">
       <div id="login-form">
-        <div></div>
         <div class="login-tabs">
           <div class="tabs-nav">
             <button class="tabs-nav-bottom">登录</button>
             <button class="tabs-nav-bottom">注册</button>
           </div>
         </div>
-
         <div class="login-content">
           <div class="login-field-input-wrapper">
             <input v-model="login.username" type="text" class="login-field-input" placeholder="用户名">

@@ -1,13 +1,13 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { defineAsyncComponent } from 'vue'
-const info = () => import(`../views/Info/Info.vue`)
+const info = () => import(`../views/info/Info.vue`)
 const home = () => import(`../views/home/Home.vue`)
 const login = () => import(`../views/login/Login.vue`)
 
 export const routes = [
   {
     path: '/',
-    redirect: '/home'
+    redirect: '/info'
   },
   {
     path: '/login',
