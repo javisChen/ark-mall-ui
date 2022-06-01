@@ -53,13 +53,32 @@ const data = reactive({
               <li class="attr-value">
                 Redmi Note 11T Pro
               </li>
+              <li class="attr-value">
+                Redmi Note 11T Pro
+              </li>
+            </ul>
+          </div>
+          <div class="spec-item">
+            <div class="attr-name">
+              选择产品
+            </div>
+            <ul class="attr-value-list">
+              <li class="attr-value">
+                Redmi Note 11T Pro
+              </li>
+              <li class="attr-value">
+                Redmi Note 11T Pro
+              </li>
+              <li class="attr-value">
+                Redmi Note 11T Pro
+              </li>
             </ul>
           </div>
         </div>
       </div>
     </div>
     <div class="other-info">
-      123
+
     </div>
   </div>
 </template>
@@ -124,11 +143,18 @@ const data = reactive({
 }
 
 .main .info .spec .spec-item {
-  border: 1px solid red;
+  margin-bottom: 30px;
 }
 
 .main .info .attr-name {
   font-size: 18px;
+}
+
+
+.main .info .attr-value-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .main .info .attr-value {
@@ -136,16 +162,19 @@ const data = reactive({
   margin-top: 10px;
   line-height: 42px;
   height: 42px;
-  position: relative;
   border: 1px solid #e0e0e0;
   list-style: none;
   cursor: pointer;
   -webkit-transition: all .2s ease;
   transition: all .2s ease;
-  float: left;
   width: 292px;
   font-size: 16px;
   text-align: center;
+}
+
+.other-info {
+  width: 85%;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 </style>
