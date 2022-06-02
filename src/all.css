@@ -61,3 +61,8 @@ a:visited {
 .primary {
     background-color: #ff6700;
 }
+.clear:after {
+    clear: both;
+    content:"";
+    display:block;
+}
