@@ -104,6 +104,10 @@ const toCartPage = () => {
   justify-content: center;
 }
 
+.top-bar .container .cart a {
+  color: #b0b0b0;
+}
+
 .top-bar .container .cart a:active {
   color: #b0b0b0;
 }

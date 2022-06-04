@@ -343,6 +343,7 @@ const {
   padding-left: 30px;
   text-decoration: none;
   line-height: 42px;
+  color: #fff;
 }
 
 .category-nav .category-nav-wrapper li a:visited {

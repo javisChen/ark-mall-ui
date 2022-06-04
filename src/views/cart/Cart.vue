@@ -23,14 +23,23 @@ const {
       </div>
       <div class="header-title">
         <span>我的购物车</span>
-        <span class="d">温馨提示：产品是否购买成功，以最终下单为准哦，请尽快结算</span>
+        <span class="tips">温馨提示：产品是否购买成功，以最终下单为准哦，请尽快结算</span>
       </div>
     </div>
   </div>
-  <div class="container">
-    <div class="main">
-    </div>
-    <div class="other-info">
+  <div class="main">
+    <div class="container">
+      <div class="cart-table">
+        <div class="cart-table-row">
+          <div class="cart-table-col">全选</div>
+          <div class="cart-table-col"></div>
+          <div class="cart-table-col">商品名称</div>
+          <div class="cart-table-col">单价</div>
+          <div class="cart-table-col">数量</div>
+          <div class="cart-table-col">小计</div>
+          <div class="cart-table-col">操作</div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -46,8 +55,8 @@ const {
 }
 .header .container {
   width: 1226px;
-  padding-top: 26px;
-  padding-bottom: 26px;
+  padding-top: 25px;
+  padding-bottom: 25px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -63,12 +72,26 @@ const {
 }
 .header-title {
   font-size: 28px;
+  font-weight: 400;
+  color: #424242;
 }
 
-.container {
+.header-title .tips {
+  margin-left: 15px;
+  color: #757575;
+  font-size: 12px;
+}
+
+.main {
+  margin-top: 38px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.main .container {
+  width: 1226px;
+  background-color: #FFFFFF;
 }
 
 </style>
