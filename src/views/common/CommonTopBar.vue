@@ -1,4 +1,16 @@
 <script setup>
+import {useRoute, useRouter} from "vue-router";
+
+const route = useRoute();
+const router = useRouter();
+
+const toCartPage = () => {
+  router.push({
+    name: 'cart',
+    query: {
+    },
+  })
+}
 
 </script>
 
@@ -11,7 +23,7 @@
         </ul>
       </div>
       <div class="cart">
-        购物车（1）
+        <a @click.prevent="toCartPage" href="#">购物车（1）</a>
       </div>
       <div class="info">
         <ul>
@@ -80,7 +92,6 @@
 }
 
 .top-bar .container .cart {
-  color: #FFFFFF;
   float: right;
   width: 120px;
   height: 100%;
@@ -91,6 +102,14 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.top-bar .container .cart a:active {
+  color: #b0b0b0;
+}
+
+.top-bar .container .cart a:visited  {
+  color: #FFFFFF;
 }
 
 </style>

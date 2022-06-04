@@ -20,6 +20,7 @@ const toInfoPage = (item: object) => {
     },
   })
 }
+
 const onMouseOver = (item: object) => {
   item.onHover = !item.onHover
 }
@@ -131,7 +132,7 @@ const {
       <div class="navs">
         <div class="container">
           <div class="header-logo">
-            <img src="../../assets/logo-mi.png" alt="">
+            <img src="@/assets/logo-mi.png" alt="">
           </div>
           <div class="header-nav">
 
