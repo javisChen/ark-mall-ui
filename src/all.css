@@ -58,9 +58,14 @@ a:visited {
     color: #fff;
 }
 
-.primary {
+.primary-bg {
     background-color: #ff6700;
 }
+
+.primary {
+    color: #ff6700;
+}
+
 .clear:after {
     clear: both;
     content:"";
