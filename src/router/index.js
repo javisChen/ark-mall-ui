@@ -4,6 +4,7 @@ const info = () => import(`../views/info/Info.vue`)
 const home = () => import(`../views/home/Home.vue`)
 const login = () => import(`../views/login/Login.vue`)
 const cart = () => import(`../views/cart/Cart.vue`)
+const checkout = () => import(`../views/checkout/Checkout.vue`)
 
 export const routes = [
   {
@@ -29,6 +30,11 @@ export const routes = [
     path: '/info',
     name: 'info',
     component: info,
+  },
+  {
+    path: '/checkout',
+    name: 'checkout',
+    component: checkout,
   },
 ]
 

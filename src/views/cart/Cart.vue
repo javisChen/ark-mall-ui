@@ -1,9 +1,11 @@
 <script setup lang="ts">
 
-import CommonTopBar from "../common/CommonTopBar.vue";
 import {reactive, toRefs, defineComponent} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import {NCheckbox} from 'naive-ui'
+
+const route = useRoute();
+const router = useRouter();
 
 const data = reactive({
   cartList: [
@@ -23,10 +25,16 @@ const data = reactive({
       quantity: 1,
       subTotal: 1699
     },
-  ]
+  ],
+  toCheckout: async () => {
+    router.push({
+      name: 'checkout'
+    })
+  },
 })
 
 const {
+  toCheckout,
   cartList,
 } = toRefs(data)
 
@@ -72,7 +80,9 @@ const {
             </div>
             <div class="cart-table-col product-name">{{ item.name }}</div>
             <div class="cart-table-col price">{{ item.price }}元</div>
-            <div class="cart-table-col num">{{ item.quantity }}</div>
+            <div class="cart-table-col num">
+              <n-input-number v-model:value="item.quantity" button-placement="both" />
+            </div>
             <div class="cart-table-col total">{{ item.subTotal }}元</div>
             <div class="cart-table-col">删除</div>
           </div>
@@ -86,7 +96,7 @@ const {
         </div>
         <div class="total-price primary">合计：<span class="money">0</span>元</div>
         <div class="btn-box">
-          <button class="settle primary-bg">去结算</button>
+          <button class="settle primary-bg" @click="toCheckout">去结算</button>
         </div>
       </div>
     </div>
