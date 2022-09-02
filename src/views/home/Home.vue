@@ -494,4 +494,8 @@ const {
   color: #ff6700;
 }
 
+.category-product-item-title {
+  color: #000000;
+}
+
 </style>
