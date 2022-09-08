@@ -1,16 +1,12 @@
 <script setup lang="ts">
 
-import {reactive, toRefs} from 'vue';
+import {onMounted, reactive, toRefs} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import CommonTopBar from "../common/CommonTopBar.vue";
+import {getList} from "../../api/commodity/category-api"
 
 const route = useRoute();
 const router = useRouter();
-
-interface Login {
-  username: string
-  password: string
-}
 
 const toInfoPage = (item: object) => {
   router.push({
@@ -29,7 +25,13 @@ const categoryHover = (item: object) => {
   item.showChildren = !item.showChildren
 }
 
+onMounted(async () => {
+  const result = await getList();
+  console.log(result)
+})
+
 const data = reactive({
+
   categories: [
     {
       name: '手机',

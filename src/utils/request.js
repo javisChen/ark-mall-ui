@@ -79,15 +79,7 @@ const errorHandler = (error) => {
       } else {
         msg = response.statusText
       }
-      // message.error({
-      //   content: msg,
-      //   duration: 10
-      // })
     } else {
-      // message.error({
-      //   content: response.data.msg,
-      //   duration: 4
-      // })
     }
   }
   return Promise.reject(error)
