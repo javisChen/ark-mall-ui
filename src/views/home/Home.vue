@@ -26,44 +26,16 @@ const categoryHover = (item: object) => {
 }
 
 onMounted(async () => {
-  const result = await getList();
-  console.log(result)
+  try {
+    const result = await getList();
+    data.categories = result.data
+    console.log(data.categories)
+  } catch (e) {
+  }
 })
 
 const data = reactive({
-
-  categories: [
-    {
-      name: '手机',
-    },
-    {
-      name: '电视',
-    },
-    {
-      name: '笔记本 平板',
-    },
-    {
-      name: '出行 穿戴',
-    },
-    {
-      name: '耳机 音箱',
-    },
-    {
-      name: '家电',
-    },
-    {
-      name: '智能 路由器',
-    },
-    {
-      name: '电源 配件',
-    },
-    {
-      name: '健康 儿童',
-    },
-    {
-      name: '生活 箱包',
-    },
-  ],
+  categories: [],
   productList: [
     {
       title: 'Redmi Note 11T Pro+',
@@ -153,13 +125,14 @@ const {
             <li class="category-nav-li" @mouseover="categoryHover(item)"
                 @mouseout="categoryHover(item)"
                 v-for="item in categories">
-              <a href="#">{{ item.name }}</a>
-              <div class="category-product" v-if="item.showChildren">
+              <a href="#">{{ item.categoryName }}</a>
+              <div class="category-product" v-if="item.showChildren && item.commodities && item.commodities.length > 0">
                 <ul class="category-product-wrapper">
-                  <li class="category-product-item" v-for="item in 24">
+                  <li class="category-product-item"
+                      v-for="commodityItem in item.commodities">
                     <a class="" href="#">
-                      <img class="product-img" src="../../assets/test-prod.webp" alt="">
-                      <span class="category-product-item-title">Note 11T Pro+</span>
+                      <img class="product-img" :src="commodityItem.picUrl" alt="">
+                      <span class="category-product-item-title">{{ commodityItem.spuName }}</span>
                     </a>
                   </li>
                 </ul>
