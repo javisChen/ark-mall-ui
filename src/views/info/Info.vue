@@ -1,61 +1,29 @@
 <script setup lang="ts">
 import CommonTopBar from "../common/CommonTopBar.vue";
-import {reactive, toRefs} from 'vue';
+import {onMounted, reactive, toRefs, computed, ref} from 'vue';
+import {getInfo} from "../../api/commodity/commodity-api"
 import {useRoute, useRouter} from 'vue-router';
 
+const route = useRoute();
+const router = useRouter();
+
+
 const data = reactive({
-  product: {
-    title: '苹果(Apple) iPhone 13 128GB 午夜色 移动联通电信5G全网通手机 双卡双待 苹果iphone13',
-    subTitle: '天玑8100｜144Hz高配LCD屏幕｜6400万像素｜VC液冷散热',
-    price: 2099,
-    discounts: 1900,
-    spec: [
-      {
-        name: '产品',
-        attrValues: [
-          {
-            name: 'Redmi Note 11T Pro'
-          },
-          {
-            name: 'Redmi Note 11T Pro'
-          },
-          {
-            name: 'Redmi Note 11T Pro'
-          },
-        ]
-      },
-      {
-        name: '产品',
-        attrValues: [
-          {
-            name: 'Redmi Note 11T Pro'
-          },
-          {
-            name: 'Redmi Note 11T Pro'
-          },
-          {
-            name: 'Redmi Note 11T Pro'
-          },
-        ]
-      },
-      {
-        name: '产品',
-        attrValues: [
-          {
-            name: 'Redmi Note 11T Pro'
-          },
-          {
-            name: 'Redmi Note 11T Pro'
-          },
-          {
-            name: 'Redmi Note 11T Pro'
-          },
-        ]
-      },
-    ]
-  }
+  product: {},
+  selectedSpecValue: []
 })
 
+onMounted(async () => {
+  try {
+    const result = await getInfo({id: route.query.id});
+    data.product = result.data
+    data.product.attrList.forEach((item, idx) => {
+      selectedSpecValue[idx] = {attrId: item.id}
+    })
+    console.log(selectedSpecValue)
+  } catch (e) {
+  }
+})
 
 const onAttrOver = (item) => {
   if (!item.selected) {
@@ -64,18 +32,34 @@ const onAttrOver = (item) => {
 }
 
 const onAttrClick = (item, specItem) => {
-  specItem.attrValues.forEach(item => {
+  specItem.optionList.forEach(item => {
     item.selected = false
     item.onHover = false
   })
   item.selected = true;
   item.onHover = true;
+  selectedSpecValue.value.forEach(obj => {
+    console.log(item)
+    console.log(obj)
+    if (item.attrId == obj.attrId) {
+      obj.value = item.value
+    }
+  })
+  console.log(selectedSpecValue)
 }
+
+const selectedFullName = computed(() => {
+  let s = product.value.name + ' ';
+  selectedSpecValue.value.forEach(item => {
+    s += item.value + ' '
+  })
+  return s
+})
 
 const {
   product,
+  selectedSpecValue
 } = toRefs(data)
-
 
 </script>
 
@@ -84,43 +68,42 @@ const {
   <div class="container">
     <div class="main">
       <div class="image">
-        <img src="@/assets/test-prod.webp" alt="">
+        <img :src="product.mainPicture" alt="">
       </div>
       <div class="info">
         <div class="title">
-          {{ product.title }}
+          {{ product.name }}
         </div>
         <div class="sub-title">
-          {{ product.subTitle }}
+          {{ product.description }}
         </div>
         <div class="price-info">
           <span>{{ product.price }} 元</span>
-          <del class="discounts">{{ product.discounts }} 元</del>
         </div>
         <div class="line"></div>
         <div class="spec">
           <div class="spec-item"
-               v-for="specItem in product.spec">
+               v-for="specItem in product.attrList">
             <div class="attr-name">
               选择{{ specItem.name }}
             </div>
             <ul class="attr-value-list clear">
-              <li @mouseover="onAttrOver(attrItem)"
+              <li v-for="attrItem in specItem.optionList"
+                  @mouseover="onAttrOver(attrItem)"
                   @mouseout="onAttrOver(attrItem)"
                   @click="onAttrClick(attrItem, specItem)"
                   :class="{
                     'active': attrItem.onHover || attrItem.selected,
                     'unactive': !attrItem.onHover
-                  }"
-                  v-for="attrItem in specItem.attrValues">
-                {{ attrItem.name }}
+                  }">
+                {{ attrItem.value }}
               </li>
             </ul>
           </div>
         </div>
         <div class="selected-list">
           <div class="selected-info">
-            <span class="selected-product">Redmi Note 11T Pro 8GB+256GB 原子银</span>
+            <span class="selected-product">{{ selectedFullName }}</span>
             <span class="selected-product-price">2099 元</span>
           </div>
           <div class="total-price">
@@ -159,6 +142,11 @@ const {
   height: 450px;
   text-align: center;
   margin-right: 10px;
+}
+
+.main .image img {
+  width: 600px;
+  height: 450px;
 }
 
 .main .info {

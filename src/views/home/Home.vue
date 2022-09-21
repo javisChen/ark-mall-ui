@@ -12,7 +12,7 @@ const toInfoPage = (item: object) => {
   router.push({
     name: 'info',
     query: {
-      id: 1,
+      id: item.spuId,
     },
   })
 }
@@ -122,13 +122,15 @@ const {
       <a href="#">
         <div class="category-nav">
           <ul class="category-nav-wrapper">
-            <li class="category-nav-li" @mouseover="categoryHover(item)"
+            <li class="category-nav-li"
+                @mouseover="categoryHover(item)"
                 @mouseout="categoryHover(item)"
                 v-for="item in categories">
               <a href="#">{{ item.categoryName }}</a>
-              <div class="category-product" v-if="item.showChildren && item.commodities && item.commodities.length > 0">
+              <div class="category-product" v-show="item.showChildren && item.commodities && item.commodities.length > 0">
                 <ul class="category-product-wrapper">
                   <li class="category-product-item"
+                      @click.prevent="toInfoPage(commodityItem)"
                       v-for="commodityItem in item.commodities">
                     <a class="" href="#">
                       <img class="product-img" :src="commodityItem.picUrl" alt="">
