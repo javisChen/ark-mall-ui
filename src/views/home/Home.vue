@@ -29,7 +29,6 @@ onMounted(async () => {
   try {
     const result = await getList();
     data.categories = result.data
-    console.log(data.categories)
   } catch (e) {
   }
 })

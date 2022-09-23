@@ -2,25 +2,30 @@
 import CommonTopBar from "../common/CommonTopBar.vue";
 import {onMounted, reactive, toRefs, computed, ref} from 'vue';
 import {getInfo} from "../../api/commodity/commodity-api"
+import {addCartItem} from "../../api/order/order-api"
 import {useRoute, useRouter} from 'vue-router';
+import {yuanToFen, fenToYuan} from '../../utils/util';
 
 const route = useRoute();
 const router = useRouter();
 
-
 const data = reactive({
+  currentSku: {},
+  selectedAttrCount: 0,
+  attrCount: 0,
   product: {},
   selectedSpecValue: []
 })
+
 
 onMounted(async () => {
   try {
     const result = await getInfo({id: route.query.id});
     data.product = result.data
     data.product.attrList.forEach((item, idx) => {
-      selectedSpecValue[idx] = {attrId: item.id}
+      data.selectedSpecValue[idx] = {attrId: item.id}
+      data.attrCount++;
     })
-    console.log(selectedSpecValue)
   } catch (e) {
   }
 })
@@ -31,6 +36,14 @@ const onAttrOver = (item) => {
   }
 }
 
+const addToCart = async () => {
+  try {
+    await addCartItem()
+  } catch (e) {
+  }
+}
+
+
 const onAttrClick = (item, specItem) => {
   specItem.optionList.forEach(item => {
     item.selected = false
@@ -38,25 +51,54 @@ const onAttrClick = (item, specItem) => {
   })
   item.selected = true;
   item.onHover = true;
-  selectedSpecValue.value.forEach(obj => {
-    console.log(item)
-    console.log(obj)
+
+  // 更新选中的属性值名称，用于展示的
+  data.selectedSpecValue.forEach(obj => {
     if (item.attrId == obj.attrId) {
       obj.value = item.value
     }
   })
-  console.log(selectedSpecValue)
+
+  data.selectedAttrCount = data.selectedSpecValue.filter(item => item.value && item.value !='').length
+  // 找到对应的SKU价
+  if (data.selectedAttrCount === data.attrCount) {
+    findSKU()
+  }
+}
+
+const findSKU = () => {
+  console.log('查找对应的SKU')
+  const skuArr = data.product.skuList.map(sku => {
+    return {
+      ...sku,
+      values: sku.specList.map(spec => {
+        return spec.attrValue
+      })
+    }
+  })
+  for (let idx in skuArr) {
+    const sku = skuArr[idx]
+    const match = data.selectedSpecValue.every(spec => sku.values.includes(spec.value));
+    if (match) {
+      data.currentSku = sku
+      console.log(data.currentSku)
+      break;
+    }
+  }
 }
 
 const selectedFullName = computed(() => {
   let s = product.value.name + ' ';
   selectedSpecValue.value.forEach(item => {
-    s += item.value + ' '
+    if (item.value) {
+      s += item.value + ' '
+    }
   })
   return s
 })
 
 const {
+  currentSku,
   product,
   selectedSpecValue
 } = toRefs(data)
@@ -104,15 +146,15 @@ const {
         <div class="selected-list">
           <div class="selected-info">
             <span class="selected-product">{{ selectedFullName }}</span>
-            <span class="selected-product-price">2099 元</span>
+            <span class="selected-product-price">{{ fenToYuan(currentSku.salesPrice) }} 元</span>
           </div>
           <div class="total-price">
-            总计：2099元
+            总计：{{ fenToYuan(currentSku.salesPrice) }} 元
           </div>
         </div>
         <div class="btn-box">
           <div class="add-cart">
-            <a href="">加入购物车</a>
+            <a href="" @click.prevent="addToCart">加入购物车</a>
           </div>
         </div>
       </div>
