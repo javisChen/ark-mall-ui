@@ -38,7 +38,12 @@ const onAttrOver = (item) => {
 
 const addToCart = async () => {
   try {
-    await addCartItem()
+    const result = await addCartItem({
+      "skuId": data.currentSku.id
+    })
+    router.push({
+      name: 'cartSuccess'
+    })
   } catch (e) {
   }
 }
@@ -81,7 +86,6 @@ const findSKU = () => {
     const match = data.selectedSpecValue.every(spec => sku.values.includes(spec.value));
     if (match) {
       data.currentSku = sku
-      console.log(data.currentSku)
       break;
     }
   }

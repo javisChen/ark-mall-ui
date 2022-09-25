@@ -1,7 +1,8 @@
 <script setup lang="ts">
 
-import {reactive, toRefs, defineComponent} from 'vue';
+import {reactive, toRefs, defineComponent, onMounted} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
+import {getCartItems} from "../../api/order/order-api"
 import {NCheckbox} from 'naive-ui'
 
 const route = useRoute();
@@ -33,6 +34,13 @@ const data = reactive({
   },
 })
 
+onMounted(async () => {
+  try {
+    const result = await getCartItems();
+    data.cartList = result.data
+  } catch (e) {
+  }
+})
 const {
   toCheckout,
   cartList,

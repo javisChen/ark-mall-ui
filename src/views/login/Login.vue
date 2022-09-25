@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
-import {login as loginReq} from '@/api/iam/login'
+import storage from 'store'
+import {login as loginReq} from '../../api/iam/login'
 import md5 from 'md5'
 
 import {reactive, ref, toRefs, computed} from 'vue';
@@ -8,6 +9,8 @@ import {useRoute, useRouter} from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
+
+const ACCESS_TOKEN = 'Access-Token'
 
 interface Login {
   username: string
@@ -24,11 +27,18 @@ const data = reactive({
     password: '',
   },
   doLogin: async () => {
-    console.log(data.login)
-    data.login.password = md5(data.login.password)
-    router.push({
-      name: 'home'
-    })
+    try {
+      const result = await loginReq({
+        username: data.login.username,
+        password: md5(data.login.password)
+      })
+      storage.set(ACCESS_TOKEN, result.data.accessToken, result.data.expires * 1000)
+      router.push({
+        name: 'home'
+      })
+    } catch (e) {
+      console.log(e)
+    }
   },
 })
 
@@ -46,7 +56,7 @@ const {
       <div id="login-form">
         <div class="login-tabs">
           <div class="tabs-nav">
-            <button class="tabs-nav-bottom">登录</button>
+            <button class="tabs-nav-bottom" @click="doLogin">登录</button>
             <button class="tabs-nav-bottom">注册</button>
           </div>
         </div>

@@ -45,16 +45,18 @@ const errorHandler = (error) => {
       //   description: data.msg
       // })
     } else if (responseStatus === 401 && !(data.result && data.result.isLogin)) {
-      notification.error({
-        message: '认证已失效，请重新登录',
-        description: response.msg
-      })
+      // notification.error({
+      //   message: '认证已失效，请重新登录',
+      //   description: response.msg
+      // })
       if (token) {
         store.dispatch('Logout').then(() => {
           setTimeout(() => {
-            window.location.reload()
+            window.location.hash = 'login'
           }, 1500)
         })
+      } else {
+        window.location.hash = 'login'
       }
     } else if (responseStatus === 400 || responseStatus === 500) {
       const result = response.data
