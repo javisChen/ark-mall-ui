@@ -1,32 +1,53 @@
 <script setup lang="ts">
 
-import {reactive, toRefs, defineComponent, onMounted} from 'vue';
+import {reactive, toRefs, onMounted, computed} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
-import {getCartItems} from "../../api/order/order-api"
+import {getCartItems, checkedCartItem} from "../../api/order/order-api"
 import {NCheckbox} from 'naive-ui'
+import {fenToYuan} from '../../utils/util';
 
 const route = useRoute();
 const router = useRouter();
 
+const handleCheckedChange = async (checked, cartItem) => {
+
+  try {
+    await checkedCartItem({cartItemId: cartItem.id, checked})
+    cartItem.checked = checked
+  } catch (e) {
+  }
+}
+
+const getSpecValue = (item) => {
+  let name = ' '
+  for (let i = 0; i < item.specData.length; i++) {
+    const spec = item.specData[i];
+    name += spec.attrValue
+    if (i < item.specData.length - 1) {
+      name += ' '
+    }
+  }
+  return name
+}
+
+const totalPrice = computed(() => {
+  let total = 0;
+  data.cartList
+      .filter(item => item.checked)
+      .forEach(item => total += item.price * item.quantity)
+  return fenToYuan(total)
+})
+
+const totalQuantity = computed(() => {
+  let total = 0;
+  data.cartList
+      .filter(item => item.checked)
+      .forEach(item => total += item.quantity)
+  return total
+})
+
 const data = reactive({
-  cartList: [
-    {
-      id: 1,
-      name: 'Redmi Note 11T Pro  6GB+128GB 子夜黑',
-      picUrl: '@/assets/img/seckill/shop/t.jpg',
-      price: 1699,
-      quantity: 1,
-      subTotal: 1699
-    },
-    {
-      id: 1,
-      name: 'Redmi Note 11T Pro  6GB+128GB 子夜黑',
-      picUrl: '@/assets/img/seckill/shop/t.jpg',
-      price: 1699,
-      quantity: 1,
-      subTotal: 1699
-    },
-  ],
+  cartList: [],
   toCheckout: async () => {
     router.push({
       name: 'checkout'
@@ -37,6 +58,9 @@ const data = reactive({
 onMounted(async () => {
   try {
     const result = await getCartItems();
+    result.data.forEach(item => {
+      item.specData = JSON.parse(item.specData)
+    })
     data.cartList = result.data
   } catch (e) {
   }
@@ -45,7 +69,6 @@ const {
   toCheckout,
   cartList,
 } = toRefs(data)
-
 
 </script>
 
@@ -81,17 +104,20 @@ const {
         <div class="cart-table-body">
           <div class="cart-table-row" v-for="item in cartList">
             <div class="cart-table-col check">
-              <n-checkbox size="large" label=""/>
+              <n-checkbox size="large"
+                          label=""
+                          :checked="item.checked == 1"
+                          @update:checked="handleCheckedChange($event, item)"/>
             </div>
             <div class="cart-table-col picture">
-              <img src="../../assets/test-prod.webp" alt="">
+              <img :src="item.picUrl" alt="">
             </div>
-            <div class="cart-table-col product-name">{{ item.name }}</div>
-            <div class="cart-table-col price">{{ item.price }}元</div>
+            <div class="cart-table-col product-name">{{ item.spuName + getSpecValue(item) }}</div>
+            <div class="cart-table-col price">{{ fenToYuan(item.price) }}元</div>
             <div class="cart-table-col num">
-              <n-input-number v-model:value="item.quantity" button-placement="both" />
+              <n-input-number v-model:value="item.quantity" button-placement="both"/>
             </div>
-            <div class="cart-table-col total">{{ item.subTotal }}元</div>
+            <div class="cart-table-col total">{{ fenToYuan(item.price * item.quantity) }}元</div>
             <div class="cart-table-col">删除</div>
           </div>
         </div>
@@ -100,9 +126,9 @@ const {
         <div class="continue">继续购物</div>
         <div class="selected">
           已选择
-          <span class="quantity primary">1</span> 件
+          <span class="quantity primary">{{ totalQuantity }}</span> 件
         </div>
-        <div class="total-price primary">合计：<span class="money">0</span>元</div>
+        <div class="total-price primary">合计：<span class="money">{{ totalPrice }}</span>元</div>
         <div class="btn-box">
           <button class="settle primary-bg" @click="toCheckout">去结算</button>
         </div>
@@ -209,7 +235,7 @@ const {
   color: #ff6700;
 }
 
-.cart-table-body .cart-table-row  {
+.cart-table-body .cart-table-row {
   font-size: 16px;
 }
 

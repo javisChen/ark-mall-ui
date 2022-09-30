@@ -1,40 +1,89 @@
 <script setup lang="ts">
 
-import CommonTopBar from "../common/CommonTopBar.vue";
-import {reactive, toRefs, defineComponent} from 'vue';
+import {reactive, toRefs, onMounted, computed} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
-import {NCheckbox} from 'naive-ui'
+import {getCartItems, createOrder} from "../../api/order/order-api"
+import {yuanToFen, fenToYuan} from '../../utils/util';
+import {Order, OrderItem, ReceiveInfo} from "./Order.ts";
 
 const route = useRoute();
 const router = useRouter();
 
-const data = reactive({
-  cartList: [
-    {
-      id: 1,
-      name: 'Redmi Note 11T Pro  6GB+128GB 子夜黑',
-      picUrl: '@/assets/img/seckill/shop/t.jpg',
-      price: 1699,
-      quantity: 1,
-      subTotal: 1699
-    },
-    {
-      id: 1,
-      name: 'Redmi Note 11T Pro  6GB+128GB 子夜黑',
-      picUrl: '@/assets/img/seckill/shop/t.jpg',
-      price: 1699,
-      quantity: 1,
-      subTotal: 1699
-    },
-  ],
-  toConfirm: async () => {
-    router.push({
-      name: 'confirm'
+onMounted(async () => {
+  try {
+    const result = await getCartItems();
+    result.data
+        .filter(item => item.checked)
+        .forEach(item => {
+      item.specData = JSON.parse(item.specData)
     })
+    data.cartList = result.data
+  } catch (e) {
+  }
+})
+
+const totalPrice = computed(() => {
+  let total = 0;
+  data.cartList
+      .filter(item => item.checked)
+      .forEach(item => total += item.price * item.quantity)
+  return fenToYuan(total)
+})
+
+const totalQuantity = computed(() => {
+  let total = 0;
+  data.cartList
+      .filter(item => item.checked)
+      .forEach(item => total += item.quantity)
+  return total
+})
+
+const getSpecValue = (item) => {
+  let name = ' '
+  for (let i = 0; i < item.specData.length; i++) {
+    const spec = item.specData[i];
+    name += spec.attrValue
+    if (i < item.specData.length - 1) {
+      name += ' '
+    }
+  }
+  return name
+}
+
+const data = reactive({
+  cartList: [],
+  receiveInfo: {
+    name: '陈嘉玮',
+    mobile: '18588888888',
+    province: '广东省',
+    city: '广州市',
+    district: '白云区',
+    street: '人民街道',
+    address: '文明路',
+  },
+  toConfirm: async () => {
+    let order = new Order();
+    order.orderType = 1;
+    order.orderChannel = 1;
+    order.orderItems = data.cartList
+        .filter(item => item.checked)
+        .map(item => new OrderItem(item.skuId, item.quantity))
+    order.receiveInfo = new ReceiveInfo(data.receiveInfo.name, data.receiveInfo.mobile,
+        data.receiveInfo.province, data.receiveInfo.city, data.receiveInfo.district, data.receiveInfo.street,
+        data.receiveInfo.address);
+    try {
+      const result = await createOrder(order)
+      await router.push({
+        name: 'confirm',
+        query: {id: result.data}
+      })
+    } catch (e) {
+    }
   },
 })
 
 const {
+  receiveInfo,
   toConfirm,
   cartList,
 } = toRefs(data)
@@ -63,14 +112,14 @@ const {
         <div class="address-list">
           <div class="address-item">
             <div class="address-info">
-              <div class="name">陈嘉玮<span style="color: rgb(176, 176, 176);"></span></div>
-              <div class="tel">185****6716</div>
+              <div class="name">{{ receiveInfo.name }}<span style="color: rgb(176, 176, 176);"></span></div>
+              <div class="tel">{{ receiveInfo.mobile }}</div>
               <div class="address-con">
-                <span>广东</span>
-                <span>广州市</span>
-                <span>越秀区</span>
-                <span>人民街道</span>
-                <span class="info">沿江路203号</span>
+                <span>{{ receiveInfo.province }}</span>
+                <span>{{ receiveInfo.city }}</span>
+                <span>{{ receiveInfo.district }}</span>
+                <span>{{ receiveInfo.street }}</span>
+                <span class="info">{{ receiveInfo.address }}</span>
               </div>
               <div class="address-action"><span>修改</span></div>
             </div>
@@ -88,52 +137,20 @@ const {
           <span>商品</span>
         </div>
         <div class="goods-list">
-          <div class="good-item">
+          <div class="good-item" v-for="item in cartList">
             <div class="item-desc good-img">
-              <img
-                  src="//cdn.cnbj0.fds.api.mi-img.com/b2c-shopapi-pms/pms_1628162373.00133777.jpg?thumb=1&amp;w=30&amp;h=30">
+              <img :src="item.picUrl">
             </div>
             <div class="item-desc good-name">
               <ah
                   href="//www.mi.com/buy?product_id=1213100005"
-                  target="_blank"><span>小米电视6 65" OLED 黑色</span>
+                  target="_blank"><span>{{ item.spuName + getSpecValue(item) }}</span>
               </ah>
             </div>
             <div class="item-desc price-box">
-              <div class="item-desc good-price">6699元 x 1</div>
+              <div class="item-desc good-price">{{ fenToYuan(item.price) }}元 x {{ item.quantity }}</div>
               <div class="item-desc good-status"></div>
-              <div class="item-desc good-total">6699元</div>
-            </div>
-          </div>
-          <div class="good-item">
-            <div class="item-desc good-img"><img
-                src="//cdn.cnbj0.fds.api.mi-img.com/b2c-shopapi-pms/pms_1660117297.65076315.png?thumb=1&amp;w=30&amp;h=30">
-            </div>
-            <div class="item-desc good-name"><a
-                href="//www.mi.com/buy?product_id=1222900081"
-                target="_blank">
-              <span>Redmi K50 至尊版 8GB+128GB 雅黑</span>
-            </a>
-            </div>
-            <div class="item-desc price-box">
-              <div class="item-desc good-price">2999元 x 1</div>
-              <div class="item-desc good-status"></div>
-              <div class="item-desc good-total">2999元</div>
-            </div>
-          </div>
-          <div class="good-item">
-            <div class="item-desc good-img">
-              <img
-                  src="//cdn.cnbj0.fds.api.mi-img.com/b2c-shopapi-pms/pms_1653393317.55445994.png?thumb=1&amp;w=30&amp;h=30">
-            </div>
-            <div class="item-desc good-name"><a
-                href="//www.mi.com/buy?product_id=1221800048"
-                target="_blank"><span>Redmi Buds 4 Pro 镜湖白</span>
-            </a></div>
-            <div class="item-desc price-box">
-              <div class="item-desc good-price">369元 x 1</div>
-              <div class="item-desc good-status"></div>
-              <div class="item-desc good-total">369元</div>
+              <div class="item-desc good-total">{{fenToYuan(item.price * item.quantity)}}元</div>
             </div>
           </div>
         </div>
@@ -171,11 +188,11 @@ const {
         <div class="section-bill">
           <div class="bill-item">
             <div class="bill-name">商品件数：</div>
-            <div class="bill-money">3件</div>
+            <div class="bill-money">{{ totalQuantity }}件</div>
           </div>
           <div class="bill-item">
             <div class="bill-name">商品总价：</div>
-            <div class="bill-money">10067元</div>
+            <div class="bill-money">{{ totalPrice }}元</div>
           </div>
           <div class="bill-item">
             <div class="bill-name">活动优惠：</div>
@@ -191,7 +208,7 @@ const {
           </div>
           <div class="bill-item total-price">
             <div class="bill-name">应付总额：</div>
-            <div class="bill-money"><em>10067</em>元</div>
+            <div class="bill-money"><em>{{ totalPrice }}</em>元</div>
           </div>
         </div>
       </div>

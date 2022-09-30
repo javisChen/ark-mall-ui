@@ -4,6 +4,7 @@ const home = () => import(`../views/home/Home.vue`)
 const login = () => import(`../views/login/Login.vue`)
 const cart = () => import(`../views/cart/Cart.vue`)
 const cartSuccess = () => import(`../views/cart/CartSuccess.vue`)
+const paySuccess = () => import(`../views/pay/PaySuccess.vue`)
 const checkout = () => import(`../views/checkout/Checkout.vue`)
 const confirm = () => import(`../views/confirm/Confirm.vue`)
 
@@ -46,6 +47,11 @@ export const routes = [
     path: '/confirm',
     name: 'confirm',
     component: confirm,
+  },
+  {
+    path: '/pay/success',
+    name: 'paySuccess',
+    component: paySuccess
   },
 ]
 

@@ -1,36 +1,118 @@
 <script setup lang="ts">
 
-import {reactive, toRefs, defineComponent} from 'vue';
+import {reactive, toRefs, onMounted} from 'vue';
+import {getOrderInfo} from "../../api/order/order-api"
+import {getPayOrderStatus, createPayOrder} from "../../api/pay/pay-api"
+import {useRoute, useRouter} from 'vue-router';
+import {fenToYuan} from '../../utils/util';
+
+const route = useRoute();
+const router = useRouter();
 
 const data = reactive({
-  cartList: [
+  order: {},
+  payOrder: {},
+  payTypeList: [
     {
-      id: 1,
-      name: 'Redmi Note 11T Pro  6GB+128GB 子夜黑',
-      picUrl: '@/assets/img/seckill/shop/t.jpg',
-      price: 1699,
-      quantity: 1,
-      subTotal: 1699
+      name: '微信支付',
+      code: 'WECHAT',
+      logo: '//cdn.cnbj1.fds.api.mi-img.com/mi-mall/031f3af10e3856352b847fe480b2b2e5.png'
     },
     {
-      id: 1,
-      name: 'Redmi Note 11T Pro  6GB+128GB 子夜黑',
-      picUrl: '@/assets/img/seckill/shop/t.jpg',
-      price: 1699,
-      quantity: 1,
-      subTotal: 1699
+      name: '支付宝',
+      code: 'ALIPAY',
+      logo: '//cdn.cnbj1.fds.api.mi-img.com/mi-mall/4cdfb179cdce8f95c57e8d82c469d20c.png'
     },
-  ]
+  ],
+  receive: {},
+  showModal: false
 })
 
+onMounted(async () => {
+
+  try {
+    const result = await getOrderInfo({id: route.query.id});
+    result.data.orderItems.forEach(item => {
+      item.specData = JSON.parse(item.specData)
+    })
+    data.order = result.data
+    data.receive = data.order.receiveInfo
+  } catch (e) {
+    console.log(e)
+  }
+
+})
+
+const getSpecValue = (item) => {
+  let name = ' '
+  for (let i = 0; i < item.specData.length; i++) {
+    const spec = item.specData[i];
+    name += spec.attrValue
+    if (i < item.specData.length - 1) {
+      name += ' '
+    }
+  }
+  return name
+}
+
+const onPay = async (item) => {
+  try {
+    const createResult = await createPayOrder({
+      orderId: data.order.id,
+      payTypeCode: item.code,
+      description: ""
+    })
+    data.showModal = true
+    data.payOrder = createResult.data
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+const submitCallback = async (item) => {
+  try {
+    const result = await getPayOrderStatus({id: data.payOrder.payOrderId})
+    console.log(result.data)
+    if (result.data == 3) {
+      console.log('支付成功')
+      await router.push({
+        name: 'paySuccess',
+      })
+      return true
+    } else {
+      return false
+    }
+  } catch (e) {
+    console.log(e)
+  }
+  return false;
+}
+
+const cancelCallback = (item) => {
+  data.showModal = true
+}
+
 const {
-  cartList,
+  payTypeList,
+  receive,
+  order,
+  showModal
 } = toRefs(data)
 
 
 </script>
 
 <template>
+  <n-modal
+      v-model:show="showModal"
+      preset="dialog"
+      title="等待支付"
+      content="支付成功后请点击【已支付】"
+      positive-text="已支付"
+      negative-text="放弃支付"
+      @positive-click="submitCallback"
+      @negative-click="cancelCallback"
+  />
   <div class="header">
     <div class="container">
       <div class="header-logo">
@@ -50,11 +132,12 @@ const {
                 class="order-time"><span>请在<span
                 class="pay-time-tip">0 小时 14 分</span><span
             >内完成支付, 超时后将取消订单</span></span></p>
-            <p class="post-info" style="display: none;">收货信息：陈嘉玮 185****6716 广东 广州市 越秀区
-              人民街道 沿江路203号</p></div>
+            <p class="post-info" style="display: none;">收货信息：{{ receive.name }} {{ receive.mobile }}
+              {{ receive.province }} {{ receive.city }} {{ receive.district }}
+              {{ receive.street }} {{ receive.address }}</p></div>
           <div class="fr">
             <div class="total">应付总额：<span class="money">
-              <em>10067</em>
+              <em>{{ fenToYuan(order.actualAmount) }}</em>
               <span>元</span>
             </span>
             </div>
@@ -68,17 +151,20 @@ const {
           <ul>
             <li class="clearfix">
               <div class="label"> 订单号：</div>
-              <div class="content"><span class="order-num">5220901846507022</span>
+              <div class="content"><span class="order-num">{{ order.tradeNo }}</span>
               </div>
             </li>
             <li class="clearfix">
               <div class="label"> 收货信息：</div>
-              <div class="content">陈嘉玮 185****6716 广东 广州市 越秀区 人民街道 沿江路203号</div>
+              <div class="content">{{ receive.name }} {{ receive.mobile }} {{ receive.province }} {{ receive.city }}
+                {{ receive.district }}
+                {{ receive.street }} {{ receive.address }}
+              </div>
             </li>
             <li class="clearfix">
               <div class="label"> 商品名称：</div>
-              <div class="content"><span>小米电视6 65" OLED 黑色</span><span
-              >Redmi Buds 4 Pro 镜湖白</span><span>Redmi K50 至尊版 8GB+128GB 雅黑</span>
+              <div class="content">
+                <span v-for="item in order.orderItems">{{ item.spuName + getSpecValue(item) }}</span>
               </div>
             </li>
             <li class="clearfix hide">
@@ -101,17 +187,11 @@ const {
             <div class="payment-header clearfix"><h3 class="title">支付工具</h3><span class="desc"></span></div>
             <div class="payment-body">
               <ul class="clearfix payment-list J_paymentList">
-                <li alt="alipay" type="alipay" class="J_bank"><img
-                    data-src="//cdn.cnbj1.fds.api.mi-img.com/mi-mall/031f3af10e3856352b847fe480b2b2e5.png"
-                    src="//cdn.cnbj1.fds.api.mi-img.com/mi-mall/031f3af10e3856352b847fe480b2b2e5.png" lazy="loaded">
-                </li>
-                <li alt="micash" type="micash" class="J_bank"><img
-                    data-src="//cdn.cnbj1.fds.api.mi-img.com/mi-mall/60ca2cd19969cfbfa9a5507ab80ab620.png"
-                    src="//cdn.cnbj1.fds.api.mi-img.com/mi-mall/60ca2cd19969cfbfa9a5507ab80ab620.png" lazy="loaded">
-                </li>
-                <li alt="weixin_native" type="weixin_native" class="J_bank"><img
-                    data-src="//cdn.cnbj1.fds.api.mi-img.com/mi-mall/4cdfb179cdce8f95c57e8d82c469d20c.png"
-                    src="//cdn.cnbj1.fds.api.mi-img.com/mi-mall/4cdfb179cdce8f95c57e8d82c469d20c.png" lazy="loaded">
+                <li v-for="item in payTypeList"
+                    @click="onPay(item)"
+                    type="alipay"
+                    class="J_bank"><img
+                    :src="item.logo">
                 </li>
               </ul>
             </div>

@@ -7,12 +7,14 @@ import {
     create,
     NButton,
     NInputNumber,
+    NModal
 } from 'naive-ui'
 
 const naive = create({
     components: [
         NButton,
-        NInputNumber
+        NInputNumber,
+        NModal
     ]
 })
 
