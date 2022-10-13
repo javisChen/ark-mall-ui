@@ -72,9 +72,7 @@ const onPay = async (item) => {
 const submitCallback = async (item) => {
   try {
     const result = await getPayOrderStatus({id: data.payOrder.payOrderId})
-    console.log(result.data)
     if (result.data == 3) {
-      console.log('支付成功')
       await router.push({
         name: 'paySuccess',
       })
