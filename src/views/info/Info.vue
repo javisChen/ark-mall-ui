@@ -131,7 +131,7 @@ const {
           <div class="spec-item"
                v-for="specItem in product.attrList">
             <div class="attr-name">
-              选择{{ specItem.name }}
+              选择{{ specItem.attrName }}
             </div>
             <ul class="attr-value-list clear">
               <li v-for="attrItem in specItem.optionList"
@@ -142,7 +142,7 @@ const {
                     'active': attrItem.onHover || attrItem.selected,
                     'unactive': !attrItem.onHover
                   }">
-                {{ attrItem.value }}
+                {{ attrItem.attrValue }}
               </li>
             </ul>
           </div>

@@ -3,7 +3,9 @@
 import {onMounted, reactive, toRefs} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import CommonTopBar from "../common/CommonTopBar.vue";
-import {getList} from "../../api/commodity/category-api"
+import {getList} from "../../api/commodity/category-api.js"
+import {search} from "../../api/commodity/commodity-api.js"
+import {fenToYuan} from '../../utils/util';
 
 const route = useRoute();
 const router = useRouter();
@@ -12,7 +14,7 @@ const toInfoPage = (item: object) => {
   router.push({
     name: 'info',
     query: {
-      id: item.spuId,
+      id: item.id,
     },
   })
 }
@@ -29,6 +31,11 @@ onMounted(async () => {
   try {
     const result = await getList();
     data.categories = result.data
+  } catch (e) {
+  }
+  try {
+    const result = await search();
+    data.productList = result.data
   } catch (e) {
   }
 })
@@ -126,7 +133,8 @@ const {
                 @mouseout="categoryHover(item)"
                 v-for="item in categories">
               <a href="#">{{ item.categoryName }}</a>
-              <div class="category-product" v-show="item.showChildren && item.commodities && item.commodities.length > 0">
+              <div class="category-product"
+                   v-show="item.showChildren && item.commodities && item.commodities.length > 0">
                 <ul class="category-product-wrapper">
                   <li class="category-product-item"
                       @click.prevent="toInfoPage(commodityItem)"
@@ -162,10 +170,10 @@ const {
               <div class="product-img">
                 <img width="160" height="160" src="src/assets/test-prod.webp" alt="">
               </div>
-              <h3 class="title">{{ item.title }}</h3>
+              <h3 class="title">{{ item.name }}</h3>
               <p class="desc">{{ item.desc }}</p>
               <p class="price">
-                <span class="num">{{ item.price }}</span>
+                <span class="num">{{ fenToYuan(item.showPrice) }}</span>
                 <span>起</span>
               </p>
             </a>
@@ -186,10 +194,10 @@ const {
               <div class="product-img">
                 <img width="160" height="160" src="src/assets/test-prod.webp" alt="">
               </div>
-              <h3 class="title">{{ item.title }}</h3>
+              <h3 class="title">{{ item.name }}</h3>
               <p class="desc">{{ item.desc }}</p>
               <p class="price">
-                <span class="num">{{ item.price }}</span>
+                <span class="num">{{ fenToYuan(item.showPrice) }}</span>
                 <span>起</span>
               </p>
             </a>
@@ -210,10 +218,10 @@ const {
               <div class="product-img">
                 <img width="160" height="160" src="src/assets/test-prod.webp" alt="">
               </div>
-              <h3 class="title">{{ item.title }}</h3>
+              <h3 class="title">{{ item.name }}</h3>
               <p class="desc">{{ item.desc }}</p>
               <p class="price">
-                <span class="num">{{ item.price }}</span>
+                <span class="num">{{ fenToYuan(item.showPrice) }}</span>
                 <span>起</span>
               </p>
             </a>
