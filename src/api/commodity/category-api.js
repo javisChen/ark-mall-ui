@@ -2,7 +2,7 @@ import {post, get, del, put} from '@/utils/request'
 import Base  from './commodity-base-api'
 
 const api = {
-  list: Base.serviceName + '/v1/categories',
+  list: Base.serviceName + '/v1/commodity/categories',
 }
 
 export default api

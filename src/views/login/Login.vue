@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import storage from 'store'
-import {login as loginReq} from '../../api/iam/login'
+import {login as loginReq} from '../../api/auth/auth-api'
 import md5 from 'md5'
 
 import {reactive, ref, toRefs, computed} from 'vue';
