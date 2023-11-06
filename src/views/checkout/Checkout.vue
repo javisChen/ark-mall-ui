@@ -2,7 +2,7 @@
 
 import {reactive, toRefs, onMounted, computed} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
-import {getCartItems, createOrder} from "../../api/trade/order-api"
+import {getCartItems, createOrder} from "../../api/trade/trade-api"
 import {yuanToFen, fenToYuan} from '../../utils/util';
 import {Order, OrderItem, ReceiveInfo} from "./Order.ts";
 
