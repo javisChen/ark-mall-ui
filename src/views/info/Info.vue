@@ -2,7 +2,7 @@
 import CommonTopBar from "../common/CommonTopBar.vue";
 import {onMounted, reactive, toRefs, computed, ref} from 'vue';
 import {getInfo} from "../../api/commodity/commodity-api"
-import {addCartItem} from "../../api/order/order-api"
+import {addCartItem} from "../../api/trade/trade-api"
 import {useRoute, useRouter} from 'vue-router';
 import {yuanToFen, fenToYuan} from '../../utils/util';
 
@@ -22,8 +22,8 @@ onMounted(async () => {
   try {
     const result = await getInfo({id: route.query.id});
     data.product = result.data
-    data.product.attrList.forEach((item, idx) => {
-      data.selectedSpecValue[idx] = {attrId: item.id}
+    data.product.specList.forEach((item, idx) => {
+      data.selectedSpecValue[idx] = {attrId: item.attrId}
       data.attrCount++;
     })
   } catch (e) {
@@ -64,6 +64,7 @@ const onAttrClick = (item, specItem) => {
     }
   })
 
+  console.log(data.selectedSpecValue)
   data.selectedAttrCount = data.selectedSpecValue.filter(item => item.value && item.value !='').length
   // 找到对应的SKU价
   if (data.selectedAttrCount === data.attrCount) {
@@ -72,7 +73,6 @@ const onAttrClick = (item, specItem) => {
 }
 
 const findSKU = () => {
-  console.log('查找对应的SKU')
   const skuArr = data.product.skuList.map(sku => {
     return {
       ...sku,
@@ -129,20 +129,20 @@ const {
         <div class="line"></div>
         <div class="spec">
           <div class="spec-item"
-               v-for="specItem in product.attrList">
+               v-for="specItem in product.specList">
             <div class="attr-name">
               选择{{ specItem.attrName }}
             </div>
             <ul class="attr-value-list clear">
-              <li v-for="attrItem in specItem.optionList"
-                  @mouseover="onAttrOver(attrItem)"
-                  @mouseout="onAttrOver(attrItem)"
-                  @click="onAttrClick(attrItem, specItem)"
+              <li v-for="optionItem in specItem.optionList"
+                  @mouseover="onAttrOver(optionItem)"
+                  @mouseout="onAttrOver(optionItem)"
+                  @click="onAttrClick(optionItem, specItem)"
                   :class="{
-                    'active': attrItem.onHover || attrItem.selected,
-                    'unactive': !attrItem.onHover
+                    'active': optionItem.onHover || optionItem.selected,
+                    'unactive': !optionItem.onHover
                   }">
-                {{ attrItem.attrValue }}
+                {{ optionItem.value }}
               </li>
             </ul>
           </div>

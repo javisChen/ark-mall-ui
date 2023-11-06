@@ -1,5 +1,5 @@
 import {post, get, del, put} from '@/utils/request'
-import Base  from './order-base-api'
+import Base  from './trade-base-api'
 
 const api = {
   cartItem: Base.serviceName + '/v1/cart/item/add',

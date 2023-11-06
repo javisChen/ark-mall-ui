@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import {reactive, toRefs, onMounted} from 'vue';
-import {getOrderInfo} from "../../api/order/order-api"
+import {getOrderInfo} from "../../api/trade/order-api"
 import {getPayOrderStatus, createPayOrder} from "../../api/pay/pay-api"
 import {useRoute, useRouter} from 'vue-router';
 import {fenToYuan} from '../../utils/util';

@@ -2,7 +2,7 @@
 
 import {reactive, toRefs, onMounted, computed} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
-import {getCartItems, checkedCartItem} from "../../api/order/order-api"
+import {getCartItems, checkedCartItem} from "../../api/trade/trade-api"
 import {NCheckbox} from 'naive-ui'
 import {fenToYuan} from '../../utils/util';
 
@@ -62,6 +62,7 @@ onMounted(async () => {
       item.specData = JSON.parse(item.specData)
     })
     data.cartList = result.data
+    console.log(data.cartList)
   } catch (e) {
   }
 })
