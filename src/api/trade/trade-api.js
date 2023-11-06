@@ -2,7 +2,7 @@ import {post, get, del, put} from '@/utils/request'
 import Base  from './trade-base-api'
 
 const api = {
-  cartItem: Base.serviceName + '/v1/cart/item/add',
+  cartItem: Base.serviceName + '/v1/cart/item/save',
   checkedCartItem: Base.serviceName + '/v1/cart/item/checked',
   cartItems: Base.serviceName + '/v1/cart/items',
   createOrder: Base.serviceName + '/v1/order/create',
