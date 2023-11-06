@@ -129,20 +129,20 @@ const {
         <div class="line"></div>
         <div class="spec">
           <div class="spec-item"
-               v-for="specItem in product.attrList">
+               v-for="specItem in product.specList">
             <div class="attr-name">
               选择{{ specItem.attrName }}
             </div>
             <ul class="attr-value-list clear">
-              <li v-for="attrItem in specItem.optionList"
-                  @mouseover="onAttrOver(attrItem)"
-                  @mouseout="onAttrOver(attrItem)"
-                  @click="onAttrClick(attrItem, specItem)"
+              <li v-for="optionItem in specItem.optionList"
+                  @mouseover="onAttrOver(optionItem)"
+                  @mouseout="onAttrOver(optionItem)"
+                  @click="onAttrClick(optionItem, specItem)"
                   :class="{
-                    'active': attrItem.onHover || attrItem.selected,
-                    'unactive': !attrItem.onHover
+                    'active': optionItem.onHover || optionItem.selected,
+                    'unactive': !optionItem.onHover
                   }">
-                {{ attrItem.attrValue }}
+                {{ optionItem.value }}
               </li>
             </ul>
           </div>
