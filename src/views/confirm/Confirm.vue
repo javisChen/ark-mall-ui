@@ -11,6 +11,7 @@ const router = useRouter();
 
 const data = reactive({
   order: {},
+  orderCharge: {},
   payOrder: {},
   payTypeList: [
     {
@@ -32,11 +33,13 @@ onMounted(async () => {
 
   try {
     const result = await getOrderInfo({id: route.query.id});
-    result.data.orderItems.forEach(item => {
+    result.data.orderProducts.forEach(item => {
       item.specData = JSON.parse(item.specData)
     })
     data.order = result.data
-    data.receive = data.order.receiveInfo
+    data.receive = data.order.orderReceive
+    data.orderCharge = data.order.orderCharge
+    console.log(data.orderCharge)
   } catch (e) {
     console.log(e)
   }
@@ -121,11 +124,12 @@ const {
       </div>
     </div>
   </div>
-  <div class="main">
+  <div class="main" v-if="order">
     <div class="container">
       <div class="section section-order">
         <div class="order-info clearfix">
-          <div class="fl"><h2 class="title">订单提交成功！去付款咯～</h2>
+          <div class="fl">
+            <h2 class="title">订单提交成功！去付款咯～</h2>
             <p
                 class="order-time"><span>请在<span
                 class="pay-time-tip">0 小时 14 分</span><span
@@ -135,7 +139,7 @@ const {
               {{ receive.street }} {{ receive.address }}</p></div>
           <div class="fr">
             <div class="total">应付总额：<span class="money">
-              <em>{{ fenToYuan(order.actualAmount) }}</em>
+              <em v-if="order.orderCharge">{{ fenToYuan(order.orderCharge.actualAmount) }}</em>
               <span>元</span>
             </span>
             </div>
@@ -149,7 +153,8 @@ const {
           <ul>
             <li class="clearfix">
               <div class="label"> 订单号：</div>
-              <div class="content"><span class="order-num">{{ order.tradeNo }}</span>
+              <div class="content">
+                <span  v-if="order.orderBase" class="order-num">{{ order.orderBase.tradeNo }}</span>
               </div>
             </li>
             <li class="clearfix">
@@ -162,7 +167,7 @@ const {
             <li class="clearfix">
               <div class="label"> 商品名称：</div>
               <div class="content">
-                <span v-for="item in order.orderItems">{{ item.spuName + getSpecValue(item) }}</span>
+                <span v-for="item in order.orderProducts">{{ item.productName + getSpecValue(item) }}</span>
               </div>
             </li>
             <li class="clearfix hide">

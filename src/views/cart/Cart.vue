@@ -113,7 +113,7 @@ const {
             <div class="cart-table-col picture">
               <img :src="item.picUrl" alt="">
             </div>
-            <div class="cart-table-col product-name">{{ item.spuName + getSpecValue(item) }}</div>
+            <div class="cart-table-col product-name">{{ item.productName + getSpecValue(item) }}</div>
             <div class="cart-table-col price">{{ fenToYuan(item.price) }}元</div>
             <div class="cart-table-col num">
               <n-input-number v-model:value="item.quantity" button-placement="both"/>

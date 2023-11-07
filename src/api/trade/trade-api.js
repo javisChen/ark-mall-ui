@@ -6,7 +6,7 @@ const api = {
   checkedCartItem: Base.serviceName + '/v1/cart/item/checked',
   cartItems: Base.serviceName + '/v1/cart/items',
   createOrder: Base.serviceName + '/v1/order/create',
-  getOrderInfo: Base.serviceName + '/v1/order/info',
+  getOrderInfo: Base.serviceName + '/v1/order/details',
 }
 
 export default api

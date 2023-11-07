@@ -144,7 +144,7 @@ const {
             <div class="item-desc good-name">
               <ah
                   href="//www.mi.com/buy?product_id=1213100005"
-                  target="_blank"><span>{{ item.spuName + getSpecValue(item) }}</span>
+                  target="_blank"><span>{{ item.productName + getSpecValue(item) }}</span>
               </ah>
             </div>
             <div class="item-desc price-box">
