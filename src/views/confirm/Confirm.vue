@@ -61,7 +61,7 @@ const getSpecValue = (item) => {
 const onPay = async (item) => {
   try {
     const createResult = await createPayOrder({
-      orderId: data.order.id,
+      orderId: data.order.orderBase.id,
       payTypeCode: item.code,
       description: ""
     })
