@@ -1,21 +1,13 @@
 <script setup lang="ts">
 
-import storage from 'store'
-import {login as loginReq} from '../../api/auth/auth-api'
+import { useAuthStore } from '../../store/auth'
 import md5 from 'md5'
-
 import {reactive, ref, toRefs, computed} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
-
-const ACCESS_TOKEN = 'Access-Token'
-
-interface Login {
-  username: string
-  password: string
-}
+const auth = useAuthStore();
 
 const loginBtnDisabled = computed(() => {
     return !(data.login.username && data.login.password)
@@ -28,14 +20,16 @@ const data = reactive({
   },
   doLogin: async () => {
     try {
-      const result = await loginReq({
+      console.log('do login')
+      const result = await auth.login({
         username: data.login.username,
         password: md5(data.login.password)
       })
-      storage.set(ACCESS_TOKEN, result.data.accessToken, result.data.expires * 1000)
-      router.push({
-        name: 'home'
-      })
+      if (result) {
+        router.push({
+          name: 'home'
+        })
+      }
     } catch (e) {
       console.log(e)
     }

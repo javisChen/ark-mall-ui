@@ -1,11 +1,10 @@
 import axios from 'axios'
 // import store from '@/store'
 import storage from 'store'
-// import notification from 'ant-design-vue/es/notification'
-// import message from 'ant-design-vue/es/message'
 import {VueAxios} from './axios'
 import {SUCCESS_CODE} from './code'
 import {ACCESS_TOKEN} from '@/store/mutation-types'
+import { useMessage } from 'naive-ui'
 
 // 创建 axios 实例
 const request = axios.create({
@@ -13,6 +12,8 @@ const request = axios.create({
   baseURL: process.env.VUE_APP_API_BASE_URL,
   timeout: 6000 // 请求超时时间
 })
+
+const message = useMessage();
 
 const post = ({url, params, data}) => request({url, method: 'post', params, data})
 
@@ -24,31 +25,24 @@ const del = ({url, params, data}) => request({url, method: 'delete', params, dat
 
 // 异常拦截处理器
 const errorHandler = (error) => {
+  const $message = window.$message;
   const response = error.response;
   if (response) {
     const responseStatus = response.status;
     const data = response.data
-    console.log(response)
-    console.log(responseStatus)
-    console.log(data)
     // 从 localstorage 获取 token
     const token = storage.get(ACCESS_TOKEN)
+    $message.error(data.msg, {duration: 3000})
     if (responseStatus === 403) {
-      // notification.error({
-      //   message: '拒绝访问：权限不足',
-      //   // description: data.msg
-      //   description: '请联系管理员授权'
-      // })
+      $message.error({
+        message: '拒绝访问：权限不足',
+        // description: data.msg
+        description: '请联系管理员授权'
+      })
     } else if (responseStatus === 404) {
-      // notification.error({
-      //   message: '服务器找不到资源~',
-      //   description: data.msg
-      // })
+      $message.error(data.msg)
     } else if (responseStatus === 401 && !(data.result && data.result.isLogin)) {
-      // notification.error({
-      //   message: '认证已失效，请重新登录',
-      //   description: response.msg
-      // })
+      $message.error('认证已失效，请重新登录')
       if (token) {
         store.dispatch('Logout').then(() => {
           setTimeout(() => {
@@ -105,7 +99,7 @@ request.interceptors.response.use((response) => {
   if (serverResponse.code === SUCCESS_CODE) {
     return Promise.resolve({data: serverResponse.data, resp: serverResponse})
   }
-  message.error({
+  window.$message.error({
     content: serverResponse.msg,
     duration: 4
   })
