@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { useAuthStore } from '../../store/auth'
+import {useAuthStore} from '../../store/auth'
 import md5 from 'md5'
 import {reactive, ref, toRefs, computed} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
@@ -10,7 +10,7 @@ const router = useRouter();
 const auth = useAuthStore();
 
 const loginBtnDisabled = computed(() => {
-    return !(data.login.username && data.login.password)
+  return !(data.login.username && data.login.password)
 })
 
 const data = reactive({
@@ -18,9 +18,10 @@ const data = reactive({
     username: '',
     password: '',
   },
+  loginBtnLoading: false,
   doLogin: async () => {
+    data.loginBtnLoading = true
     try {
-      console.log('do login')
       const result = await auth.login({
         username: data.login.username,
         password: md5(data.login.password)
@@ -32,6 +33,8 @@ const data = reactive({
       }
     } catch (e) {
       console.log(e)
+    } finally {
+      data.loginBtnLoading = false
     }
   },
 })
@@ -39,6 +42,7 @@ const data = reactive({
 const {
   doLogin,
   login,
+  loginBtnLoading
 } = toRefs(data)
 
 
@@ -59,11 +63,16 @@ const {
             <input v-model="login.username" type="text" class="login-field-input" placeholder="用户名">
           </div>
           <div class="login-field-input-wrapper">
-            <input v-model="login.password" type="text" class="login-field-input" placeholder="密码">
+            <input v-model="login.password" type="password" class="login-field-input" placeholder="密码">
           </div>
           <div class="login-field-button-wrapper">
-            <button class="login-btn" :class="loginBtnDisabled ? ' login-btn-disabled' : ''" @click="doLogin">登录
-            </button>
+            <n-button
+                :loading="loginBtnLoading"
+                color="#ff5c00" class="login-btn"
+                :class="loginBtnDisabled ? ' login-btn-disabled' : ''"
+                @click="doLogin">
+              登录
+            </n-button>
           </div>
         </div>
       </div>

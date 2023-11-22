@@ -1,14 +1,38 @@
 <script setup>
 import {useRoute, useRouter} from "vue-router";
+import {computed} from 'vue';
+import {useAuthStore} from '@/store/auth'
 
 const route = useRoute();
 const router = useRouter();
+const authStore = useAuthStore();
 
 const toCartPage = () => {
   router.push({
     name: 'cart',
-    query: {
-    },
+    query: {},
+  })
+}
+
+
+const doLogout = async () => {
+  const result = await authStore.logout()
+  if (result) {
+    window.location.reload();
+  }
+}
+
+const toLoginPage = () => {
+  router.push({
+    name: 'login',
+    query: {},
+  })
+}
+
+const toRegisterPage = () => {
+  router.push({
+    name: 'register',
+    query: {},
   })
 }
 
@@ -22,14 +46,38 @@ const toCartPage = () => {
           <li><a href="">小米商城</a></li>
         </ul>
       </div>
-      <div class="cart">
+      <div v-if="authStore.authUser" class="cart">
         <a @click.prevent="toCartPage" href="#">购物车（1）</a>
       </div>
       <div class="info">
-        <ul>
-          <li>登录</li>
-          <li>注册</li>
+        <ul v-if="!authStore.authUser">
+          <n-button
+              @click="toLoginPage"
+              size="tiny"
+              color="#B0B0B0"
+              text
+              tag="li">登录
+          </n-button>
+          <n-button
+              @click="toRegisterPage"
+              size="tiny"
+              color="#B0B0B0"
+              text
+              tag="li">注册
+          </n-button>
         </ul>
+        <div v-else class="user-info">
+          <span class="user-info">欢迎您，【{{ authStore.authUser.username }}】</span>
+          &nbsp
+          <n-button
+              @click="doLogout"
+              size="tiny"
+              color="#B0B0B0"
+              text
+              tag="a">登出
+          </n-button>
+
+        </div>
       </div>
     </div>
   </div>
@@ -82,6 +130,15 @@ const toCartPage = () => {
   height: 100%;
 }
 
+.top-bar .container .info .user-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  height: 100%;
+}
+
 .top-bar .container .info ul li {
   padding: 0 5px;
   border-right: 1px solid grey;
@@ -112,7 +169,7 @@ const toCartPage = () => {
   color: #b0b0b0;
 }
 
-.top-bar .container .cart a:visited  {
+.top-bar .container .cart a:visited {
   color: #FFFFFF;
 }
 

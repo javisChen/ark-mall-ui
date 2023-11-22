@@ -6,6 +6,8 @@ import './all.css'
 // 通用字体
 import 'vfonts/Lato.css'
 // 等宽字体
+import {fenToYuan} from '@/utils/util';
+import accounting from 'accounting'
 import 'vfonts/FiraCode.css'
 
 
@@ -32,3 +34,9 @@ app.use(naive)
     .use(router)
     .use(pinia)
     .mount('#app')
+
+app.config.globalProperties.$filters = {
+    formatShowPrice(value) {
+        return accounting.format(fenToYuan(value))
+    }
+}

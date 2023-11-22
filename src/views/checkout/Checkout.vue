@@ -51,7 +51,7 @@ const getSpecValue = (item) => {
 }
 
 const data = reactive({
-  cartList: [],
+  carts: [],
   receiveInfo: {
     name: '陈嘉玮',
     mobile: '18588888888',

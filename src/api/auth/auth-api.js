@@ -14,20 +14,16 @@ const authApi = {
   UserMenu: Base.serviceName + '/v1/user/routes'
 }
 
-/**
- * login func
- * parameter: {
- *     username: '',
- *     password: '',
- *     remember_me: true,
- *     captcha: '12345'
- * }
- * @param parameter
- * @returns {*}
- */
 export function login(parameter) {
   return post({
     url: authApi.Login,
+    data: parameter
+  })
+}
+
+export function logout(parameter) {
+  return post({
+    url: authApi.Logout,
     data: parameter
   })
 }

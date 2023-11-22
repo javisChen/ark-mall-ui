@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "accounting": "^0.4.1",
     "axios": "^0.27.2",
     "md5": "^2.3.0",
     "pinia": "^2.1.7",
