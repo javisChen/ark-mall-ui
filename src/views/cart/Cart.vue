@@ -1,10 +1,9 @@
 <script setup lang="ts">
 
-import {reactive, toRefs, onMounted, computed} from 'vue';
+import {reactive, toRefs, onMounted, computed, ref} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import {NCheckbox} from 'naive-ui'
 import {useCartStore} from '@/store/cart'
-import Cart from "./Cart.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -23,23 +22,31 @@ const buildProductName = (item) => {
 }
 
 const data = reactive({
-  carts: [] as Cart[],
   toCheckout: () => {
     router.push({
       name: 'checkout'
     })
   },
+  removeCartItems: async ($event, item) => {
+    try {
+      await cartStore.remove($event, item)
+    } catch (e) {
+      console.log(e)
+    }
+  }
 })
 
 onMounted(async () => {
   try {
-    data.carts = await cartStore.items;
+    await cartStore.loadCart();
   } catch (e) {
+    console.log(e)
   }
 })
+
 const {
   toCheckout,
-  carts,
+  removeCartItems
 } = toRefs(data)
 
 </script>
@@ -77,7 +84,8 @@ const {
           </div>
         </div>
         <div class="cart-table-body">
-          <div class="cart-table-row" v-for="item in carts">
+          <div class="cart-table-row"
+               v-for="item in cartStore.carts">
             <div class="cart-table-col check">
               <n-checkbox size="large"
                           label=""
@@ -93,11 +101,20 @@ const {
               <n-input-number
                   min="1"
                   max="99"
+                  :update-value-on-input="true"
+                  @blur="cartStore.changeQuantity($event, item)"
                   v-model:value="item.quantity"
                   button-placement="both"/>
             </div>
             <div class="cart-table-col total">{{ $filters.formatShowPrice(item.price * item.quantity) }}元</div>
-            <div class="cart-table-col">删除</div>
+            <div class="cart-table-col">
+              <n-button
+                  @click="removeCartItems($event, item)"
+                  size="small"
+                  text
+                  tag="li">删除
+              </n-button>
+            </div>
           </div>
         </div>
       </div>
@@ -107,7 +124,9 @@ const {
           已选择
           <span class="quantity primary">{{ cartStore.totalQuantity }}</span> 件
         </div>
-        <div class="total-price primary">合计：<span class="money">{{ $filters.formatShowPrice(cartStore.totalPrice)}}</span>元</div>
+        <div class="total-price primary">合计：<span
+            class="money">{{ $filters.formatShowPrice(cartStore.totalPrice) }}</span>元
+        </div>
         <div class="btn-box">
           <button class="settle primary-bg" @click="toCheckout">去结算</button>
         </div>

@@ -33,7 +33,6 @@ const errorHandler = async (error) => {
     }
     const responseStatus = response.status;
     const data = response.data
-    // 从 localstorage 获取 token
     const authUser = authStore.authUser
     if (responseStatus === 403) {
         $message.error('该账号没有权限进行访问，请联系管理员进行授权')
@@ -45,23 +44,11 @@ const errorHandler = async (error) => {
             await authStore.logout();
         }
         window.location.hash = 'login'
-    } else if (responseStatus === 400 || responseStatus === 500) {
+    } else if (responseStatus === 400) {
         const result = response.data
-        let description;
-        const {code, msg, data} = result
-        if (code === 'A0003') {
-            description = result.data.defaultMsg
-        } else {
-            description = result.msg
-        }
-    } else if (responseStatus === 503) {
-        let msg
-        if (response.data) {
-            msg = response.data.msg
-        } else {
-            msg = response.statusText
-        }
+        $message.error('服务器出了点小问题，请稍候重试~')
     } else {
+        $message.error('服务器出了点小问题，请稍候重试~')
     }
     return Promise.resolve();
 }

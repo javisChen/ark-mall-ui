@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {getCartItems, updateCartItemQuantity} from "@/api/trade/trade-api"
+import {getCartItems, updateCartItemQuantity, deleteCartItems} from "@/api/trade/trade-api"
 
 export const useCartStore
     = defineStore('cart', {
@@ -13,20 +13,8 @@ export const useCartStore
         count: (state) => {
             return state.carts ? state.carts.length : 0
         },
-        items: async (state) => {
-            if (state.carts) {
-                return state.carts;
-            }
-            try {
-                const result = await getCartItems()
-                state.carts = result.data
-                state.carts.forEach(item => {
-                    item.specData = JSON.parse(item.specData)
-                })
-                console.log(state.carts)
-            } catch (e) {
-            }
-            return state.carts
+        cartItems: (state) => {
+            return state.carts;
         },
         totalQuantity: (state) => {
             if (!state.carts) {
@@ -50,7 +38,19 @@ export const useCartStore
         },
     },
     actions: {
+        async loadCart() {
+            try {
+                const result = await getCartItems()
+                this.carts = result.data
+                this.carts.forEach(item => {
+                    item.specData = JSON.parse(item.specData)
+                })
+            } catch (e) {
+                console.log(e)
+            }
+        },
         checked(checked, item) {
+            console.log(checked)
             this.carts.forEach(cartItem => {
                 if (cartItem.id === item.id) {
                     cartItem.checked = checked
@@ -62,16 +62,21 @@ export const useCartStore
                 cartItem.checked = checked
             })
         },
-        async changeQuantity(item, quantity) {
-            for (const cartItem of this.carts) {
-                if (cartItem.id === item.id) {
-                    cartItem.quantity = quantity
-                    try {
-                        await updateCartItemQuantity({cartItemId: cartItem.id, quantity})
-                    } catch (e) {
-                    }
-                }
+        async remove(e, item) {
+            this.carts = this.carts.filter(cartItem => cartItem.id !== item.id)
+            try {
+                await deleteCartItems({cartItemIds: [item.id]})
+            } catch (e) {
+                console.log(e)
             }
+        },
+        async changeQuantity(e, cartItem) {
+            this.carts.forEach(item => {
+                if (item.id === cartItem.id) {
+                    item.quantity = cartItem.quantity
+                }
+            })
+            await updateCartItemQuantity({cartItemId: cartItem.id, quantity: cartItem.quantity})
         },
     }
 })
