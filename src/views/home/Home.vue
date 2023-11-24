@@ -173,7 +173,7 @@ const {
               <h3 class="title">{{ item.name }}</h3>
               <p class="desc">{{ item.desc }}</p>
               <p class="price">
-                <span class="num">{{ fenToYuan(item.showPrice) }}</span>
+                <span class="num">{{ $filters.formatShowPrice(item.showPrice) }}</span>
                 <span>起</span>
               </p>
             </a>
@@ -197,7 +197,7 @@ const {
               <h3 class="title">{{ item.name }}</h3>
               <p class="desc">{{ item.desc }}</p>
               <p class="price">
-                <span class="num">{{ fenToYuan(item.showPrice) }}</span>
+                <span class="num">{{ $filters.formatShowPrice(item.showPrice) }}</span>
                 <span>起</span>
               </p>
             </a>
@@ -221,7 +221,7 @@ const {
               <h3 class="title">{{ item.name }}</h3>
               <p class="desc">{{ item.desc }}</p>
               <p class="price">
-                <span class="num">{{ fenToYuan(item.showPrice) }}</span>
+                <span class="num">{{ $filters.formatShowPrice(item.showPrice) }}</span>
                 <span>起</span>
               </p>
             </a>

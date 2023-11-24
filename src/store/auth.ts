@@ -2,6 +2,8 @@ import {defineStore} from 'pinia'
 import {login as loginReq, logout as logoutReq} from '../api/auth/auth-api'
 import storage from 'store'
 import {ACCESS_TOKEN, AUTH_USER_NAME} from '@/store/mutation-types'
+import { useCartStore } from './cart'
+
 
 // 你可以对 `defineStore()` 的返回值进行任意命名，但最好使用 store 的名字，同时以 `use` 开头且以 `Store` 结尾。(比如 `useUserStore`，`useCartStore`，`useProductStore`)
 function clearStorage() {
@@ -50,6 +52,8 @@ export const useAuthStore
                     username: params.username,
                     token: result.data.accessToken,
                 }
+                // 登录成功后加载用户购物车信息
+                await useCartStore().loadCartInfo()
                 return true
             } catch (e) {
                 return false

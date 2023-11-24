@@ -1,10 +1,9 @@
 <script setup lang="ts">
 
 import {reactive, toRefs, onMounted} from 'vue';
-import {getOrderInfo} from "../../api/trade/trade-api"
-import {getPayOrderStatus, createPayOrder} from "../../api/pay/pay-api"
+import {getOrderInfo} from "@/api/trade/trade-api"
+import {getPayOrderStatus, createPayOrder} from "@/api/pay/pay-api"
 import {useRoute, useRouter} from 'vue-router';
-import {fenToYuan} from '../../utils/util';
 
 const route = useRoute();
 const router = useRouter();
@@ -30,7 +29,6 @@ const data = reactive({
 })
 
 onMounted(async () => {
-
   try {
     const result = await getOrderInfo({id: route.query.id});
     result.data.orderProducts.forEach(item => {
@@ -45,18 +43,6 @@ onMounted(async () => {
   }
 
 })
-
-const getSpecValue = (item) => {
-  let name = ' '
-  for (let i = 0; i < item.specData.length; i++) {
-    const spec = item.specData[i];
-    name += spec.attrValue
-    if (i < item.specData.length - 1) {
-      name += ' '
-    }
-  }
-  return name
-}
 
 const onPay = async (item) => {
   try {
@@ -139,7 +125,7 @@ const {
               {{ receive.street }} {{ receive.address }}</p></div>
           <div class="fr">
             <div class="total">应付总额：<span class="money">
-              <em v-if="order.orderCharge">{{ fenToYuan(order.orderCharge.actualAmount) }}</em>
+              <em v-if="order.orderCharge">{{ $filters.formatShowPrice(order.orderCharge.actualAmount) }}</em>
               <span>元</span>
             </span>
             </div>
@@ -167,7 +153,7 @@ const {
             <li class="clearfix">
               <div class="label"> 商品名称：</div>
               <div class="content">
-                <span v-for="item in order.orderProducts">{{ item.productName + getSpecValue(item) }}</span>
+                <span v-for="item in order.orderProducts">{{ item.showProductName }}</span>
               </div>
             </li>
             <li class="clearfix hide">

@@ -1,9 +1,21 @@
 import {defineStore} from 'pinia'
-import {getCartItems, updateCartItemQuantity, deleteCartItems} from "@/api/trade/trade-api"
+import {addCartItem, deleteCartItems, getCartItems, updateCartItemQuantity} from "@/api/trade/trade-api"
+import {useAuthStore} from "./auth";
+
+const buildProductDesc = (item) => {
+    let name = item.productName + ' '
+    for (let i = 0; i < item.specData.length; i++) {
+        const spec = item.specData[i];
+        name += spec.attrValue
+        if (i < item.specData.length - 1) {
+            name += ' '
+        }
+    }
+    return name
+}
 
 export const useCartStore
     = defineStore('cart', {
-    // 为了完整类型推理，推荐使用箭头函数
     state: () => {
         return {
             carts: null as Cart[],
@@ -13,8 +25,11 @@ export const useCartStore
         count: (state) => {
             return state.carts ? state.carts.length : 0
         },
-        cartItems: (state) => {
-            return state.carts;
+        checkedCartItems: (state) => {
+            if (!state.carts) {
+                return [];
+            }
+            return state.carts.filter(cartItem => cartItem.checked)
         },
         totalQuantity: (state) => {
             if (!state.carts) {
@@ -38,19 +53,24 @@ export const useCartStore
         },
     },
     actions: {
-        async loadCart() {
+        async loadCartInfo() {
+            const userAuth= useAuthStore()
+            if (!userAuth.authUser) {
+                return;
+            }
             try {
                 const result = await getCartItems()
                 this.carts = result.data
                 this.carts.forEach(item => {
                     item.specData = JSON.parse(item.specData)
+                    item.showProductName = buildProductDesc(item)
                 })
+                console.log('cart loaded successfully')
             } catch (e) {
                 console.log(e)
             }
         },
         checked(checked, item) {
-            console.log(checked)
             this.carts.forEach(cartItem => {
                 if (cartItem.id === item.id) {
                     cartItem.checked = checked
@@ -58,16 +78,23 @@ export const useCartStore
             })
         },
         checkedAll(checked) {
-            this.carts.forEach(cartItem => {
-                cartItem.checked = checked
-            })
+            console.log(checked)
+            this.carts.forEach(cartItem => cartItem.checked = checked)
         },
-        async remove(e, item) {
-            this.carts = this.carts.filter(cartItem => cartItem.id !== item.id)
+        async removeCartItem(e, item) {
             try {
                 await deleteCartItems({cartItemIds: [item.id]})
+                this.carts = this.carts.filter(cartItem => cartItem.id !== item.id)
             } catch (e) {
                 console.log(e)
+            }
+        },
+        async addCartItem(skuId) {
+            try {
+                await addCartItem({skuId})
+                await this.loadCart()
+            } catch (e) {
+                throw e;
             }
         },
         async changeQuantity(e, cartItem) {

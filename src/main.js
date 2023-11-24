@@ -15,14 +15,18 @@ import {
     create,
     NButton,
     NInputNumber,
-    NModal
+    NModal,
+    NCard,
+    NSpin
 } from 'naive-ui'
 
 const naive = create({
     components: [
         NButton,
         NInputNumber,
-        NModal
+        NModal,
+        NCard,
+        NSpin
     ]
 })
 

@@ -6,7 +6,9 @@ import { useDialog, useMessage } from "naive-ui";
 // 注意不要太过于简单，以免污染其他全局定义
 
 window.$message = useMessage();
+
 window.$dialog = useDialog();
+
 </script>
 
 <template>

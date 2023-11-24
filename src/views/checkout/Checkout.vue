@@ -1,54 +1,19 @@
 <script setup lang="ts">
 
-import {reactive, toRefs, onMounted, computed} from 'vue';
+import {reactive, toRefs, onMounted, computed, ref} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
-import {getCartItems, createOrder} from "../../api/trade/trade-api"
-import {yuanToFen, fenToYuan} from '../../utils/util';
+import {createOrder} from "../../api/trade/trade-api"
 import {Order, OrderItem, ReceiveInfo} from "./Order.ts";
+import {useCartStore} from "@/store/cart";
 
 const route = useRoute();
 const router = useRouter();
+const cartStore = useCartStore();
 
 onMounted(async () => {
-  try {
-    const result = await getCartItems();
-    result.data
-        .filter(item => item.checked)
-        .forEach(item => {
-      item.specData = JSON.parse(item.specData)
-    })
-    data.cartList = result.data
-  } catch (e) {
-  }
 })
 
-const totalPrice = computed(() => {
-  let total = 0;
-  data.cartList
-      .filter(item => item.checked)
-      .forEach(item => total += item.price * item.quantity)
-  return fenToYuan(total)
-})
-
-const totalQuantity = computed(() => {
-  let total = 0;
-  data.cartList
-      .filter(item => item.checked)
-      .forEach(item => total += item.quantity)
-  return total
-})
-
-const getSpecValue = (item) => {
-  let name = ' '
-  for (let i = 0; i < item.specData.length; i++) {
-    const spec = item.specData[i];
-    name += spec.attrValue
-    if (i < item.specData.length - 1) {
-      name += ' '
-    }
-  }
-  return name
-}
+const showCreateOrderModal = ref(false)
 
 const data = reactive({
   carts: [],
@@ -61,13 +26,21 @@ const data = reactive({
     street: '人民街道',
     address: '文明路',
   },
+  toCartPage: () => {
+    router.push({
+      name: 'cart'
+    })
+  },
   toConfirm: async () => {
+
+    showCreateOrderModal.value = true
+
+    return
+
     let order = new Order();
     order.orderType = 1;
     order.orderChannel = 1;
-    order.orderItems = data.cartList
-        .filter(item => item.checked)
-        .map(item => new OrderItem(item.skuId, item.quantity))
+    order.orderItems = cartStore.checkedCartItems.map(item => new OrderItem(item.skuId, item.quantity))
     order.receiveInfo = new ReceiveInfo(data.receiveInfo.name, data.receiveInfo.mobile,
         data.receiveInfo.province, data.receiveInfo.city, data.receiveInfo.district, data.receiveInfo.street,
         data.receiveInfo.address);
@@ -85,13 +58,25 @@ const data = reactive({
 const {
   receiveInfo,
   toConfirm,
-  cartList,
+  toCartPage
 } = toRefs(data)
 
 
 </script>
 
 <template>
+
+  <n-modal
+      @update:show="() => console.log(666)"
+      :on-mask-click="() => console.log(123)"
+      :mask-closable="false"
+      :close-on-esc="true"
+      :show="showCreateOrderModal"
+           transform-origin="center">
+      <div class="loading">    <n-spin size="large" />
+      </div>
+  </n-modal>
+
   <div class="header">
     <div class="container">
       <div class="header-logo">
@@ -137,20 +122,20 @@ const {
           <span>商品</span>
         </div>
         <div class="goods-list">
-          <div class="good-item" v-for="item in cartList">
+          <div class="good-item" v-for="item in cartStore.checkedCartItems">
             <div class="item-desc good-img">
               <img :src="item.picUrl">
             </div>
             <div class="item-desc good-name">
               <ah
                   href="//www.mi.com/buy?product_id=1213100005"
-                  target="_blank"><span>{{ item.productName + getSpecValue(item) }}</span>
+                  target="_blank"><span>{{ item.showProductName }}</span>
               </ah>
             </div>
             <div class="item-desc price-box">
-              <div class="item-desc good-price">{{ fenToYuan(item.price) }}元 x {{ item.quantity }}</div>
+              <div class="item-desc good-price">{{ $filters.formatShowPrice(item.price) }}元 x {{ item.quantity }}</div>
               <div class="item-desc good-status"></div>
-              <div class="item-desc good-total">{{fenToYuan(item.price * item.quantity)}}元</div>
+              <div class="item-desc good-total">{{ $filters.formatShowPrice(item.price * item.quantity) }}元</div>
             </div>
           </div>
         </div>
@@ -188,11 +173,11 @@ const {
         <div class="section-bill">
           <div class="bill-item">
             <div class="bill-name">商品件数：</div>
-            <div class="bill-money">{{ totalQuantity }}件</div>
+            <div class="bill-money">{{ cartStore.totalQuantity }}件</div>
           </div>
           <div class="bill-item">
             <div class="bill-name">商品总价：</div>
-            <div class="bill-money">{{ totalPrice }}元</div>
+            <div class="bill-money">{{ $filters.formatShowPrice(cartStore.totalPrice) }}元</div>
           </div>
           <div class="bill-item">
             <div class="bill-name">活动优惠：</div>
@@ -208,13 +193,13 @@ const {
           </div>
           <div class="bill-item total-price">
             <div class="bill-name">应付总额：</div>
-            <div class="bill-money"><em>{{ totalPrice }}</em>元</div>
+            <div class="bill-money"><em>{{ $filters.formatShowPrice(cartStore.totalPrice) }}</em>元</div>
           </div>
         </div>
       </div>
       <div class="cart-bar">
         <div class="btn-box">
-          <a class="btn return-btn">返回购物车</a>
+          <a class="btn return-btn" @click="toCartPage">返回购物车</a>
           <a class="btn primary-btn" @click="toConfirm">立即下单</a>
         </div>
       </div>
@@ -533,6 +518,12 @@ const {
   cursor: pointer;
   -webkit-transition: all .4s;
   transition: all .4s;
+}
+
+.loading {
+  width: 350px;
+  height: 100px;
+  background-color: #f9f9fa;
 }
 
 </style>

@@ -2,12 +2,12 @@
 import CommonTopBar from "../common/CommonTopBar.vue";
 import {onMounted, reactive, toRefs, computed, ref} from 'vue';
 import {getInfo} from "../../api/commodity/commodity-api"
-import {addCartItem} from "../../api/trade/trade-api"
 import {useRoute, useRouter} from 'vue-router';
-import {yuanToFen, fenToYuan} from '../../utils/util';
+import {useCartStore} from '@/store/cart'
 
 const route = useRoute();
 const router = useRouter();
+const cartStore = useCartStore();
 
 const data = reactive({
   currentSku: {},
@@ -38,13 +38,12 @@ const onAttrOver = (item) => {
 
 const addToCart = async () => {
   try {
-    const result = await addCartItem({
-      "skuId": data.currentSku.id
-    })
+    await cartStore.addCartItem(data.currentSku.id)
     router.push({
       name: 'cartSuccess'
     })
   } catch (e) {
+    console.log('add cart error', e)
   }
 }
 
@@ -63,9 +62,7 @@ const onAttrClick = (item, specItem) => {
       obj.value = item.value
     }
   })
-
-  console.log(data.selectedSpecValue)
-  data.selectedAttrCount = data.selectedSpecValue.filter(item => item.value && item.value !='').length
+  data.selectedAttrCount = data.selectedSpecValue.filter(item => item.value && item.value != '').length
   // 找到对应的SKU价
   if (data.selectedAttrCount === data.attrCount) {
     findSKU()
@@ -150,10 +147,10 @@ const {
         <div class="selected-list">
           <div class="selected-info">
             <span class="selected-product">{{ selectedFullName }}</span>
-            <span class="selected-product-price">{{ fenToYuan(currentSku.salesPrice) }} 元</span>
+            <span class="selected-product-price">{{ $filters.formatShowPrice(currentSku.salesPrice) }} 元</span>
           </div>
           <div class="total-price">
-            总计：{{ fenToYuan(currentSku.salesPrice) }} 元
+            总计：{{ $filters.formatShowPrice(currentSku.salesPrice) }} 元
           </div>
         </div>
         <div class="btn-box">

@@ -24,33 +24,32 @@ const del = ({url, params, data}) => request({url, method: 'delete', params, dat
 // 异常拦截处理器
 const errorHandler = async (error) => {
     const $message = window.$message;
-    const authStore = useAuthStore()
     const response = error.response;
     console.log('error', error)
     if (!response) {
         $message.error('服务器出了点小问题，请稍候重试~', {duration: 3000})
         return Promise.reject(error)
     }
-    const responseStatus = response.status;
+    const authStore = useAuthStore()
+    const httpStatus = response.status;
     const data = response.data
     const authUser = authStore.authUser
-    if (responseStatus === 403) {
+    if (httpStatus === 403) {
         $message.error('该账号没有权限进行访问，请联系管理员进行授权')
-    } else if (responseStatus === 404) {
+    } else if (httpStatus === 404) {
         $message.error(data.msg)
-    } else if (responseStatus === 401) {
+    } else if (httpStatus === 401) {
         $message.error('会话已失效，请重新登录')
         if (authUser) {
             await authStore.logout();
         }
         window.location.hash = 'login'
-    } else if (responseStatus === 400) {
-        const result = response.data
+    } else if (httpStatus === 400) {
         $message.error('服务器出了点小问题，请稍候重试~')
     } else {
         $message.error('服务器出了点小问题，请稍候重试~')
     }
-    return Promise.resolve();
+    return Promise.reject(error);
 }
 
 // request interceptor
@@ -66,16 +65,10 @@ request.interceptors.request.use(config => {
 // response interceptor
 request.interceptors.response.use((response) => {
     const serverResponse = response.data
-    if (serverResponse.code === SUCCESS_CODE) {
+    console.log(response)
+    if (response.status === 200 && serverResponse.code === SUCCESS_CODE) {
         return Promise.resolve({data: serverResponse.data, resp: serverResponse})
     }
-    window.$message.error({
-        content: serverResponse.msg,
-        duration: 4
-    })
-
-
-    const authStore = useAuthStore();
     return Promise.reject(serverResponse)
 }, errorHandler)
 

@@ -1,25 +1,13 @@
 <script setup lang="ts">
 
-import {reactive, toRefs, onMounted, computed, ref} from 'vue';
+import {reactive, toRefs, onMounted, computed, ref, Ref} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
-import {NCheckbox} from 'naive-ui'
+import {ButtonProps, DialogProps, NCheckbox} from 'naive-ui'
 import {useCartStore} from '@/store/cart'
 
 const route = useRoute();
 const router = useRouter();
 const cartStore = useCartStore();
-
-const buildProductName = (item) => {
-  let name = item.productName + ' '
-  for (let i = 0; i < item.specData.length; i++) {
-    const spec = item.specData[i];
-    name += spec.attrValue
-    if (i < item.specData.length - 1) {
-      name += ' '
-    }
-  }
-  return name
-}
 
 const data = reactive({
   toCheckout: () => {
@@ -27,24 +15,40 @@ const data = reactive({
       name: 'checkout'
     })
   },
+  toHomePage: () => {
+    router.push({
+      name: 'home'
+    })
+  },
   removeCartItems: async ($event, item) => {
-    try {
-      await cartStore.remove($event, item)
-    } catch (e) {
-      console.log(e)
-    }
+    window.$dialog.warning(<DialogProps>{
+      title: '提示',
+      content: '确定要删除所选商品吗？',
+      positiveText: '确定',
+      negativeText: '取消',
+      negativeButtonProps: <ButtonProps> {
+        type: "tertiary",
+        secondary: true
+      },
+      onPositiveClick: async () => {
+        try {
+          await cartStore.removeCartItem($event, item)
+        } catch (e) {
+          console.log(e)
+        }
+      },
+      onNegativeClick: () => {
+
+      }
+    })
   }
 })
 
 onMounted(async () => {
-  try {
-    await cartStore.loadCart();
-  } catch (e) {
-    console.log(e)
-  }
 })
 
 const {
+  toHomePage,
   toCheckout,
   removeCartItems
 } = toRefs(data)
@@ -64,7 +68,8 @@ const {
     </div>
   </div>
   <div class="main">
-    <div class="container">
+    <!-- 购物车存在商品时 -->
+    <div class="container" v-if="cartStore.count > 0">
       <div class="cart-table">
         <div class="cart-table-header">
           <div class="cart-table-row">
@@ -95,7 +100,7 @@ const {
             <div class="cart-table-col picture">
               <img :src="item.picUrl" alt="">
             </div>
-            <div class="cart-table-col product-name">{{ buildProductName(item) }}</div>
+            <div class="cart-table-col product-name">{{ item.showProductName }}</div>
             <div class="cart-table-col price">{{ $filters.formatShowPrice(item.price) }}元</div>
             <div class="cart-table-col num">
               <n-input-number
@@ -119,7 +124,9 @@ const {
         </div>
       </div>
       <div class="cart-bar">
-        <div class="continue">继续购物</div>
+        <div class="continue">
+          <n-button text @click="toHomePage">继续购物</n-button>
+        </div>
         <div class="selected">
           已选择
           <span class="quantity primary">{{ cartStore.totalQuantity }}</span> 件
@@ -132,7 +139,22 @@ const {
         </div>
       </div>
     </div>
+
+    <!-- 购物车不存在商品或未登录 -->
+    <div class="container" v-else>
+      <div class="cart-empty">
+        <h2 class="login-tip is-login">您的购物车还是空的！</h2>
+        <n-button
+            @click="toHomePage"
+            color="#ff5c00" class="login-btn"
+            tag="a">马上去购物
+        </n-button>
+      </div>
+    </div>
+
   </div>
+
+
 </template>
 
 <style scoped>
@@ -331,6 +353,35 @@ const {
 
 .cart-bar .total-price .money {
   font-size: 30px;
+}
+
+.cart-empty {
+  background: url("@/assets/cart-empty.png") no-repeat 124px 0;height: 273px;
+  padding-left: 558px;
+  margin: 65px 0 130px;
+  color: #b0b0b0;
+  overflow: hidden;
+}
+
+.login-tip.is-login {
+  margin: 70px 0 0 0;
+}
+.login-tip {
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.login-btn {
+  margin-top: 30px;
+  border-radius: 2px;
+  font-size: 18px;
+  border: 0;
+  outline: none;
+  background-color: #ff5c00;
+  color: #fff;
+  width: 170px;
+  height: 48px;
+  line-height: 48px;
 }
 
 </style>

@@ -2,10 +2,12 @@
 import {useRoute, useRouter} from "vue-router";
 import {computed} from 'vue';
 import {useAuthStore} from '@/store/auth'
+import {useCartStore} from '@/store/cart'
 
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
+const cartStore = useCartStore();
 
 const toCartPage = () => {
   router.push({
@@ -47,7 +49,7 @@ const toRegisterPage = () => {
         </ul>
       </div>
       <div v-if="authStore.authUser" class="cart">
-        <a @click.prevent="toCartPage" href="#">购物车（1）</a>
+        <a @click.prevent="toCartPage" href="#">购物车（{{ cartStore.count }}）</a>
       </div>
       <div class="info">
         <ul v-if="!authStore.authUser">
