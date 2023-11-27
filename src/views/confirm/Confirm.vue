@@ -4,12 +4,27 @@ import {reactive, toRefs, onMounted} from 'vue';
 import {getOrderInfo} from "@/api/trade/trade-api"
 import {getPayOrderStatus, createPayOrder} from "@/api/pay/pay-api"
 import {useRoute, useRouter} from 'vue-router';
+import BizLoading from "../../components/BizLoading.vue";
 
 const route = useRoute();
 const router = useRouter();
 
+const buildProductDesc = (item) => {
+  let name = item.productName + ' '
+  for (let i = 0; i < item.specData.length; i++) {
+    const spec = item.specData[i];
+    name += spec.attrValue
+    if (i < item.specData.length - 1) {
+      name += ' '
+    }
+  }
+  return name
+}
+
+
 const data = reactive({
   order: {},
+  createOrderLoading: false,
   orderCharge: {},
   payOrder: {},
   payTypeList: [
@@ -37,7 +52,6 @@ onMounted(async () => {
     data.order = result.data
     data.receive = data.order.orderReceive
     data.orderCharge = data.order.orderCharge
-    console.log(data.orderCharge)
   } catch (e) {
     console.log(e)
   }
@@ -45,16 +59,20 @@ onMounted(async () => {
 })
 
 const onPay = async (item) => {
+  data.createOrderLoading = true
+
   try {
     const createResult = await createPayOrder({
       orderId: data.order.orderBase.id,
       payTypeCode: item.code,
       description: ""
     })
+    data.createOrderLoading = false
     data.showModal = true
     data.payOrder = createResult.data
   } catch (e) {
     console.log(e)
+    data.createOrderLoading = false
   }
 }
 
@@ -67,6 +85,7 @@ const submitCallback = async (item) => {
       })
       return true
     } else {
+      window.$message.warning('未检查到已支付，请稍后再试')
       return false
     }
   } catch (e) {
@@ -80,6 +99,7 @@ const cancelCallback = (item) => {
 }
 
 const {
+  createOrderLoading,
   payTypeList,
   receive,
   order,
@@ -90,13 +110,18 @@ const {
 </script>
 
 <template>
+
+  <biz-loading
+      description="正在生成支付单..."
+      :show="createOrderLoading"/>
+
   <n-modal
       v-model:show="showModal"
       preset="dialog"
       title="等待支付"
       content="支付成功后请点击【已支付】"
       positive-text="已支付"
-      negative-text="放弃支付"
+      negative-text="稍后再支付"
       @positive-click="submitCallback"
       @negative-click="cancelCallback"
   />
@@ -153,7 +178,7 @@ const {
             <li class="clearfix">
               <div class="label"> 商品名称：</div>
               <div class="content">
-                <span v-for="item in order.orderProducts">{{ item.showProductName }}</span>
+                <span v-for="item in order.orderProducts">{{ buildProductDesc(item)}}</span>
               </div>
             </li>
             <li class="clearfix hide">

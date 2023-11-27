@@ -1,10 +1,11 @@
 <script setup lang="ts">
 
-import {reactive, toRefs, onMounted, computed, ref} from 'vue';
+import {onMounted, reactive, toRefs} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
-import {createOrder} from "../../api/trade/trade-api"
+import {createOrder} from "@/api/trade/trade-api"
 import {Order, OrderItem, ReceiveInfo} from "./Order.ts";
 import {useCartStore} from "@/store/cart";
+import BizLoading from "@/components/BizLoading.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -13,10 +14,9 @@ const cartStore = useCartStore();
 onMounted(async () => {
 })
 
-const showCreateOrderModal = ref(false)
-
 const data = reactive({
   carts: [],
+  createOrderLoading: false,
   receiveInfo: {
     name: '陈嘉玮',
     mobile: '18588888888',
@@ -33,10 +33,7 @@ const data = reactive({
   },
   toConfirm: async () => {
 
-    showCreateOrderModal.value = true
-
-    return
-
+    data.createOrderLoading = true
     let order = new Order();
     order.orderType = 1;
     order.orderChannel = 1;
@@ -46,16 +43,22 @@ const data = reactive({
         data.receiveInfo.address);
     try {
       const result = await createOrder(order)
-      await router.push({
-        name: 'confirm',
-        query: {id: result.data}
-      })
+      setTimeout(() => {
+        router.push({
+          name: 'confirm',
+          query: {id: result.data}
+        })
+        data.createOrderLoading = false
+      }, 800)
     } catch (e) {
+      data.createOrderLoading = false
+      console.log(e)
     }
   },
 })
 
 const {
+  createOrderLoading,
   receiveInfo,
   toConfirm,
   toCartPage
@@ -66,16 +69,9 @@ const {
 
 <template>
 
-  <n-modal
-      @update:show="() => console.log(666)"
-      :on-mask-click="() => console.log(123)"
-      :mask-closable="false"
-      :close-on-esc="true"
-      :show="showCreateOrderModal"
-           transform-origin="center">
-      <div class="loading">    <n-spin size="large" />
-      </div>
-  </n-modal>
+  <biz-loading
+      description="订单生成中..."
+      :show="createOrderLoading"/>
 
   <div class="header">
     <div class="container">
@@ -127,10 +123,10 @@ const {
               <img :src="item.picUrl">
             </div>
             <div class="item-desc good-name">
-              <ah
+              <a
                   href="//www.mi.com/buy?product_id=1213100005"
                   target="_blank"><span>{{ item.showProductName }}</span>
-              </ah>
+              </a>
             </div>
             <div class="item-desc price-box">
               <div class="item-desc good-price">{{ $filters.formatShowPrice(item.price) }}元 x {{ item.quantity }}</div>
@@ -249,7 +245,7 @@ const {
 }
 
 .main .container {
-  width: 1226px;
+  //width: 1226px;
   padding: 48px 0 0;
   background-color: #FFFFFF;
 }
@@ -489,10 +485,9 @@ const {
 
 .return-btn {
   margin-left: 30px;
-  color: #b0b0b0;
+  color: #f9f9fa;
   transition: all .4s;
-  background-color: #fff;
-  border: 1px solid #b0b0b0;
+  background-color: #b0b0b0;
 }
 
 .cart-bar .btn-box {
@@ -507,7 +502,6 @@ const {
 
 .btn-box .btn {
   margin-left: 30px;
-  border: 1px solid #b0b0b0;
   outline: none;
   width: 158px;
   height: 38px;
@@ -518,12 +512,6 @@ const {
   cursor: pointer;
   -webkit-transition: all .4s;
   transition: all .4s;
-}
-
-.loading {
-  width: 350px;
-  height: 100px;
-  background-color: #f9f9fa;
 }
 
 </style>

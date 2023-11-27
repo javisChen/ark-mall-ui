@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import './all.css'
+import './common.css'
 // 通用字体
 import 'vfonts/Lato.css'
 // 等宽字体
@@ -17,12 +18,14 @@ import {
     NInputNumber,
     NModal,
     NCard,
-    NSpin
+    NSpin,
+    NEllipsis,
 } from 'naive-ui'
 
 const naive = create({
     components: [
         NButton,
+        NEllipsis,
         NInputNumber,
         NModal,
         NCard,

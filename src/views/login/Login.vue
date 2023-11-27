@@ -130,6 +130,8 @@ const {
 
 .login-btn-disabled {
   opacity: .4;
+  border: 1px solid gray;
+  outline: none;
 }
 
 .login-content {

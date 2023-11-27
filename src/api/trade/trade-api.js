@@ -9,6 +9,7 @@ const api = {
   updateCartItemQuantity: Base.serviceName + '/v1/cart/item/quantity',
   createOrder: Base.serviceName + '/v1/order/create',
   getOrderInfo: Base.serviceName + '/v1/order/details',
+  getUserOrders: Base.serviceName + '/v1/user/order/pages',
 }
 
 export default api
@@ -26,3 +27,5 @@ export const checkedCartItem = (data) => post({url: api.checkedCartItem, data})
 export const getCartItems = () => get({url: api.cartItems})
 
 export const getOrderInfo = (params) => get({url: api.getOrderInfo, params})
+
+export const getUserOrders = (data) => post({url: api.getUserOrders, data})

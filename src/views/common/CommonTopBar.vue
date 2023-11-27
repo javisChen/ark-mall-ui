@@ -30,6 +30,12 @@ const toLoginPage = () => {
     query: {},
   })
 }
+const toOrderPage = () => {
+  router.push({
+    name: 'order',
+    query: {},
+  })
+}
 
 const toRegisterPage = () => {
   router.push({
@@ -77,6 +83,13 @@ const toRegisterPage = () => {
               color="#B0B0B0"
               text
               tag="a">登出
+          </n-button> &nbsp|&nbsp
+          <n-button
+              @click="toOrderPage"
+              size="tiny"
+              color="#B0B0B0"
+              text
+              tag="a">我的订单
           </n-button>
 
         </div>
@@ -93,6 +106,7 @@ const toRegisterPage = () => {
   display: flex;
   background-color: #333333;
   justify-content: center;
+  width: 100%;
 }
 
 .top-bar .container {

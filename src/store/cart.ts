@@ -78,7 +78,6 @@ export const useCartStore
             })
         },
         checkedAll(checked) {
-            console.log(checked)
             this.carts.forEach(cartItem => cartItem.checked = checked)
         },
         async removeCartItem(e, item) {

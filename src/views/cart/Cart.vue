@@ -9,6 +9,11 @@ const route = useRoute();
 const router = useRouter();
 const cartStore = useCartStore();
 
+const loginBtnDisabled = computed(() => {
+  return cartStore.checkedCartItems.length === 0
+})
+
+
 const data = reactive({
   toCheckout: () => {
     router.push({
@@ -26,7 +31,7 @@ const data = reactive({
       content: '确定要删除所选商品吗？',
       positiveText: '确定',
       negativeText: '取消',
-      negativeButtonProps: <ButtonProps> {
+      negativeButtonProps: <ButtonProps>{
         type: "tertiary",
         secondary: true
       },
@@ -67,97 +72,110 @@ const {
       </div>
     </div>
   </div>
-  <div class="main">
-    <!-- 购物车存在商品时 -->
-    <div class="container" v-if="cartStore.count > 0">
-      <div class="cart-table">
-        <div class="cart-table-header">
-          <div class="cart-table-row">
-            <div class="cart-table-col check">
-              <n-checkbox class="checkbox"
-                          size="large"
-                          label=""
-                          @update:checked="cartStore.checkedAll($event)"/>
-              &nbsp;&nbsp;全选
-            </div>
-            <div class="cart-table-col picture"></div>
-            <div class="cart-table-col product-name">商品名称</div>
-            <div class="cart-table-col price">单价</div>
-            <div class="cart-table-col num">数量</div>
-            <div class="cart-table-col total">小计</div>
-            <div class="cart-table-col">操作</div>
-          </div>
-        </div>
-        <div class="cart-table-body">
-          <div class="cart-table-row"
-               v-for="item in cartStore.carts">
-            <div class="cart-table-col check">
-              <n-checkbox size="large"
-                          label=""
-                          :checked="item.checked"
-                          @update:checked="cartStore.checked($event, item)"/>
-            </div>
-            <div class="cart-table-col picture">
-              <img :src="item.picUrl" alt="">
-            </div>
-            <div class="cart-table-col product-name">{{ item.showProductName }}</div>
-            <div class="cart-table-col price">{{ $filters.formatShowPrice(item.price) }}元</div>
-            <div class="cart-table-col num">
-              <n-input-number
-                  min="1"
-                  max="99"
-                  :update-value-on-input="true"
-                  @blur="cartStore.changeQuantity($event, item)"
-                  v-model:value="item.quantity"
-                  button-placement="both"/>
-            </div>
-            <div class="cart-table-col total">{{ $filters.formatShowPrice(item.price * item.quantity) }}元</div>
-            <div class="cart-table-col">
-              <n-button
-                  @click="removeCartItems($event, item)"
-                  size="small"
-                  text
-                  tag="li">删除
-              </n-button>
+  <div class="cart">
+    <div class="main">
+      <!-- 购物车存在商品时 -->
+      <div class="container" v-if="cartStore.count > 0">
+        <div class="cart-table">
+          <div class="cart-table-header">
+            <div class="cart-table-row">
+              <div class="cart-table-col check">
+                <n-checkbox class="checkbox"
+                            size="large"
+                            label=""
+                            @update:checked="cartStore.checkedAll($event)"/>
+                &nbsp;&nbsp;全选
+              </div>
+              <div class="cart-table-col picture"></div>
+              <div class="cart-table-col product-name">商品名称</div>
+              <div class="cart-table-col price">单价</div>
+              <div class="cart-table-col num">数量</div>
+              <div class="cart-table-col total">小计</div>
+              <div class="cart-table-col">操作</div>
             </div>
           </div>
+          <div class="cart-table-body">
+            <div class="cart-table-row"
+                 v-for="item in cartStore.carts">
+              <div class="cart-table-col check">
+                <n-checkbox size="large"
+                            label=""
+                            :checked="item.checked"
+                            @update:checked="cartStore.checked($event, item)"/>
+              </div>
+              <div class="cart-table-col picture">
+                <img :src="item.picUrl" alt="">
+              </div>
+              <div class="cart-table-col product-name">
+                <n-ellipsis :line-clamp="2">
+                  {{ item.showProductName }}
+                </n-ellipsis>
+              </div>
+              <div class="cart-table-col price">{{ $filters.formatShowPrice(item.price) }}元</div>
+              <div class="cart-table-col num">
+                <n-input-number
+                    min="1"
+                    max="99"
+                    :update-value-on-input="true"
+                    @blur="cartStore.changeQuantity($event, item)"
+                    v-model:value="item.quantity"
+                    button-placement="both"/>
+              </div>
+              <div class="cart-table-col total">{{ $filters.formatShowPrice(item.price * item.quantity) }}元</div>
+              <div class="cart-table-col">
+                <n-button
+                    @click="removeCartItems($event, item)"
+                    size="small"
+                    text
+                    tag="li">删除
+                </n-button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cart-bar">
+          <div class="continue">
+            <n-button text @click="toHomePage">继续购物</n-button>
+          </div>
+          <div class="selected">
+            已选择
+            <span class="quantity primary">{{ cartStore.totalQuantity }}</span> 件
+          </div>
+          <div class="total-price primary">合计：<span
+              class="money">{{ $filters.formatShowPrice(cartStore.totalPrice) }}</span>元
+          </div>
+          <div class="btn-box">
+            <n-button
+                color="#ff5c00"
+                :class="loginBtnDisabled ? ' login-btn-disabled' : ''"
+                class="settle"
+                @click="toCheckout">去结算
+            </n-button>
+          </div>
         </div>
       </div>
-      <div class="cart-bar">
-        <div class="continue">
-          <n-button text @click="toHomePage">继续购物</n-button>
-        </div>
-        <div class="selected">
-          已选择
-          <span class="quantity primary">{{ cartStore.totalQuantity }}</span> 件
-        </div>
-        <div class="total-price primary">合计：<span
-            class="money">{{ $filters.formatShowPrice(cartStore.totalPrice) }}</span>元
-        </div>
-        <div class="btn-box">
-          <button class="settle primary-bg" @click="toCheckout">去结算</button>
-        </div>
-      </div>
-    </div>
 
-    <!-- 购物车不存在商品或未登录 -->
-    <div class="container" v-else>
-      <div class="cart-empty">
-        <h2 class="login-tip is-login">您的购物车还是空的！</h2>
-        <n-button
-            @click="toHomePage"
-            color="#ff5c00" class="login-btn"
-            tag="a">马上去购物
-        </n-button>
+      <!-- 购物车不存在商品或未登录 -->
+      <div class="container" v-else>
+        <div class="cart-empty">
+          <h2 class="login-tip is-login">您的购物车还是空的！</h2>
+          <n-button
+              @click="toHomePage"
+              color="#ff5c00" class="login-btn"
+              tag="a">马上去购物
+          </n-button>
+        </div>
       </div>
-    </div>
 
+    </div>
   </div>
-
-
 </template>
 
 <style scoped>
+
+.cart {
+  width: 100%;
+}
 
 .header {
   background-color: #FFFFFF;
@@ -168,7 +186,7 @@ const {
 }
 
 .header .container {
-  width: 1226px;
+  width: 100%;
   padding-top: 25px;
   padding-bottom: 25px;
   display: flex;
@@ -205,11 +223,16 @@ const {
 }
 
 .main .container {
-  width: 1226px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .cart-table {
   background-color: #FFFFFF;
+  width: 1226px;
 }
 
 .cart-table .cart-table-row {
@@ -234,22 +257,34 @@ const {
 }
 
 .cart-table .cart-table-row .cart-table-col.num {
-  width: 150px;
+  width: 10%;
 }
 
 .cart-table .cart-table-row .cart-table-col.total {
-  width: 201px;
+  width: 20%;
 }
 
 .cart-table .cart-table-row .cart-table-col.price {
-  width: 158px;
+  width: 20%;
 }
 
 .cart-table .cart-table-row .cart-table-col.product-name {
-  width: 380px;
   text-align: left;
   font-size: 18px;
+  width: 30%;
 }
+
+.cart-table .cart-table-row .cart-table-col.picture {
+  width: 10%;
+}
+
+.cart-table .cart-table-row .cart-table-col.check {
+  width: 10%;
+  float: left;
+  text-align: left;
+  padding-left: 20px;
+}
+
 
 .cart-table-body .cart-table-row .cart-table-col.price {
   color: #ff6700;
@@ -263,10 +298,6 @@ const {
   color: #ff6700;
 }
 
-.cart-table .cart-table-row .cart-table-col.picture {
-  width: 100px;
-}
-
 .cart-table .cart-table-row .cart-table-col.picture img {
   width: 85px;
   height: 85px;
@@ -277,13 +308,6 @@ const {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-}
-
-.cart-table .cart-table-row .cart-table-col.check {
-  width: 80px;
-  float: left;
-  text-align: left;
-  padding-left: 20px;
 }
 
 .cart-table-body .cart-table-row {
@@ -314,7 +338,7 @@ const {
   color: #757575;
   font-size: 14px;
   align-items: center;
-  width: 100%;
+  width: 1226px;
   position: relative;
 }
 
@@ -338,7 +362,6 @@ const {
 
 .cart-bar .btn-box {
   height: 100%;
-  border: 1px solid red;
   margin-left: 50px;
 }
 
@@ -356,7 +379,8 @@ const {
 }
 
 .cart-empty {
-  background: url("@/assets/cart-empty.png") no-repeat 124px 0;height: 273px;
+  background: url("@/assets/cart-empty.png") no-repeat 124px 0;
+  height: 273px;
   padding-left: 558px;
   margin: 65px 0 130px;
   color: #b0b0b0;
@@ -366,6 +390,7 @@ const {
 .login-tip.is-login {
   margin: 70px 0 0 0;
 }
+
 .login-tip {
   font-size: 36px;
   font-weight: bold;
@@ -383,5 +408,10 @@ const {
   height: 48px;
   line-height: 48px;
 }
+
+.login-btn-disabled {
+  opacity: .4;
+}
+
 
 </style>

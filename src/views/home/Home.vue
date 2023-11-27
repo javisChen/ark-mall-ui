@@ -107,135 +107,146 @@ const {
 
 <template>
   <common-top-bar/>
-  <div id="container">
-    <div class="header">
-      <div class="navs">
-        <div class="container">
-          <div class="header-logo">
-            <img src="@/assets/logo-mi.png" alt="">
-          </div>
-          <div class="header-nav">
+  <div class="home">
+    <div class="container">
+      <div class="header">
+        <div class="navs">
+          <div class="container">
+            <div class="header-logo">
+              <img src="@/assets/logo-mi.png" alt="">
+            </div>
+            <div class="header-nav">
 
-          </div>
-          <div class="header-search">
+            </div>
+            <div class="header-search">
 
+            </div>
           </div>
         </div>
       </div>
+
+      <div class="category">
+        <a href="#">
+          <div class="category-nav">
+            <ul class="category-nav-wrapper">
+              <li class="category-nav-li"
+                  @mouseover="categoryHover(item)"
+                  @mouseout="categoryHover(item)"
+                  v-for="item in categories">
+                <a href="#">{{ item.categoryName }}</a>
+                <div class="category-product"
+                     v-show="item.showChildren && item.commodities && item.commodities.length > 0">
+                  <ul class="category-product-wrapper">
+                    <li class="category-product-item"
+                        @click.prevent="toInfoPage(commodityItem)"
+                        v-for="commodityItem in item.commodities">
+                      <a class="" href="#">
+                        <img class="product-img" :src="commodityItem.picUrl" alt="">
+                        <span class="category-product-item-title">{{ commodityItem.spuName }}</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <img src="../../assets/category-bg.webp" alt="">
+        </a>
+      </div>
+
+      <div class="content">
+        <div class="box">
+          <div class="box-hd">
+            <h2 class="title">手机</h2>
+          </div>
+          <div class="box-bd">
+            <div
+                v-for="(item, idx) in productList"
+                @click.prevent="toInfoPage(item)"
+                @mouseover="onMouseOver(item)"
+                @mouseout="onMouseOver(item)"
+                :class="{'product-hover': item.onHover}"
+                class="item">
+              <a class="item-a-tag" href="#">
+                <div class="product-img">
+                  <img width="160" height="160" src="src/assets/test-prod.webp" alt="">
+                </div>
+                <h3 class="title">{{ item.name }}</h3>
+                <p class="desc">{{ item.desc }}</p>
+                <p class="price">
+                  <span class="num">{{ $filters.formatShowPrice(item.showPrice) }}</span>
+                  <span>起</span>
+                </p>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="box">
+          <div class="box-hd">
+            <h2 class="title">手机</h2>
+          </div>
+          <div class="box-bd">
+            <div @mouseover="onMouseOver(item)"
+                 @mouseout="onMouseOver(item)"
+                 :class="{'product-hover': item.onHover}"
+                 class="item"
+                 v-for="(item, idx) in productList">
+              <a class="item-a-tag" href="#">
+                <div class="product-img">
+                  <img width="160" height="160" src="src/assets/test-prod.webp" alt="">
+                </div>
+                <h3 class="title">{{ item.name }}</h3>
+                <p class="desc">{{ item.desc }}</p>
+                <p class="price">
+                  <span class="num">{{ $filters.formatShowPrice(item.showPrice) }}</span>
+                  <span>起</span>
+                </p>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="box">
+          <div class="box-hd">
+            <h2 class="title">手机</h2>
+          </div>
+          <div class="box-bd">
+            <div @mouseover="onMouseOver(item)"
+                 @mouseout="onMouseOver(item)"
+                 :class="{'product-hover': item.onHover}"
+                 class="item"
+                 v-for="(item, idx) in productList">
+              <a class="item-a-tag" href="#">
+                <div class="product-img">
+                  <img width="160" height="160" src="src/assets/test-prod.webp" alt="">
+                </div>
+                <h3 class="title">{{ item.name }}</h3>
+                <p class="desc">{{ item.desc }}</p>
+                <p class="price">
+                  <span class="num">{{ $filters.formatShowPrice(item.showPrice) }}</span>
+                  <span>起</span>
+                </p>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
-
-    <div class="category">
-      <a href="#">
-        <div class="category-nav">
-          <ul class="category-nav-wrapper">
-            <li class="category-nav-li"
-                @mouseover="categoryHover(item)"
-                @mouseout="categoryHover(item)"
-                v-for="item in categories">
-              <a href="#">{{ item.categoryName }}</a>
-              <div class="category-product"
-                   v-show="item.showChildren && item.commodities && item.commodities.length > 0">
-                <ul class="category-product-wrapper">
-                  <li class="category-product-item"
-                      @click.prevent="toInfoPage(commodityItem)"
-                      v-for="commodityItem in item.commodities">
-                    <a class="" href="#">
-                      <img class="product-img" :src="commodityItem.picUrl" alt="">
-                      <span class="category-product-item-title">{{ commodityItem.spuName }}</span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-          </ul>
-        </div>
-        <img src="../../assets/category-bg.webp" alt="">
-      </a>
-    </div>
-
-    <div class="content">
-      <div class="box">
-        <div class="box-hd">
-          <h2 class="title">手机</h2>
-        </div>
-        <div class="box-bd">
-          <div
-              v-for="(item, idx) in productList"
-              @click.prevent="toInfoPage(item)"
-              @mouseover="onMouseOver(item)"
-              @mouseout="onMouseOver(item)"
-              :class="{'product-hover': item.onHover}"
-              class="item">
-            <a class="item-a-tag" href="#">
-              <div class="product-img">
-                <img width="160" height="160" src="src/assets/test-prod.webp" alt="">
-              </div>
-              <h3 class="title">{{ item.name }}</h3>
-              <p class="desc">{{ item.desc }}</p>
-              <p class="price">
-                <span class="num">{{ $filters.formatShowPrice(item.showPrice) }}</span>
-                <span>起</span>
-              </p>
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="box">
-        <div class="box-hd">
-          <h2 class="title">手机</h2>
-        </div>
-        <div class="box-bd">
-          <div @mouseover="onMouseOver(item)"
-               @mouseout="onMouseOver(item)"
-               :class="{'product-hover': item.onHover}"
-               class="item"
-               v-for="(item, idx) in productList">
-            <a class="item-a-tag" href="#">
-              <div class="product-img">
-                <img width="160" height="160" src="src/assets/test-prod.webp" alt="">
-              </div>
-              <h3 class="title">{{ item.name }}</h3>
-              <p class="desc">{{ item.desc }}</p>
-              <p class="price">
-                <span class="num">{{ $filters.formatShowPrice(item.showPrice) }}</span>
-                <span>起</span>
-              </p>
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="box">
-        <div class="box-hd">
-          <h2 class="title">手机</h2>
-        </div>
-        <div class="box-bd">
-          <div @mouseover="onMouseOver(item)"
-               @mouseout="onMouseOver(item)"
-               :class="{'product-hover': item.onHover}"
-               class="item"
-               v-for="(item, idx) in productList">
-            <a class="item-a-tag" href="#">
-              <div class="product-img">
-                <img width="160" height="160" src="src/assets/test-prod.webp" alt="">
-              </div>
-              <h3 class="title">{{ item.name }}</h3>
-              <p class="desc">{{ item.desc }}</p>
-              <p class="price">
-                <span class="num">{{ $filters.formatShowPrice(item.showPrice) }}</span>
-                <span>起</span>
-              </p>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
 </template>
 
 <style scoped>
 
-#container {
+.home {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+}
+
+.home .container {
+  width: 100%;
   min-height: 100%;
   display: flex;
   flex-direction: column;

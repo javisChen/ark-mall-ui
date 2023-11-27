@@ -8,6 +8,10 @@ const paySuccess = () => import(`../views/pay/PaySuccess.vue`)
 const checkout = () => import(`../views/checkout/Checkout.vue`)
 const confirm = () => import(`../views/confirm/Confirm.vue`)
 
+const order = () => import(`../views/order/Order.vue`)
+
+const center = () => import(`../views/center/Center.vue`)
+
 export const routes = [
   {
     path: '/',
@@ -17,6 +21,11 @@ export const routes = [
     path: '/login',
     name: 'login',
     component: login,
+  },
+  {
+    path: '/order',
+    name: 'order',
+    component: order,
   },
   {
     path: '/cart',
@@ -52,6 +61,18 @@ export const routes = [
     path: '/pay/success',
     name: 'paySuccess',
     component: paySuccess
+  },
+  {
+    path: '/center',
+    name: 'center',
+    component: center,
+    children: [
+      {
+        path: 'order',
+        name: 'order',
+        component: order
+      }
+    ],
   },
 ]
 

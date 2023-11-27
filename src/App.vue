@@ -29,4 +29,8 @@ onMounted(() => {
 #app {
   height: 100%;
 }
+
+body {
+  min-width: 1226px;
+}
 </style>
