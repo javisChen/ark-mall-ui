@@ -8,10 +8,11 @@ const paySuccess = () => import(`../views/pay/PaySuccess.vue`)
 const checkout = () => import(`../views/checkout/Checkout.vue`)
 const confirm = () => import(`../views/confirm/Confirm.vue`)
 
-const order = () => import(`../views/order/Order.vue`)
 
 const center = () => import(`../views/center/Center.vue`)
+const order = () => import(`../views/order/Order.vue`)
 
+const orderDetail = () => import(`../views/order/OrderDetail.vue`)
 export const routes = [
   {
     path: '/',
@@ -71,7 +72,12 @@ export const routes = [
         path: 'order',
         name: 'order',
         component: order
-      }
+      },
+      {
+        path: 'order/:id',
+        name: 'orderDetail',
+        component: orderDetail
+      },
     ],
   },
 ]

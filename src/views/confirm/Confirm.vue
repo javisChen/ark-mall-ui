@@ -4,23 +4,11 @@ import {reactive, toRefs, onMounted} from 'vue';
 import {getOrderInfo} from "@/api/trade/trade-api"
 import {getPayOrderStatus, createPayOrder} from "@/api/pay/pay-api"
 import {useRoute, useRouter} from 'vue-router';
+import {buildProductDesc} from '@/utils/util'
 import BizLoading from "../../components/BizLoading.vue";
 
 const route = useRoute();
 const router = useRouter();
-
-const buildProductDesc = (item) => {
-  let name = item.productName + ' '
-  for (let i = 0; i < item.specData.length; i++) {
-    const spec = item.specData[i];
-    name += spec.attrValue
-    if (i < item.specData.length - 1) {
-      name += ' '
-    }
-  }
-  return name
-}
-
 
 const data = reactive({
   order: {},

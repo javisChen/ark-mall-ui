@@ -10,6 +10,7 @@ import 'vfonts/Lato.css'
 import {fenToYuan} from '@/utils/util';
 import accounting from 'accounting'
 import 'vfonts/FiraCode.css'
+import {initFilters} from "@/filter";
 
 
 import {
@@ -20,6 +21,7 @@ import {
     NCard,
     NSpin,
     NEllipsis,
+    NPagination
 } from 'naive-ui'
 
 const naive = create({
@@ -29,7 +31,8 @@ const naive = create({
         NInputNumber,
         NModal,
         NCard,
-        NSpin
+        NSpin,
+        NPagination
     ]
 })
 
@@ -42,8 +45,4 @@ app.use(naive)
     .use(pinia)
     .mount('#app')
 
-app.config.globalProperties.$filters = {
-    formatShowPrice(value) {
-        return accounting.format(fenToYuan(value))
-    }
-}
+initFilters(app);

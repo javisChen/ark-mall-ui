@@ -1,18 +1,7 @@
 import {defineStore} from 'pinia'
 import {addCartItem, deleteCartItems, getCartItems, updateCartItemQuantity} from "@/api/trade/trade-api"
 import {useAuthStore} from "./auth";
-
-const buildProductDesc = (item) => {
-    let name = item.productName + ' '
-    for (let i = 0; i < item.specData.length; i++) {
-        const spec = item.specData[i];
-        name += spec.attrValue
-        if (i < item.specData.length - 1) {
-            name += ' '
-        }
-    }
-    return name
-}
+import {buildProductDesc} from '@/utils/util'
 
 export const useCartStore
     = defineStore('cart', {

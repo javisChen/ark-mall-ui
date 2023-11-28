@@ -3,27 +3,84 @@
 import {onMounted, reactive, toRefs} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import {getUserOrders} from "@/api/trade/trade-api"
-import {Order, OrderItem, ReceiveInfo} from "./Order.ts";
 import {useCartStore} from "@/store/cart";
-import BizLoading from "@/components/BizLoading.vue";
-import CommonTopBar from "../common/CommonTopBar.vue";
+import {buildProductDesc} from '@/utils/util'
+import {
+  DICT_ORDER_STATUS_WAIT_PAY,
+  DICT_ORDER_STATUS_WAIT_DELIVER,
+  DICT_ORDER_STATUS_WAIT_RECEIVE,
+  DICT_ORDER_STATUS_WAIT_EVALUATE,
+  DICT_ORDER_STATUS_COMPLETED
+} from '@/utils/constants'
 
 const route = useRoute();
 const router = useRouter();
 const cartStore = useCartStore();
 
-onMounted(async () => {
-  try {
-    const result = await getUserOrders({});
-    data.orders = result.data.records
-  } catch (e) {
-    console.log(e);
-  }
+onMounted(() => {
+  data.loadOrders()
 })
 
 const data = reactive({
   orders: [],
+  selectedStatus: '',
+  ordersLoading: true,
+  statusFilters: [
+    {
+      label: '全部',
+      value: ''
+    },
+    {
+      label: '待支付',
+      value: DICT_ORDER_STATUS_WAIT_PAY
+    },
+    {
+      label: '待发货',
+      value: DICT_ORDER_STATUS_WAIT_DELIVER
+    },
+    {
+      label: '待收货',
+      value: DICT_ORDER_STATUS_WAIT_RECEIVE
+    },
+    {
+      label: '已完成',
+      value: DICT_ORDER_STATUS_COMPLETED
+    }],
+  orderPage: {
+    page: 1,
+    pageSize: 5,
+    count: 0
+  },
   createOrderLoading: false,
+  onPageUpdate: (page) => {
+    data.orderPage.page = page
+    data.loadOrders();
+  },
+  onStatusFilterSelected: (status) => {
+    data.selectedStatus = status.value
+    data.loadOrders();
+  },
+  loadOrders: async () => {
+    data.ordersLoading = true
+    const {page, pageSize} = data.orderPage
+    try {
+      const result = await getUserOrders({
+        current: page,
+        size: pageSize,
+        orderStatus: data.selectedStatus
+      });
+
+      const {records, current, size, total} = result.data
+      data.orders = records
+      data.orderPage.page = current
+      data.orderPage.pageSize = size
+      data.orderPage.count = total
+    } catch (e) {
+      console.log(e);
+    } finally {
+      data.ordersLoading = false
+    }
+  },
   toCartPage: () => {
     router.push({
       name: 'cart'
@@ -34,7 +91,13 @@ const data = reactive({
 })
 
 const {
-  orders
+  onStatusFilterSelected,
+  selectedStatus,
+  statusFilters,
+  ordersLoading,
+  onPageUpdate,
+  orders,
+  orderPage
 } = toRefs(data)
 
 
@@ -48,19 +111,10 @@ const {
       </h1>
       <div class="more clearfix">
         <ul class="filter-list">
-          <li class="first active"><a data-stat-id="57897755adc8c1e0" href="javascript:void(0);">全部有效订单</a></li>
-          <li class="">
-            <a href="javascript:void(0);">
-              待支付
-            </a>
-          </li>
-          <li class="">
-            <a href="javascript:void(0);">
-              待收货
-            </a>
-          </li>
-          <li class="">
-            <a data-stat-id="1591d5f9a89e8bb6" href="javascript:void(0);">订单回收站</a>
+          <li :class="selectedStatus === status.value ? ' active' : ''"
+              class="first" v-for="status in statusFilters">
+            <a @click="onStatusFilterSelected(status)"
+               href="javascript:void(0);">{{ status.label }}</a>
           </li>
         </ul>
         <div class="search-form clearfix">
@@ -74,71 +128,84 @@ const {
     <!--    -->
     <div class="box-bd">
       <div>
-        <ul class="order-list">
-          <p v-if="orders.length === 0" class="empty">当前没有交易订单。</p>
-          <li v-else
-              v-for="(order, idx) in orders"
-              class="uc-order-item uc-order-item-pay">
-            <div class="order-detail">
-              <div class="order-summary">
-                <div class="order-status">
-                  等待付款
+        <n-spin :show="ordersLoading">
+          <ul class="order-list">
+            <p v-if="orders.length === 0" class="empty">当前没有交易订单。</p>
+            <li v-else
+                v-for="(order, idx) in orders"
+                class="uc-order-item uc-order-item-pay">
+              <div class="order-detail">
+                <div class="order-summary">
+                  <div class="order-status">
+                    {{ $filters.translateOrderStatus(order.orderStatus) }}
+                  </div>
                 </div>
+                <table class="order-detail-table">
+                  <thead>
+                  <tr>
+                    <th class="col-main"><p class="caption-info">
+                      {{ order.gmtCreate }}
+                      <span class="sep">|</span>
+                      {{ order.buyerName }}
+                      <span class="sep">|</span>
+                      订单号：<a href="//www.mi.com/user/orderView?order_id=5231127733200098">{{
+                        order.tradeNo
+                      }}</a><span
+                        class="sep">|</span>
+                      在线支付
+                    </p></th>
+                    <th class="col-sub"><p class="caption-price">
+                      应付金额：
+                      <span class="num">{{ $filters.formatShowPrice(order.actualAmount) }}</span>元
+                    </p></th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                    <td class="order-items">
+                      <ul class="goods-list">
+                        <li v-for="orderItem in order.orderItems">
+                          <div class="figure figure-thumb"><a
+                              href="//www.mi.com/buy?product_id=1230800169"
+                              target="_blank">
+                            <img
+                                :src="orderItem.picUrl"
+                                width="80"
+                                height="80"
+                                alt="Xiaomi Pad 6 Pro 8GB+128GB 黑色"></a>
+                          </div>
+                          <p class="name"><a
+                              href="//www.mi.com/buy?product_id=1230800169"
+                              target="_blank">{{ buildProductDesc(orderItem) }}</a>
+                          </p>
+                          <p class="price">
+                            {{ $filters.formatShowPrice(orderItem.price) }}元 × {{ orderItem.quantity }}
+                          </p></li>
+                      </ul>
+                    </td>
+                    <td class="order-actions">
+                      <a v-if="order.orderStatus === DICT_ORDER_STATUS_WAIT_PAY"
+                          href="//www.mi.com/buy/confirm?id=5231127733200098"
+                          target="_blank" class="btn btn-small btn-primary">立即付款</a>
+                      <a href="//www.mi.com/user/orderView?order_id=5231127733200098"
+                         class="btn btn-small btn-line-gray">订单详情</a>
+                      <a href="javascript:void(0)"
+                         class="btn btn-small btn-line-gray btn-contract">联系客服</a>
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
               </div>
-              <table class="order-detail-table">
-                <thead>
-                <tr>
-                  <th class="col-main"><p class="caption-info">
-                    {{ order.gmtCreate }}
-                    <span class="sep">|</span>
-                    {{ order.buyerName }}
-                    <span class="sep">|</span>
-                    订单号：<a href="//www.mi.com/user/orderView?order_id=5231127733200098">{{ order.tradeNo }}</a><span
-                      class="sep">|</span>
-                    在线支付
-                  </p></th>
-                  <th class="col-sub"><p class="caption-price">
-                    应付金额：
-                    <span class="num">{{ $filters.formatShowPrice(order.actualAmount) }}</span>元
-                  </p></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                  <td class="order-items">
-                    <ul class="goods-list">
-                      <li>
-                        <div class="figure figure-thumb"><a
-                            href="//www.mi.com/buy?product_id=1230800169"
-                            target="_blank"><img
-                            src="//cdn.cnbj0.fds.api.mi-img.com/b2c-shopapi-pms/pms_1681708013.08067335.png?thumb=1&amp;w=80&amp;h=80"
-                            width="80"
-                            height="80"
-                            alt="Xiaomi Pad 6 Pro 8GB+128GB 黑色"></a>
-                        </div>
-                        <p class="name"><a
-                            href="//www.mi.com/buy?product_id=1230800169"
-                            target="_blank">Xiaomi Pad 6 Pro 8GB+128GB 黑色</a>
-                        </p>
-                        <p class="price">
-                          2499元 × 1
-                        </p></li>
-                    </ul>
-                  </td>
-                  <td class="order-actions"><a
-                      href="//www.mi.com/buy/confirm?id=5231127733200098"
-                      target="_blank" class="btn btn-small btn-primary">立即付款</a>
-                    <a href="//www.mi.com/user/orderView?order_id=5231127733200098"
-                       class="btn btn-small btn-line-gray">订单详情</a>
-                    <a href="javascript:void(0)"
-                       class="btn btn-small btn-line-gray btn-contract">联系客服</a>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
-            </div>
-          </li>
-        </ul>
+            </li>
+          </ul>
+        </n-spin>
+      </div>
+
+      <div class="page" v-if="orders.length > 0">
+        <n-pagination
+            @update:page="onPageUpdate"
+            :item-count="orderPage.count"
+            :page-size="orderPage.pageSize"/>
       </div>
     </div>
   </div>
@@ -313,6 +380,10 @@ const {
   color: #757575;
 }
 
+.uc-box .uc-content-box .box-hd .filter-list li.active, .uc-box .uc-content-box .box-hd .filter-list li.active a, .uc-box .uc-content-box .box-hd .filter-list li.tab-active, .uc-box .uc-content-box .box-hd .filter-list li.tab-active a {
+  color: #ff6700;
+}
+
 .uc-box .uc-content-box .box-hd .filter-list a {
   color: #757575;
   cursor: pointer;
@@ -357,6 +428,11 @@ const {
   font-size: 18px;
   text-align: center;
   color: #b0b0b0;
+}
+
+.page {
+  display: flex;
+  justify-content: center;
 }
 
 </style>

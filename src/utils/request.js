@@ -25,7 +25,6 @@ const del = ({url, params, data}) => request({url, method: `delete`, params, dat
 const errorHandler = async (error) => {
     const $message = window.$message;
     const response = error.response;
-    console.log(`error`, error)
     if (!response) {
         $message.error(`服务器出了点小问题，请稍候重试~`, {duration: 3000})
         return Promise.reject(error)
@@ -65,7 +64,6 @@ request.interceptors.request.use(config => {
 // response interceptor
 request.interceptors.response.use((response) => {
     const serverResponse = response.data
-    console.log(response)
     if (response.status === 200 && serverResponse.code === SUCCESS_CODE) {
         return Promise.resolve({data: serverResponse.data, resp: serverResponse})
     }

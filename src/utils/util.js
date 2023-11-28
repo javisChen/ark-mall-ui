@@ -65,3 +65,24 @@ export const fenToYuan = (value) => {
   }
   return (value - 0) / 100
 }
+
+
+/**
+ * 构建商品描述
+ * @param item
+ * @returns {string}
+ */
+export const buildProductDesc = (item) => {
+  if (typeof item.specData === 'string') {
+    item.specData = JSON.parse(item.specData)
+  }
+  let name = item.productName + ' '
+  for (let i = 0; i < item.specData.length; i++) {
+    const spec = item.specData[i];
+    name += spec.attrValue
+    if (i < item.specData.length - 1) {
+      name += ' '
+    }
+  }
+  return name
+}
