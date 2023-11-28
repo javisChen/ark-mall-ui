@@ -137,26 +137,26 @@ const {
               <div class="order-detail">
                 <div class="order-summary">
                   <div class="order-status">
-                    {{ $filters.translateOrderStatus(order.orderStatus) }}
+                    {{ $filters.translateOrderStatus(order.orderBase.orderStatus) }}
                   </div>
                 </div>
                 <table class="order-detail-table">
                   <thead>
                   <tr>
                     <th class="col-main"><p class="caption-info">
-                      {{ order.gmtCreate }}
+                      {{ order.orderBase.createTime }}
                       <span class="sep">|</span>
-                      {{ order.buyerName }}
+                      {{ order.orderBase.buyerName }}
                       <span class="sep">|</span>
                       订单号：<a href="//www.mi.com/user/orderView?order_id=5231127733200098">{{
-                        order.tradeNo
+                        order.orderBase.tradeNo
                       }}</a><span
                         class="sep">|</span>
                       在线支付
                     </p></th>
                     <th class="col-sub"><p class="caption-price">
                       应付金额：
-                      <span class="num">{{ $filters.formatShowPrice(order.actualAmount) }}</span>元
+                      <span class="num">{{ $filters.formatShowPrice(order.orderAmount.actualAmount) }}</span>元
                     </p></th>
                   </tr>
                   </thead>

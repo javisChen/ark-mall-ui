@@ -2,7 +2,7 @@
 
 import {onMounted, reactive, toRefs} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
-import {getUserOrders} from "@/api/trade/trade-api"
+import {getUserOrders, getOrderInfo} from "@/api/trade/trade-api"
 import {useCartStore} from "@/store/cart";
 import {buildProductDesc} from '@/utils/util'
 import {
@@ -18,7 +18,7 @@ const router = useRouter();
 const cartStore = useCartStore();
 
 onMounted(() => {
-  data.loadOrders()
+  data.loadOrder()
 })
 
 const data = reactive({
@@ -60,14 +60,11 @@ const data = reactive({
     data.selectedStatus = status.value
     data.loadOrders();
   },
-  loadOrders: async () => {
-    data.ordersLoading = true
-    const {page, pageSize} = data.orderPage
+  loadOrder: async () => {
+    console.log(route)
     try {
-      const result = await getUserOrders({
-        current: page,
-        size: pageSize,
-        orderStatus: data.selectedStatus
+      const result = await getOrderInfo({
+        id: route.params.id
       });
 
       const {records, current, size, total} = result.data

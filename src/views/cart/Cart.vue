@@ -107,7 +107,7 @@ const {
                 <img :src="item.picUrl" alt="">
               </div>
               <div class="cart-table-col product-name">
-                <n-ellipsis :line-clamp="2">
+                <n-ellipsis :line-clamp="1">
                   {{ item.showProductName }}
                 </n-ellipsis>
               </div>
@@ -186,7 +186,7 @@ const {
 }
 
 .header .container {
-  width: 100%;
+  width: 1226px;
   padding-top: 25px;
   padding-bottom: 25px;
   display: flex;
