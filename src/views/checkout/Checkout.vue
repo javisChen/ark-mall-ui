@@ -6,6 +6,7 @@ import {createOrder} from "@/api/trade/trade-api"
 import {Order, OrderItem, ReceiveInfo} from "./Order.ts";
 import {useCartStore} from "@/store/cart";
 import BizLoading from "@/components/BizLoading.vue";
+import SelectAddress from "../../components/SelectAddress.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -31,8 +32,10 @@ const data = reactive({
       name: 'cart'
     })
   },
+  onSelectedDistrict: (district) => {
+    console.log(v)
+  },
   toConfirm: async () => {
-
     data.createOrderLoading = true
     let order = new Order();
     order.orderType = 1;
@@ -58,6 +61,7 @@ const data = reactive({
 })
 
 const {
+  onSelectedDistrict,
   createOrderLoading,
   receiveInfo,
   toConfirm,
@@ -74,6 +78,25 @@ const {
       :show="createOrderLoading"/>
 
   <div class="header">
+    <n-modal
+        :show="true"
+        class="custom-card"
+        preset="card"
+        :style="{width: '600px'}"
+        title="卡片预设"
+        size="huge"
+        :bordered="false"
+    >
+      <template #header-extra>
+        噢!
+      </template>
+      <n-form>
+
+      </n-form>
+      <template #footer>
+        尾部
+      </template>
+    </n-modal>
     <div class="container">
       <div class="header-logo">
         <img src="@/assets/logo-mi.png" alt="">

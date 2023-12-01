@@ -21,7 +21,7 @@ import {
     NCard,
     NSpin,
     NEllipsis,
-    NPagination
+    NPagination, NSpace, NSelect,
 } from 'naive-ui'
 
 const naive = create({
@@ -32,7 +32,9 @@ const naive = create({
         NModal,
         NCard,
         NSpin,
-        NPagination
+        NPagination,
+        NSpace,
+        NSelect
     ]
 })
 
