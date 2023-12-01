@@ -80,7 +80,7 @@ export const useCartStore
         async addCartItem(skuId) {
             try {
                 await addCartItem({skuId})
-                await this.loadCart()
+                await this.loadCartInfo()
             } catch (e) {
                 throw e;
             }

@@ -246,10 +246,15 @@ const {
 }
 
 .home .container {
+  background-color: #e0e0e0;
+  width: 100%;
+}
+
+.home .navs .container {
   width: 100%;
   min-height: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-content: center;
   align-items: center;
 }
@@ -353,9 +358,10 @@ const {
 }
 
 .header .navs .container {
-  width: 1226px;
   height: 100%;
   display: flex;
+  width: 1226px;
+  background-color: #FFFFFF;
 
 }
 
@@ -424,6 +430,14 @@ const {
 }
 
 .content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+}
+
+.content .box {
   width: 1226px;
 }
 

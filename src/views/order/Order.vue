@@ -5,6 +5,7 @@ import {useRoute, useRouter} from 'vue-router';
 import {getUserOrders} from "@/api/trade/trade-api"
 import {useCartStore} from "@/store/cart";
 import {buildProductDesc} from '@/utils/util'
+import image404 from '@/assets/image404.png';
 import {
   DICT_ORDER_STATUS_WAIT_PAY,
   DICT_ORDER_STATUS_WAIT_DELIVER,
@@ -81,6 +82,11 @@ const data = reactive({
       data.ordersLoading = false
     }
   },
+  toOrderDetailPage: (order) => {
+    router.push({
+      path: `order/${order.orderBase.id}`
+    })
+  },
   toCartPage: () => {
     router.push({
       name: 'cart'
@@ -88,9 +94,14 @@ const data = reactive({
   },
   toConfirm: async () => {
   },
+  onPicError: async (orderItem) => {
+    orderItem.picUrl = image404
+  },
 })
 
 const {
+  toOrderDetailPage,
+  onPicError,
   onStatusFilterSelected,
   selectedStatus,
   statusFilters,
@@ -165,29 +176,29 @@ const {
                     <td class="order-items">
                       <ul class="goods-list">
                         <li v-for="orderItem in order.orderItems">
-                          <div class="figure figure-thumb"><a
-                              href="//www.mi.com/buy?product_id=1230800169"
-                              target="_blank">
-                            <img
-                                :src="orderItem.picUrl"
-                                width="80"
-                                height="80"
-                                alt="Xiaomi Pad 6 Pro 8GB+128GB 黑色"></a>
+                          <div class="figure figure-thumb">
+                            <a href="javascript:void(0);">
+                              <img :src="orderItem.picUrl" width="80" height="80" @error="onPicError(orderItem)">
+                            </a>
                           </div>
-                          <p class="name"><a
-                              href="//www.mi.com/buy?product_id=1230800169"
-                              target="_blank">{{ buildProductDesc(orderItem) }}</a>
-                          </p>
-                          <p class="price">
-                            {{ $filters.formatShowPrice(orderItem.price) }}元 × {{ orderItem.quantity }}
-                          </p></li>
+                          <div class="goods-info">
+                            <p class="name">
+                              <a href="javascript:void(0);">{{ buildProductDesc(orderItem) }}</a>
+                            </p>
+                            <p class="price">
+                              {{ $filters.formatShowPrice(orderItem.price) }}元 × {{ orderItem.quantity }}
+                            </p>
+                          </div>
+                        </li>
                       </ul>
                     </td>
                     <td class="order-actions">
                       <a v-if="order.orderStatus === DICT_ORDER_STATUS_WAIT_PAY"
-                          href="//www.mi.com/buy/confirm?id=5231127733200098"
-                          target="_blank" class="btn btn-small btn-primary">立即付款</a>
-                      <a href="//www.mi.com/user/orderView?order_id=5231127733200098"
+                         href="//www.mi.com/buy/confirm?id=5231127733200098"
+                         target="_blank" class="btn btn-small btn-primary">立即付款</a>
+                      <a
+                          @click="toOrderDetailPage(order)"
+                          href="javascript:void(0)"
                          class="btn btn-small btn-line-gray">订单详情</a>
                       <a href="javascript:void(0)"
                          class="btn btn-small btn-line-gray btn-contract">联系客服</a>
@@ -232,10 +243,23 @@ const {
   list-style-type: none;
 }
 
+
+.order-list-box .goods-list li {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+}
+
 .order-list-box .goods-list .figure-thumb {
   position: absolute;
   left: 0;
   top: 0;
+}
+
+.order-list-box .goods-list .goods-info {
+  display: flex;
+  flex-direction: column;
 }
 
 .order-list-box .goods-list .price {
