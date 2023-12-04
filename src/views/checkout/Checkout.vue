@@ -2,22 +2,26 @@
 
 import {onMounted, reactive, toRefs} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
-import {createOrder} from "@/api/trade/trade-api"
+import {createOrder, saveUserReceives, getUserReceives} from "@/api/trade/trade-api"
 import {Order, OrderItem, ReceiveInfo} from "./Order.ts";
 import {useCartStore} from "@/store/cart";
 import BizLoading from "@/components/BizLoading.vue";
-import SelectAddress from "../../components/SelectAddress.vue";
+import AddressForm from "./AddressForm.vue";
 
 const route = useRoute();
 const router = useRouter();
 const cartStore = useCartStore();
 
-onMounted(async () => {
+onMounted(() => {
+  data.loadUserReceives()
 })
 
 const data = reactive({
   carts: [],
+  showAddressForm: false,
   createOrderLoading: false,
+  selectedReceiveInfo: {},
+  userReceives: [],
   receiveInfo: {
     name: '陈嘉玮',
     mobile: '18588888888',
@@ -32,8 +36,24 @@ const data = reactive({
       name: 'cart'
     })
   },
+  loadUserReceives: async () => {
+    const result = await getUserReceives({
+      current: 1,
+      size: 20
+    });
+    const {records} = result.data
+    data.userReceives = records
+  },
   onSelectedDistrict: (district) => {
-    console.log(v)
+    console.log(district)
+  },
+  onAddressSubmitOk: (district) => {
+    data.loadUserReceives();
+    data.showAddressForm = false
+  },
+  receiveOnSelected: (receive) => {
+    data.selectedReceiveInfo = receive
+    console.log(data.selectedReceiveInfo)
   },
   toConfirm: async () => {
     data.createOrderLoading = true
@@ -61,9 +81,12 @@ const data = reactive({
 })
 
 const {
-  onSelectedDistrict,
+  receiveOnSelected,
+  showAddressForm,
+  onAddressSubmitOk,
   createOrderLoading,
-  receiveInfo,
+  userReceives,
+  selectedReceiveInfo,
   toConfirm,
   toCartPage
 } = toRefs(data)
@@ -78,25 +101,7 @@ const {
       :show="createOrderLoading"/>
 
   <div class="header">
-    <n-modal
-        :show="true"
-        class="custom-card"
-        preset="card"
-        :style="{width: '600px'}"
-        title="卡片预设"
-        size="huge"
-        :bordered="false"
-    >
-      <template #header-extra>
-        噢!
-      </template>
-      <n-form>
-
-      </n-form>
-      <template #footer>
-        尾部
-      </template>
-    </n-modal>
+    <address-form :show="showAddressForm" @submit-ok="onAddressSubmitOk"/>
     <div class="container">
       <div class="header-logo">
         <img src="@/assets/logo-mi.png" alt="">
@@ -114,7 +119,12 @@ const {
           <span>收货地址</span>
         </div>
         <div class="address-list">
-          <div class="address-item">
+          <div class="address-item"
+               v-if="userReceives && userReceives.length > 0"
+               v-for="receiveInfo in userReceives"
+               :class="selectedReceiveInfo.id === receiveInfo.id ? 'active' : ''"
+               @click="receiveOnSelected(receiveInfo)"
+          >
             <div class="address-info">
               <div class="name">{{ receiveInfo.name }}<span style="color: rgb(176, 176, 176);"></span></div>
               <div class="tel">{{ receiveInfo.mobile }}</div>
@@ -129,7 +139,7 @@ const {
             </div>
           </div>
           <div class="address-item">
-            <div class="add-address">
+            <div @click="() => showAddressForm = true" class="add-address">
               <span>添加新地址</span>
             </div>
           </div>
@@ -268,7 +278,7 @@ const {
 }
 
 .main .container {
-  //width: 1226px;
+  width: 1226px;
   padding: 48px 0 0;
   background-color: #FFFFFF;
 }
@@ -537,4 +547,7 @@ const {
   transition: all .4s;
 }
 
+.address-item.active {
+  border-color: #ff6700;
+}
 </style>

@@ -21,7 +21,7 @@ import {
     NCard,
     NSpin,
     NEllipsis,
-    NPagination, NSpace, NSelect,
+    NPagination, NSpace, NSelect, NForm, NRow, NCol, NFormItem, NInput,
 } from 'naive-ui'
 
 const naive = create({
@@ -34,7 +34,12 @@ const naive = create({
         NSpin,
         NPagination,
         NSpace,
-        NSelect
+        NSelect,
+        NForm,
+        NFormItem,
+        NInput,
+        NRow,
+        NCol
     ]
 })
 

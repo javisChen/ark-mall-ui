@@ -34,7 +34,7 @@ const data = reactive({
 onMounted(async () => {
   try {
     const result = await getOrderInfo({id: route.query.id});
-    result.data.orderProducts.forEach(item => {
+    result.data.orderItems.forEach(item => {
       item.specData = JSON.parse(item.specData)
     })
     data.order = result.data
