@@ -2,10 +2,10 @@
 
 import {onMounted, reactive, toRefs} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
-import CommonTopBar from "../common/CommonTopBar.vue";
-import {getList} from "../../api/commodity/category-api.js"
-import {search} from "../../api/commodity/commodity-api.js"
-import {fenToYuan} from '../../utils/util';
+import CommonTopBar from "@/common/CommonTopBar.vue";
+import {getList} from "@/api/commodity/category-api.js"
+import {search} from "@/api/commodity/commodity-api.js"
+import {fenToYuan} from '@/utils/util';
 
 const route = useRoute();
 const router = useRouter();
@@ -169,7 +169,7 @@ const {
                 class="item">
               <a class="item-a-tag" href="#">
                 <div class="product-img">
-                  <img width="160" height="160" src="src/assets/test-prod.webp" alt="">
+                  <img width="160" height="160" src="@/assets/test-prod.webp" alt="">
                 </div>
                 <h3 class="title">{{ item.name }}</h3>
                 <p class="desc">{{ item.desc }}</p>
@@ -193,7 +193,7 @@ const {
                  v-for="(item, idx) in productList">
               <a class="item-a-tag" href="#">
                 <div class="product-img">
-                  <img width="160" height="160" src="src/assets/test-prod.webp" alt="">
+                  <img width="160" height="160" src="@/assets/test-prod.webp" alt="">
                 </div>
                 <h3 class="title">{{ item.name }}</h3>
                 <p class="desc">{{ item.desc }}</p>
@@ -217,7 +217,7 @@ const {
                  v-for="(item, idx) in productList">
               <a class="item-a-tag" href="#">
                 <div class="product-img">
-                  <img width="160" height="160" src="src/assets/test-prod.webp" alt="">
+                  <img width="160" height="160" src="@/assets/test-prod.webp" alt="">
                 </div>
                 <h3 class="title">{{ item.name }}</h3>
                 <p class="desc">{{ item.desc }}</p>

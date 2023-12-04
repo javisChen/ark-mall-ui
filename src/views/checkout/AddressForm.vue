@@ -2,10 +2,12 @@
 
 import {reactive, ref, toRefs} from "vue";
 import {FormRules} from "naive-ui";
-import SelectAddress from "../../components/SelectAddress.vue";
+import SelectAddress from "@/components/SelectAddress.vue";
 import {saveUserReceives} from "@/api/trade/trade-api"
 
-const emit = defineEmits(['submitOk'])
+const submitOkEmit = 'submitOk';
+
+const emit = defineEmits([submitOkEmit])
 
 defineProps({
   show: {
@@ -71,7 +73,7 @@ const data = reactive({
             district: districts.district?.name,
             street: districts.street?.name
           })
-          emit('submitOk', {
+          emit(submitOkEmit, {
             name,
             mobile,
             address,

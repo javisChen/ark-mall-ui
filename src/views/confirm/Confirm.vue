@@ -123,7 +123,7 @@ const {
       </div>
     </div>
   </div>
-  <div class="main" v-if="order">
+  <div class="main" v-if="order && order.orderBase">
     <div class="container">
       <div class="section section-order">
         <div class="order-info clearfix">
@@ -138,13 +138,10 @@ const {
               {{ receive.street }} {{ receive.address }}</p></div>
           <div class="fr">
             <div class="total">应付总额：<span class="money">
-              <em v-if="order.orderCharge">{{ $filters.formatShowPrice(order.orderCharge.actualAmount) }}</em>
+              <em>{{ $filters.formatShowPrice(order.orderAmount.actualAmount) }}</em>
               <span>元</span>
             </span>
             </div>
-            <!--            <a href="javascript:void(0);" class="show-detail">订单详情-->
-            <!--              <i class="iconfont"></i>-->
-            <!--            </a>-->
           </div>
         </div>
         <i class="iconfont icon-right">√</i>
@@ -166,7 +163,7 @@ const {
             <li class="clearfix">
               <div class="label"> 商品名称：</div>
               <div class="content">
-                <span v-for="item in order.orderProducts">{{ buildProductDesc(item)}}</span>
+                <span v-for="item in order.orderItems">{{ buildProductDesc(item)}}</span>
               </div>
             </li>
             <li class="clearfix hide">

@@ -159,9 +159,8 @@ const {
                       <span class="sep">|</span>
                       {{ order.orderBase.buyerName }}
                       <span class="sep">|</span>
-                      订单号：<a href="//www.mi.com/user/orderView?order_id=5231127733200098">{{
-                        order.orderBase.tradeNo
-                      }}</a><span
+                      订单号：<a href="javascript:void(0)">
+                      {{ order.orderBase.tradeNo }}</a><span
                         class="sep">|</span>
                       在线支付
                     </p></th>
@@ -193,12 +192,11 @@ const {
                       </ul>
                     </td>
                     <td class="order-actions">
-                      <a v-if="order.orderStatus === DICT_ORDER_STATUS_WAIT_PAY"
-                         href="//www.mi.com/buy/confirm?id=5231127733200098"
+                      <a v-if="order.orderBase.orderStatus === DICT_ORDER_STATUS_WAIT_PAY"
+                         href="javascript:void(0)"
                          target="_blank" class="btn btn-small btn-primary">立即付款</a>
-                      <a
-                          @click="toOrderDetailPage(order)"
-                          href="javascript:void(0)"
+                      <a @click="toOrderDetailPage(order)"
+                         href="javascript:void(0)"
                          class="btn btn-small btn-line-gray">订单详情</a>
                       <a href="javascript:void(0)"
                          class="btn btn-small btn-line-gray btn-contract">联系客服</a>
