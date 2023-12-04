@@ -1,6 +1,5 @@
 <script setup>
 import {useRoute, useRouter} from "vue-router";
-import {computed} from 'vue';
 import {useAuthStore} from '@/store/auth'
 import {useCartStore} from '@/store/cart'
 

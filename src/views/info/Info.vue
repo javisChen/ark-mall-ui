@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import CommonTopBar from "../common/CommonTopBar.vue";
+import CommonTopBar from "@/views/common/CommonTopBar.vue";
 import {onMounted, reactive, toRefs, computed, ref} from 'vue';
-import {getInfo} from "../../api/commodity/commodity-api"
+import {getInfo} from "@/api/commodity/commodity-api"
 import {useRoute, useRouter} from 'vue-router';
 import {useCartStore} from '@/store/cart'
 

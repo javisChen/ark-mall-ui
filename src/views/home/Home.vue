@@ -2,7 +2,7 @@
 
 import {onMounted, reactive, toRefs} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
-import CommonTopBar from "@/common/CommonTopBar.vue";
+import CommonTopBar from "@/views/common/CommonTopBar.vue";
 import {getList} from "@/api/commodity/category-api.js"
 import {search} from "@/api/commodity/commodity-api.js"
 import {fenToYuan} from '@/utils/util';

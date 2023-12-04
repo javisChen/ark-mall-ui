@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  nacos:
+    image: ark-mall-ui
+    container_name: ark-mall-ui
+    ports:
+      - "80:80"
+    restart: always
+    networks:
+      - compose_default
+networks:
+  compose_default:
+    external: true

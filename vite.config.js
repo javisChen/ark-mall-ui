@@ -1,10 +1,25 @@
 import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
+import {createHtmlPlugin} from "vite-plugin-html";
+import {inject} from "vue";
 
 export default defineConfig({
+    base: './',
+    build: {
+        outDir: 'dist',
+
+    },
     plugins: [
-        vue()
+        vue(),
+        createHtmlPlugin({
+                inject: {
+                    data: {
+                        title: 'Mall',
+                    }
+                }
+            }
+        )
     ],
     resolve: {
         alias: {
@@ -25,11 +40,4 @@ export default defineConfig({
         hmr: true,
         port: 8888
     },
-    define: {
-        process: {
-            env: {
-                VUE_APP_API_BASE_URL: "/api"
-            }
-        }
-    }
 })
