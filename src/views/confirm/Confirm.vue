@@ -17,11 +17,13 @@ const data = reactive({
   payOrder: {},
   payTypeList: [
     {
+      id : 1,
       name: '微信支付',
       code: 'WECHAT',
       logo: '//cdn.cnbj1.fds.api.mi-img.com/mi-mall/031f3af10e3856352b847fe480b2b2e5.png'
     },
     {
+      id : 2,
       name: '支付宝',
       code: 'ALIPAY',
       logo: '//cdn.cnbj1.fds.api.mi-img.com/mi-mall/4cdfb179cdce8f95c57e8d82c469d20c.png'
@@ -46,13 +48,14 @@ onMounted(async () => {
 
 })
 
-const onPay = async (item) => {
+const onPay = async (payType) => {
   data.createOrderLoading = true
 
   try {
     const createResult = await createPayOrder({
-      orderId: data.order.orderBase.id,
-      payTypeCode: item.code,
+      bizTradeNo: data.order.orderBase.tradeNo,
+      payTypeId: payType.id,
+      payTypeCode: payType.code,
       description: ""
     })
     data.createOrderLoading = false

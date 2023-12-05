@@ -12,7 +12,6 @@ import accounting from 'accounting'
 import 'vfonts/FiraCode.css'
 import {initFilters} from "@/filter";
 
-
 import {
     create,
     NButton,
