@@ -20,17 +20,8 @@ const data = reactive({
   carts: [],
   showAddressForm: false,
   createOrderLoading: false,
-  selectedReceiveInfo: {} as ReceiveInfo,
+  selectedReceiveInfo: null as ReceiveInfo,
   userReceives: [],
-  receiveInfo: {
-    name: '陈嘉玮',
-    mobile: '18588888888',
-    province: '广东省',
-    city: '广州市',
-    district: '白云区',
-    street: '人民街道',
-    address: '文明路',
-  },
   toCartPage: () => {
     router.push({
       name: 'cart'
@@ -42,7 +33,10 @@ const data = reactive({
       size: 20
     });
     const {records} = result.data
-    data.userReceives = records
+    if (records && records.length > 0) {
+      data.selectedReceiveInfo = records[0]
+      data.userReceives = records
+    }
   },
   onSelectedDistrict: (district) => {
     console.log(district)
@@ -54,12 +48,22 @@ const data = reactive({
   receiveOnSelected: (receive) => {
     data.selectedReceiveInfo = receive
   },
-  toConfirm: async () => {
+  doCreateOrder: async () => {
+    if (!data.selectedReceiveInfo) {
+      window.$message.warning('请选择收货地址!')
+      return;
+    }
+    const orderItems = cartStore.checkedCartItems.map(item => new OrderItem(item.skuId, item.quantity));
+    if (!orderItems || orderItems.length === 0) {
+      window.$message.warning('请先去添加商品到购物车吧!')
+      return;
+    }
+
     data.createOrderLoading = true
     let order = new Order();
     order.orderType = 1;
     order.orderChannel = 1;
-    order.orderItems = cartStore.checkedCartItems.map(item => new OrderItem(item.skuId, item.quantity))
+    order.orderItems = orderItems
     order.receiveInfo = data.selectedReceiveInfo;
     try {
       const result = await createOrder(order)
@@ -68,6 +72,7 @@ const data = reactive({
           name: 'confirm',
           query: {id: result.data}
         })
+
         data.createOrderLoading = false
       }, 800)
     } catch (e) {
@@ -84,7 +89,7 @@ const {
   createOrderLoading,
   userReceives,
   selectedReceiveInfo,
-  toConfirm,
+  doCreateOrder,
   toCartPage
 } = toRefs(data)
 
@@ -118,8 +123,8 @@ const {
         <div class="address-list">
           <div class="address-item"
                v-if="userReceives && userReceives.length > 0"
-               v-for="receiveInfo in userReceives"
-               :class="selectedReceiveInfo.id === receiveInfo.id ? 'active' : ''"
+               v-for="(receiveInfo, idx) in userReceives"
+               :class="(selectedReceiveInfo?.id === receiveInfo.id) || (!selectedReceiveInfo && idx === 0) ? 'active' : ''"
                @click="receiveOnSelected(receiveInfo)"
           >
             <div class="address-info">
@@ -226,7 +231,7 @@ const {
       <div class="cart-bar">
         <div class="btn-box">
           <a class="btn return-btn" @click="toCartPage">返回购物车</a>
-          <a class="btn primary-btn" @click="toConfirm">立即下单</a>
+          <a class="btn primary-btn" @click="doCreateOrder">立即下单</a>
         </div>
       </div>
     </div>

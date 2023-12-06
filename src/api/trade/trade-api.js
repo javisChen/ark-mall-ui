@@ -7,8 +7,10 @@ const api = {
   checkedCartItem: Base.serviceName + '/v1/cart/item/checked',
   cartItems: Base.serviceName + '/v1/cart/items',
   updateCartItemQuantity: Base.serviceName + '/v1/cart/item/quantity',
+
   createOrder: Base.serviceName + '/v1/order/create',
   getOrderInfo: Base.serviceName + '/v1/order/details',
+  orderReceive: Base.serviceName + '/v1/order/receive',
 
   getUserOrders: Base.serviceName + '/v1/user/order/pages',
   getUserReceives: Base.serviceName + '/v1/user/receive/pages',
@@ -34,4 +36,7 @@ export const getOrderInfo = (params) => get({url: api.getOrderInfo, params})
 export const getUserOrders = (data) => post({url: api.getUserOrders, data})
 
 export const getUserReceives = (data) => post({url: api.getUserReceives, data})
+
 export const saveUserReceives = (data) => post({url: api.saveUserReceives, data})
+
+export const orderReceive = (data) => post({url: api.orderReceive, data})

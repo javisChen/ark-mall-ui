@@ -2,7 +2,7 @@
 
 import {onMounted, reactive, toRefs} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
-import {getUserOrders} from "@/api/trade/trade-api"
+import {getUserOrders, orderReceive} from "@/api/trade/trade-api"
 import {useCartStore} from "@/store/cart";
 import {buildProductDesc} from '@/utils/util'
 import image404 from '@/assets/image404.png';
@@ -13,6 +13,7 @@ import {
   DICT_ORDER_STATUS_WAIT_EVALUATE,
   DICT_ORDER_STATUS_COMPLETED
 } from '@/utils/constants'
+import {ButtonProps, DialogProps} from "naive-ui";
 
 const route = useRoute();
 const router = useRouter();
@@ -87,6 +88,31 @@ const data = reactive({
       path: `order/${order.orderBase.id}`
     })
   },
+  confirmReceive: async (order) => {
+    window.$dialog.warning(<DialogProps>{
+      title: '确认收货',
+      content: '确认商品已经成功收货了吗？',
+      positiveText: '确定',
+      negativeText: '取消',
+      negativeButtonProps: <ButtonProps>{
+        type: "tertiary",
+        secondary: true
+      },
+      onPositiveClick: async () => {
+        try {
+          await orderReceive({
+            orderId: order.orderBase.id,
+          });
+          await data.loadOrders()
+        } catch (e) {
+          console.log(e)
+        }
+      },
+      onNegativeClick: () => {
+
+      }
+    })
+  },
   toCartPage: () => {
     router.push({
       name: 'cart'
@@ -100,6 +126,7 @@ const data = reactive({
 })
 
 const {
+  confirmReceive,
   toOrderDetailPage,
   onPicError,
   onStatusFilterSelected,
@@ -194,7 +221,11 @@ const {
                     <td class="order-actions">
                       <a v-if="order.orderBase.orderStatus === DICT_ORDER_STATUS_WAIT_PAY"
                          href="javascript:void(0)"
-                         target="_blank" class="btn btn-small btn-primary">立即付款</a>
+                         class="btn btn-small btn-primary">立即付款</a>
+                      <a v-if="order.orderBase.orderStatus === DICT_ORDER_STATUS_WAIT_RECEIVE"
+                         @click="confirmReceive(order)"
+                         href="javascript:void(0)"
+                         class="btn btn-small btn-primary">确认收货</a>
                       <a @click="toOrderDetailPage(order)"
                          href="javascript:void(0)"
                          class="btn btn-small btn-line-gray">订单详情</a>
