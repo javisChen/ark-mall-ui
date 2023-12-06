@@ -5,13 +5,6 @@ import {useRoute, useRouter} from 'vue-router';
 import {getOrderInfo} from "@/api/trade/trade-api"
 import image404 from '@/assets/image404.png';
 import {buildProductDesc} from '@/utils/util'
-import {
-  DICT_ORDER_STATUS_WAIT_PAY,
-  DICT_ORDER_STATUS_WAIT_DELIVER,
-  DICT_ORDER_STATUS_WAIT_RECEIVE,
-  DICT_ORDER_STATUS_WAIT_EVALUATE,
-  DICT_ORDER_STATUS_COMPLETED
-} from '@/utils/constants'
 
 const route = useRoute();
 const router = useRouter();

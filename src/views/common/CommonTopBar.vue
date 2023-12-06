@@ -50,7 +50,7 @@ const toRegisterPage = () => {
     <div class="container">
       <div class="top-bar-navs">
         <ul>
-          <li><a href="">小米商城</a></li>
+          <li><a href="">E-Mall</a></li>
         </ul>
       </div>
       <div v-if="authStore.authUser" class="cart">

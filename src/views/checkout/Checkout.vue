@@ -20,7 +20,7 @@ const data = reactive({
   carts: [],
   showAddressForm: false,
   createOrderLoading: false,
-  selectedReceiveInfo: {},
+  selectedReceiveInfo: {} as ReceiveInfo,
   userReceives: [],
   receiveInfo: {
     name: '陈嘉玮',
@@ -53,7 +53,6 @@ const data = reactive({
   },
   receiveOnSelected: (receive) => {
     data.selectedReceiveInfo = receive
-    console.log(data.selectedReceiveInfo)
   },
   toConfirm: async () => {
     data.createOrderLoading = true
@@ -61,9 +60,7 @@ const data = reactive({
     order.orderType = 1;
     order.orderChannel = 1;
     order.orderItems = cartStore.checkedCartItems.map(item => new OrderItem(item.skuId, item.quantity))
-    order.receiveInfo = new ReceiveInfo(data.receiveInfo.name, data.receiveInfo.mobile,
-        data.receiveInfo.province, data.receiveInfo.city, data.receiveInfo.district, data.receiveInfo.street,
-        data.receiveInfo.address);
+    order.receiveInfo = data.selectedReceiveInfo;
     try {
       const result = await createOrder(order)
       setTimeout(() => {
