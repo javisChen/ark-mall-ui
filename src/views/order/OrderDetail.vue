@@ -84,22 +84,22 @@ const {
               <li class="step">
                 <div class="progress"
                      :class="[stepStyle(1)]"><span class="text">下单</span></div>
-                <div class="info">11月28日 15:38</div>
+                <div class="info">{{ order.orderBase.createTime }}</div>
               </li>
               <li class="step">
                 <div class="progress"
                      :class="[stepStyle(2)]"><span class="text">付款</span></div>
-                <div class="info"></div>
+                <div class="info">{{ order.orderBase.payTime }}</div>
               </li>
               <li class="step">
                 <div class="progress"
                      :class="[stepStyle(3)]"><span class="text">发货</span></div>
-                <div class="info"></div>
+                <div class="info">{{ order.orderBase.deliverTime }}</div>
               </li>
               <li class="step step-last">
                 <div class="progress"
                      :class="[stepStyle(4)]"><span class="text">收货</span></div>
-                <div class="info"></div>
+                <div class="info">{{ order.orderBase.receiveTime  }}</div>
               </li>
               <li class="step step-last">
                 <div class="progress"
