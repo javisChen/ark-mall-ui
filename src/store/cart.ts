@@ -43,7 +43,7 @@ export const useCartStore
     },
     actions: {
         async loadCartInfo() {
-            const userAuth= useAuthStore()
+            const userAuth = useAuthStore()
             if (!userAuth.authUser) {
                 return;
             }

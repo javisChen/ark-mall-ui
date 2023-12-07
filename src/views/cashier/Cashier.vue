@@ -5,7 +5,8 @@ import {getOrderInfo} from "@/api/trade/trade-api"
 import {getPayOrderStatus, createPayOrder} from "@/api/pay/pay-api"
 import {useRoute, useRouter} from 'vue-router';
 import {buildProductDesc} from '@/utils/util'
-import BizLoading from "../../components/BizLoading.vue";
+import BizLoading from "@/components/BizLoading.vue";
+import CommonTopBar from "@/views/common/CommonTopBar.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -13,17 +14,16 @@ const router = useRouter();
 const data = reactive({
   order: {},
   createOrderLoading: false,
-  orderCharge: {},
   payOrder: {},
   payTypeList: [
     {
-      id : 1,
+      id: 1,
       name: '微信支付',
       code: 'WECHAT',
       logo: '//cdn.cnbj1.fds.api.mi-img.com/mi-mall/031f3af10e3856352b847fe480b2b2e5.png'
     },
     {
-      id : 2,
+      id: 2,
       name: '支付宝',
       code: 'ALIPAY',
       logo: '//cdn.cnbj1.fds.api.mi-img.com/mi-mall/4cdfb179cdce8f95c57e8d82c469d20c.png'
@@ -34,6 +34,10 @@ const data = reactive({
 })
 
 onMounted(async () => {
+  await loadOrder();
+})
+
+async function loadOrder() {
   try {
     const result = await getOrderInfo({id: route.query.id});
     result.data.orderItems.forEach(item => {
@@ -41,12 +45,10 @@ onMounted(async () => {
     })
     data.order = result.data
     data.receive = data.order.orderReceive
-    data.orderCharge = data.order.orderCharge
   } catch (e) {
     console.log(e)
   }
-
-})
+}
 
 const onPay = async (payType) => {
   data.createOrderLoading = true
@@ -69,8 +71,8 @@ const onPay = async (payType) => {
 
 const submitCallback = async (item) => {
   try {
-    const result = await getPayOrderStatus({id: data.payOrder.payOrderId})
-    if (result.data == 3) {
+    await loadOrder()
+    if (data.order.orderBase.payStatus === 3) {
       await router.push({
         name: 'paySuccess',
       })
@@ -87,6 +89,9 @@ const submitCallback = async (item) => {
 
 const cancelCallback = (item) => {
   data.showModal = true
+  router.push({
+    name: 'order',
+  })
 }
 
 const {
@@ -101,6 +106,8 @@ const {
 </script>
 
 <template>
+
+  <common-top-bar/>
 
   <biz-loading
       description="正在生成支付单..."
@@ -122,7 +129,7 @@ const {
         <img src="@/assets/logo-mi.png" alt="">
       </div>
       <div class="header-title">
-        <span>确认订单</span>
+        <span>收银台</span>
       </div>
     </div>
   </div>
@@ -131,18 +138,20 @@ const {
       <div class="section section-order">
         <div class="order-info clearfix">
           <div class="fl">
-            <h2 class="title">订单提交成功！去付款咯～</h2>
-            <p
-                class="order-time"><span>请在<span
-                class="pay-time-tip">0 小时 14 分</span><span
-            >内完成支付, 超时后将取消订单</span></span></p>
+            <h2 class="title">订单提交成功，请尽快付款！</h2>
+            <p class="order-time">
+              <span>
+                请在<span class="pay-time-tip">0 小时 14 分</span>
+                <span>内完成支付, 否则订单会被自动取消</span>
+              </span>
+            </p>
             <p class="post-info" style="display: none;">收货信息：{{ receive.name }} {{ receive.mobile }}
               {{ receive.province }} {{ receive.city }} {{ receive.district }}
               {{ receive.street }} {{ receive.address }}</p></div>
           <div class="fr">
             <div class="total">应付总额：<span class="money">
               <em>{{ $filters.formatShowPrice(order.orderAmount.actualAmount) }}</em>
-              <span>元</span>
+              <span></span>
             </span>
             </div>
           </div>
@@ -153,7 +162,7 @@ const {
             <li class="clearfix">
               <div class="label"> 订单号：</div>
               <div class="content">
-                <span  v-if="order.orderBase" class="order-num">{{ order.orderBase.tradeNo }}</span>
+                <span v-if="order.orderBase" class="order-num">{{ order.orderBase.tradeNo }}</span>
               </div>
             </li>
             <li class="clearfix">
@@ -166,7 +175,7 @@ const {
             <li class="clearfix">
               <div class="label"> 商品名称：</div>
               <div class="content">
-                <span v-for="item in order.orderItems">{{ buildProductDesc(item)}}</span>
+                <span v-for="item in order.orderItems">{{ buildProductDesc(item) }}</span>
               </div>
             </li>
             <li class="clearfix hide">

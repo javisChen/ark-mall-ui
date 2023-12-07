@@ -5,6 +5,7 @@ import {useRoute, useRouter} from 'vue-router';
 import {getOrderInfo} from "@/api/trade/trade-api"
 import image404 from '@/assets/image404.png';
 import {buildProductDesc} from '@/utils/util'
+import CommonTopBar from "../common/CommonTopBar.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -41,9 +42,16 @@ const data = reactive({
   onPicError: async (orderItem) => {
     orderItem.picUrl = image404
   },
+  toCashier: () => {
+    router.push({
+      name: 'cashier',
+      query: {id: data.order.orderBase.id}
+    })
+  },
 })
 
 const {
+  toCashier,
   stepStyle,
   onPicError,
   order,
@@ -65,8 +73,11 @@ const {
           <div class="status-btn-box">
             <a href="javascript:void(0)"
                class="btn btn-small btn-line-gray btn-contract">联系客服</a><a
-              title="取消订单" class="btn btn-small btn-line-gray">取消订单</a><a
-              title="立即付款" class="btn btn-small btn-primary">立即付款</a>
+              title="取消订单" class="btn btn-small btn-line-gray">取消订单</a>
+            <a
+                @click="toCashier"
+                title="立即付款"
+               class="btn btn-small btn-primary">立即付款</a>
           </div>
         </div>
       </div>
@@ -77,7 +88,7 @@ const {
       <div class="order-detail uc-order-item-pay">
         <div class="order-summary">
           <div class="order-status">
-            <div style="display: inline-block;">等待付款</div>
+            <div style="display: inline-block;">{{ $filters.translateOrderStatus(order.orderBase.orderStatus) }}</div>
           </div>
           <div class="order-progress">
             <ol class="progress-list clearfix">
@@ -103,7 +114,7 @@ const {
               </li>
               <li class="step step-last">
                 <div class="progress"
-                     :class="[stepStyle(10)]"><span class="text">交易成功</span></div>
+                     :class="[stepStyle(10)]"><span class="text">评价</span></div>
                 <div class="info"></div>
               </li>
             </ol>
@@ -133,7 +144,7 @@ const {
                       </div>
                     </td>
                     <td class="col col-price">
-                      <p class="price">{{ $filters.formatShowPrice(orderItem.price) }}元 × {{ orderItem.quantity }}</p>
+                      <p class="price">{{ $filters.formatShowPrice(orderItem.price) }} × {{ orderItem.quantity }}</p>
                     </td>
                     <td class="col col-actions">
                     </td>
@@ -204,15 +215,15 @@ const {
           <tbody>
           <tr>
             <th>商品总价：</th>
-            <td><span class="num">{{$filters.formatShowPrice(order.orderAmount.actualAmount)}}</span>元</td>
+            <td><span class="num">{{$filters.formatShowPrice(order.orderAmount.actualAmount)}}</span></td>
           </tr>
           <tr>
             <th>运费：</th>
-            <td><span class="num">0</span>元</td>
+            <td><span class="num">0</span></td>
           </tr>
           <tr>
             <th class="total">应付金额：</th>
-            <td class="total"><span class="num">{{$filters.formatShowPrice(order.orderAmount.actualAmount)}}</span>元</td>
+            <td class="total"><span class="num">{{$filters.formatShowPrice(order.orderAmount.actualAmount)}}</span></td>
           </tr>
           </tbody>
         </table>

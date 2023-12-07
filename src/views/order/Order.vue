@@ -14,6 +14,7 @@ import {
   DICT_ORDER_STATUS_COMPLETED
 } from '@/utils/constants'
 import {ButtonProps, DialogProps} from "naive-ui";
+import CommonTopBar from "../common/CommonTopBar.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -118,6 +119,12 @@ const data = reactive({
       name: 'cart'
     })
   },
+  toCashier: (order) => {
+    router.push({
+      name: 'cashier',
+      query: {id: order.orderBase.id}
+    })
+  },
   toConfirm: async () => {
   },
   onPicError: async (orderItem) => {
@@ -126,6 +133,7 @@ const data = reactive({
 })
 
 const {
+  toCashier,
   confirmReceive,
   toOrderDetailPage,
   onPicError,
@@ -193,7 +201,7 @@ const {
                     </p></th>
                     <th class="col-sub"><p class="caption-price">
                       应付金额：
-                      <span class="num">{{ $filters.formatShowPrice(order.orderAmount.actualAmount) }}</span>元
+                      <span class="num">{{ $filters.formatShowPrice(order.orderAmount.actualAmount) }}</span>
                     </p></th>
                   </tr>
                   </thead>
@@ -212,7 +220,7 @@ const {
                               <a href="javascript:void(0);">{{ buildProductDesc(orderItem) }}</a>
                             </p>
                             <p class="price">
-                              {{ $filters.formatShowPrice(orderItem.price) }}元 × {{ orderItem.quantity }}
+                              {{ $filters.formatShowPrice(orderItem.price) }} × {{ orderItem.quantity }}
                             </p>
                           </div>
                         </li>
@@ -220,6 +228,7 @@ const {
                     </td>
                     <td class="order-actions">
                       <a v-if="order.orderBase.orderStatus === DICT_ORDER_STATUS_WAIT_PAY"
+                         @click="toCashier(order)"
                          href="javascript:void(0)"
                          class="btn btn-small btn-primary">立即付款</a>
                       <a v-if="order.orderBase.orderStatus === DICT_ORDER_STATUS_WAIT_RECEIVE"

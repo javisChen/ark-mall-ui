@@ -4,6 +4,7 @@ import {reactive, toRefs, onMounted, computed, ref, Ref} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import {ButtonProps, DialogProps, NCheckbox} from 'naive-ui'
 import {useCartStore} from '@/store/cart'
+import CommonTopBar from "../common/CommonTopBar.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -61,6 +62,8 @@ const {
 </script>
 
 <template>
+  <common-top-bar/>
+
   <div class="header">
     <div class="container">
       <div class="header-logo">
@@ -111,7 +114,7 @@ const {
                   {{ item.showProductName }}
                 </n-ellipsis>
               </div>
-              <div class="cart-table-col price">{{ $filters.formatShowPrice(item.price) }}元</div>
+              <div class="cart-table-col price">{{ $filters.formatShowPrice(item.price) }}</div>
               <div class="cart-table-col num">
                 <n-input-number
                     min="1"
@@ -121,7 +124,7 @@ const {
                     v-model:value="item.quantity"
                     button-placement="both"/>
               </div>
-              <div class="cart-table-col total">{{ $filters.formatShowPrice(item.price * item.quantity) }}元</div>
+              <div class="cart-table-col total">{{ $filters.formatShowPrice(item.price * item.quantity) }}</div>
               <div class="cart-table-col">
                 <n-button
                     @click="removeCartItems($event, item)"
@@ -142,7 +145,7 @@ const {
             <span class="quantity primary">{{ cartStore.totalQuantity }}</span> 件
           </div>
           <div class="total-price primary">合计：<span
-              class="money">{{ $filters.formatShowPrice(cartStore.totalPrice) }}</span>元
+              class="money">{{ $filters.formatShowPrice(cartStore.totalPrice) }}</span>
           </div>
           <div class="btn-box">
             <n-button

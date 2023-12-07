@@ -7,6 +7,7 @@ import {Order, OrderItem, ReceiveInfo} from "./Order.ts";
 import {useCartStore} from "@/store/cart";
 import BizLoading from "@/components/BizLoading.vue";
 import AddressForm from "./AddressForm.vue";
+import CommonTopBar from "../common/CommonTopBar.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -38,9 +39,6 @@ const data = reactive({
       data.userReceives = records
     }
   },
-  onSelectedDistrict: (district) => {
-    console.log(district)
-  },
   onAddressSubmitOk: (district) => {
     data.loadUserReceives();
     data.showAddressForm = false
@@ -69,10 +67,9 @@ const data = reactive({
       const result = await createOrder(order)
       setTimeout(() => {
         router.push({
-          name: 'confirm',
+          name: 'cashier',
           query: {id: result.data}
         })
-
         data.createOrderLoading = false
       }, 800)
     } catch (e) {
@@ -97,6 +94,8 @@ const {
 </script>
 
 <template>
+
+  <common-top-bar/>
 
   <biz-loading
       description="订单生成中..."
@@ -158,15 +157,14 @@ const {
               <img :src="item.picUrl">
             </div>
             <div class="item-desc good-name">
-              <a
-                  href="//www.mi.com/buy?product_id=1213100005"
-                  target="_blank"><span>{{ item.showProductName }}</span>
+              <a href="javascript:void(0)">
+                <span>{{ item.showProductName }}</span>
               </a>
             </div>
             <div class="item-desc price-box">
-              <div class="item-desc good-price">{{ $filters.formatShowPrice(item.price) }}元 x {{ item.quantity }}</div>
+              <div class="item-desc good-price">{{ $filters.formatShowPrice(item.price) }} x {{ item.quantity }}</div>
               <div class="item-desc good-status"></div>
-              <div class="item-desc good-total">{{ $filters.formatShowPrice(item.price * item.quantity) }}元</div>
+              <div class="item-desc good-total">{{ $filters.formatShowPrice(item.price * item.quantity) }}</div>
             </div>
           </div>
         </div>
@@ -208,23 +206,23 @@ const {
           </div>
           <div class="bill-item">
             <div class="bill-name">商品总价：</div>
-            <div class="bill-money">{{ $filters.formatShowPrice(cartStore.totalPrice) }}元</div>
+            <div class="bill-money">{{ $filters.formatShowPrice(cartStore.totalPrice) }}</div>
           </div>
           <div class="bill-item">
             <div class="bill-name">活动优惠：</div>
-            <div class="bill-money">-0元</div>
+            <div class="bill-money">- {{ $filters.formatShowPrice(0) }}</div>
           </div>
           <div class="bill-item">
             <div class="bill-name">优惠券抵扣：</div>
-            <div class="bill-money">-0元</div>
+            <div class="bill-money">- {{ $filters.formatShowPrice(0) }}</div>
           </div>
           <div class="bill-item">
             <div class="bill-name">运费：</div>
-            <div class="bill-money">0元</div>
+            <div class="bill-money">- {{ $filters.formatShowPrice(0) }}</div>
           </div>
           <div class="bill-item total-price">
             <div class="bill-name">应付总额：</div>
-            <div class="bill-money"><em>{{ $filters.formatShowPrice(cartStore.totalPrice) }}</em>元</div>
+            <div class="bill-money"><em>{{ $filters.formatShowPrice(cartStore.totalPrice) }}</em></div>
           </div>
         </div>
       </div>

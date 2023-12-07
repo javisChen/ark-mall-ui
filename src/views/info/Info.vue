@@ -121,7 +121,7 @@ const {
           {{ product.description }}
         </div>
         <div class="price-info">
-          <span>{{ product.price }} 元</span>
+          <span>{{ product.price }} </span>
         </div>
         <div class="line"></div>
         <div class="spec">
@@ -147,10 +147,10 @@ const {
         <div class="selected-list">
           <div class="selected-info">
             <span class="selected-product">{{ selectedFullName }}</span>
-            <span class="selected-product-price">{{ $filters.formatShowPrice(currentSku.salesPrice) }} 元</span>
+            <span class="selected-product-price">{{ $filters.formatShowPrice(currentSku.salesPrice) }} </span>
           </div>
           <div class="total-price">
-            总计：{{ $filters.formatShowPrice(currentSku.salesPrice) }} 元
+            总计：{{ $filters.formatShowPrice(currentSku.salesPrice) }}
           </div>
         </div>
         <div class="btn-box">

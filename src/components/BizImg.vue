@@ -6,7 +6,7 @@
 </template>
 <script setup lang="ts">
 
-import {defineProps, defineEmits, reactive} from 'vue'
+import {reactive} from 'vue'
 import image404 from '@/assets/image404.png';
 
 defineProps({
