@@ -57,7 +57,6 @@ const {
   order,
 } = toRefs(data)
 
-
 </script>
 
 <template>

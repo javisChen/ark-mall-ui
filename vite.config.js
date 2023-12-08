@@ -1,8 +1,6 @@
 import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
-import {createHtmlPlugin} from "vite-plugin-html";
-import {inject} from "vue";
 
 export default defineConfig({
     base: './',
@@ -12,14 +10,6 @@ export default defineConfig({
     },
     plugins: [
         vue(),
-        createHtmlPlugin({
-                inject: {
-                    data: {
-                        title: 'Mall',
-                    }
-                }
-            }
-        )
     ],
     resolve: {
         alias: {

@@ -14,7 +14,6 @@ import {
   DICT_ORDER_STATUS_COMPLETED
 } from '@/utils/constants'
 import {ButtonProps, DialogProps} from "naive-ui";
-import CommonTopBar from "../common/CommonTopBar.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -181,28 +180,16 @@ const {
                 v-for="(order, idx) in orders"
                 class="uc-order-item uc-order-item-pay">
               <div class="order-detail">
-                <div class="order-summary">
-                  <div class="order-status">
-                    {{ $filters.translateOrderStatus(order.orderBase.orderStatus) }}
-                  </div>
-                </div>
                 <table class="order-detail-table">
                   <thead>
                   <tr>
-                    <th class="col-main"><p class="caption-info">
-                      {{ order.orderBase.createTime }}
-                      <span class="sep">|</span>
-                      {{ order.orderBase.buyerName }}
-                      <span class="sep">|</span>
-                      订单号：<a href="javascript:void(0)">
-                      {{ order.orderBase.tradeNo }}</a><span
-                        class="sep">|</span>
-                      在线支付
-                    </p></th>
-                    <th class="col-sub"><p class="caption-price">
-                      应付金额：
-                      <span class="num">{{ $filters.formatShowPrice(order.orderAmount.actualAmount) }}</span>
-                    </p></th>
+                    <th class="col-main" colspan="4">
+                      {{ $filters.translateOrderStatus(order.orderBase.orderStatus) }}
+                      &nbsp;<span class="sep">|</span>&nbsp;
+                      <span class="label">下单时间：</span>{{ order.orderBase.createTime }}
+                      &nbsp;<span class="sep">|</span>&nbsp;
+                      <span class="label">订单号：</span><a @click="toOrderDetailPage(order)" href="javascript:void(0)">{{ order.orderBase.tradeNo }}</a>
+                    </th>
                   </tr>
                   </thead>
                   <tbody>
@@ -212,19 +199,42 @@ const {
                         <li v-for="orderItem in order.orderItems">
                           <div class="figure figure-thumb">
                             <a href="javascript:void(0);">
-                              <img :src="orderItem.picUrl" width="80" height="80" @error="onPicError(orderItem)">
+                              <img :src="orderItem.picUrl" @error="onPicError(orderItem)">
                             </a>
                           </div>
                           <div class="goods-info">
-                            <p class="name">
+                            <span class="name">
                               <a href="javascript:void(0);">{{ buildProductDesc(orderItem) }}</a>
-                            </p>
-                            <p class="price">
-                              {{ $filters.formatShowPrice(orderItem.price) }} × {{ orderItem.quantity }}
-                            </p>
+                            </span>
+                            <span class="price">
+                              {{ $filters.formatShowPrice(orderItem.price) }}
+                            </span>
+                            <span class="quantity">
+                              ×{{ orderItem.quantity }}
+                            </span>
                           </div>
                         </li>
                       </ul>
+                    </td>
+<!--                    <td class="order-price">-->
+<!--                      <p>-->
+<!--                        {{order.orderAmount.acutalAmount}}-->
+<!--                      </p>-->
+<!--                    </td>-->
+<!--                    <td class="order-quantity">-->
+<!--                      <p>-->
+<!--                        {{order.orderAmount.acutalAmount}}-->
+<!--                      </p>-->
+<!--                    </td>-->
+                    <td class="order-receive">
+                      <p>
+                        {{order.orderBase.buyerName}}
+                      </p>
+                    </td>
+                    <td class="order-amount">
+                      <p>
+                        {{order.orderAmount.acutalAmount}}
+                      </p>
                     </td>
                     <td class="order-actions">
                       <a v-if="order.orderBase.orderStatus === DICT_ORDER_STATUS_WAIT_PAY"
@@ -263,8 +273,7 @@ const {
 <style scoped>
 
 .order-list-box .order-list .uc-order-item-pay .order-detail-table th {
-  background: #fffaf7;
-  border-bottom: 1px solid #feccac;
+  background: #F3F3F3;
 }
 
 .order-list-box .order-detail-table th .sep {
@@ -295,19 +304,47 @@ const {
   top: 0;
 }
 
+.figure-thumb img {
+  border: 1px solid #E8E3DE;
+  padding: 2px;
+  width: 80px;
+  height: 80px;
+}
+
 .order-list-box .goods-list .goods-info {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 }
 
 .order-list-box .goods-list .price {
-  margin: 0;
+  width: 100px;
 }
 
 .order-list-box .order-detail-table .order-actions {
-  padding-top: 20px;
-  text-align: right;
-  vertical-align: top;
+  display: flex;
+  flex-direction: column;
+  width: 10%;
+}
+.order-list-box .order-detail-table .order-actions .btn {
+  display: block;
+  margin: 0 0 10px auto;
+}
+
+.order-list-box .order-detail-table .order-actions .btn-small {
+  width: 80px;
+  padding: 0;
+}
+
+.order-list-box .order-detail-table .order-receive {
+  width: 10%;
+}
+
+.order-list-box .order-detail-table .order-amount {
+  width: 10%;
+}
+
+.order-list-box .order-detail-table .order-items {
+  /*width: 70%;*/
 }
 
 .order-list-box .btn-line-gray {
@@ -316,15 +353,10 @@ const {
   color: #757575;
 }
 
-.order-list-box .order-detail-table .order-actions .btn {
-  display: block;
-  margin: 0 0 10px auto;
-}
-
 .order-list-box .goods-list .name {
-  margin: 0;
+  width: 200px;
+  margin-right: 20px;
 }
-
 
 .order-list-box .goods-list .name a {
   color: #333;
@@ -333,14 +365,15 @@ const {
 .order-list-box .goods-list li {
   position: relative;
   height: 44px;
-  margin: 10px 0;
+  margin: 5px 0 20px 0;
   padding: 18px 18px 18px 100px;
   line-height: 22px;
   color: #333;
 }
 
 .order-list-box .order-detail-table td {
-  padding: 0 30px;
+  padding: 0 15px;
+  border-right: 1px solid #F1F1F1;
 }
 
 .order-list-box .order-detail-table th .num {
@@ -369,7 +402,7 @@ const {
 }
 
 .order-list-box .order-list .uc-order-item .order-status {
-  font-size: 18px;
+  /*font-size: 18px;*/
 }
 
 .order-list-box .order-detail-table th p {
@@ -381,14 +414,16 @@ const {
   font-family: sans-serif;
 }
 
+.order-detail-table {
+  font-size: 13px;
+}
+
 .order-list-box .order-detail-table th {
-  height: 28px;
-  padding: 0 30px 24px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
   border-bottom: 1px solid #e0e0e0;
-  font-weight: 400;
-  text-align: left;
   color: #757575;
-  vertical-align: bottom;
 }
 
 .order-list-box .order-summary {
@@ -402,7 +437,7 @@ const {
 }
 
 .order-list-box .order-list .uc-order-item-pay {
-  border-color: #ff6700;
+  border-color: #E1E1E1;
 }
 
 .uc-order-item {
@@ -495,6 +530,11 @@ const {
 .page {
   display: flex;
   justify-content: center;
+}
+
+
+.col-main .label {
+  color: #ACACAC;
 }
 
 </style>

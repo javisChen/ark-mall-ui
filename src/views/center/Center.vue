@@ -2,14 +2,13 @@
 
 import {onMounted, reactive, toRefs} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
-import {useCartStore} from "@/store/cart";
 import CommonTopBar from "@/views/common/CommonTopBar.vue";
 
 const route = useRoute();
 const router = useRouter();
-const cartStore = useCartStore();
 
 onMounted(async () => {
+
 })
 
 const data = reactive({})
@@ -84,21 +83,15 @@ const {} = toRefs(data)
 
 #J_userMenu {
   background: #fff;
-  padding: 36px 0;
-  width: 234px;
 }
 
 .user-address-menu .menu-box {
-  margin: 0 48px 12px;
-}
-
-.user-address-menu .menu-box {
-  margin: 0 48px 12px;
+  margin: 0 30px 20px 30px;
 }
 
 .user-address-menu h3 {
-  font-size: 16px;
-  font-weight: 400;
+  font-size: 14px;
+  font-weight: bold;
   line-height: 52px;
   color: #333;
   margin: 0;
@@ -112,7 +105,8 @@ const {} = toRefs(data)
 }
 
 .user-address-menu li {
-  padding: 6px 0;
+  padding: 0 0 15px 0;
+  font-size: 13px;
 }
 
 .user-address-menu li a {
