@@ -1,20 +1,21 @@
 import {post, get, del, put} from '@/utils/request'
-import Base  from './trade-base-api'
+import Base from './trade-base-api'
+import Order from "@/views/order/Order.vue";
 
 const api = {
-  cartItem: Base.serviceName + '/v1/cart/item/save',
-  deleteCartItems: Base.serviceName + '/v1/cart/item/delete',
-  checkedCartItem: Base.serviceName + '/v1/cart/item/checked',
-  cartItems: Base.serviceName + '/v1/cart/items',
-  updateCartItemQuantity: Base.serviceName + '/v1/cart/item/quantity',
+    cartItem: Base.serviceName + '/v1/cart/item/save',
+    deleteCartItems: Base.serviceName + '/v1/cart/item/delete',
+    checkedCartItem: Base.serviceName + '/v1/cart/item/checked',
+    cartItems: Base.serviceName + '/v1/cart/items',
+    updateCartItemQuantity: Base.serviceName + '/v1/cart/item/quantity',
 
-  createOrder: Base.serviceName + '/v1/order/create',
-  getOrderInfo: Base.serviceName + '/v1/order/details',
-  orderReceive: Base.serviceName + '/v1/order/receive',
+    createOrder: Base.serviceName + '/v1/order/create',
+    getOrderInfo: Base.serviceName + '/v1/order/details',
+    orderReceive: Base.serviceName + '/v1/order/receive',
 
-  getUserOrders: Base.serviceName + '/v1/user/order/pages',
-  getUserReceives: Base.serviceName + '/v1/user/receive/pages',
-  saveUserReceives: Base.serviceName + '/v1/user/receive/save',
+    getUserOrders: Base.serviceName + '/v1/user/order/pages',
+    getUserReceives: Base.serviceName + '/v1/user/receive/pages',
+    saveUserReceives: Base.serviceName + '/v1/user/receive/save',
 }
 
 export default api

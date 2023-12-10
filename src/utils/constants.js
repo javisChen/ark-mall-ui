@@ -11,3 +11,15 @@ export const DICT_ORDER_STATUS = {
   4: "待评价",
   10: "已完成"
 }
+
+export const DICT_PAY_TYPE = {
+  1: "微信支付",
+  2: "支付宝",
+}
+
+export const DICT_PAY_STATUS = {
+  1: "未支付",
+  2: "支付中",
+  3: "支付成功",
+  4: "支付失败"
+}

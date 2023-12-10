@@ -1,43 +1,64 @@
+
 export class Order {
-    orderType: number
-    orderChannel: number
-    orderItems: OrderItem[]
-    receiveInfo: ReceiveInfo
+    orderBase: OrderBaseDTO;
+    orderAmount: OrderAmountDTO;
+    orderReceive: OrderReceiveDTO;
+    orderItems: OrderItemDTO[];
 }
 
-export class OrderItem {
-    skuId: number
-    quantity: number
-
-    constructor(skuId: number, quantity: number) {
-        this.skuId = skuId;
-        this.quantity = quantity;
-    }
+// OrderBaseDTO.ts
+export class OrderBaseDTO {
+    id: number;
+    tradeNo: string;
+    orderType: number;
+    orderChannel: number;
+    orderStatus: number;
+    payStatus: number;
+    payType: number;
+    payTradeNo: string;
+    payTime: Date;
+    deliverTime: Date;
+    receiveTime: Date;
+    completionTime: Date;
+    buyerRemark: string;
+    buyerId: number;
+    buyerName: string;
+    sellerId: number;
+    logisticsCompany: string;
+    logisticsCode: string;
+    createTime: Date;
 }
 
-export class ReceiveInfo {
-    name: string
-    mobile: string
-    province: string
-    city: string
-    district: string
-    street: string
-    address: string
+// OrderAmountDTO.ts
+export class OrderAmountDTO {
+    expectAmount: number;
+    actualAmount: number;
+    freightAmount: number;
+}
 
+// OrderReceiveDTO.ts
+export class OrderReceiveDTO {
+    id: number;
+    orderId: number;
+    name?: string;
+    mobile?: string;
+    province?: string;
+    city?: string;
+    district?: string;
+    address?: string;
+    street?: string;
+}
 
-    constructor(name: string,
-                mobile: string,
-                province: string,
-                city: string,
-                district: string,
-                street: string,
-                address: string) {
-        this.name = name;
-        this.mobile = mobile;
-        this.province = province;
-        this.city = city;
-        this.district = district;
-        this.street = street;
-        this.address = address;
-    }
+// OrderItemDTO.ts
+export class OrderItemDTO {
+    orderId?: number;
+    tradeNo?: string;
+    productName?: string;
+    skuId?: number;
+    price?: number;
+    quantity?: number;
+    expectAmount?: number;
+    actualAmount?: number;
+    picUrl?: string;
+    specData?: string;
 }

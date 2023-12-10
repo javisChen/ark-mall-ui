@@ -68,3 +68,9 @@ a {
 a:hover {
     color: #ff6700;
 }
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

@@ -4,15 +4,16 @@ import {onMounted, reactive, toRefs} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import {getUserOrders, orderReceive} from "@/api/trade/trade-api"
 import {useCartStore} from "@/store/cart";
-import {buildProductDesc} from '@/utils/util'
+import {buildSpecDesc} from '@/utils/util'
 import image404 from '@/assets/image404.png';
+
 import {
   DICT_ORDER_STATUS_WAIT_PAY,
   DICT_ORDER_STATUS_WAIT_DELIVER,
   DICT_ORDER_STATUS_WAIT_RECEIVE,
-  DICT_ORDER_STATUS_WAIT_EVALUATE,
   DICT_ORDER_STATUS_COMPLETED
 } from '@/utils/constants'
+
 import {ButtonProps, DialogProps} from "naive-ui";
 
 const route = useRoute();
@@ -188,7 +189,9 @@ const {
                       &nbsp;<span class="sep">|</span>&nbsp;
                       <span class="label">下单时间：</span>{{ order.orderBase.createTime }}
                       &nbsp;<span class="sep">|</span>&nbsp;
-                      <span class="label">订单号：</span><a @click="toOrderDetailPage(order)" href="javascript:void(0)">{{ order.orderBase.tradeNo }}</a>
+                      <span class="label">订单号：</span><a @click="toOrderDetailPage(order)" href="javascript:void(0)">{{
+                        order.orderBase.tradeNo
+                      }}</a>
                     </th>
                   </tr>
                   </thead>
@@ -203,38 +206,29 @@ const {
                             </a>
                           </div>
                           <div class="goods-info">
-                            <span class="name">
-                              <a href="javascript:void(0);">{{ buildProductDesc(orderItem) }}</a>
-                            </span>
-                            <span class="price">
+                            <div class="name flex-column">
+                              <div>
+                                <a href="javascript:void(0);">{{ orderItem.productName }}</a>
+                              </div>
+                              <div class="spec">
+                                <n-ellipsis :line-clamp="1">{{buildSpecDesc(orderItem)}}</n-ellipsis>
+                              </div>
+                            </div>
+                            <span class="price flex-column">
                               {{ $filters.formatShowPrice(orderItem.price) }}
                             </span>
-                            <span class="quantity">
+                            <span class="quantity flex-column">
                               ×{{ orderItem.quantity }}
                             </span>
                           </div>
                         </li>
                       </ul>
                     </td>
-<!--                    <td class="order-price">-->
-<!--                      <p>-->
-<!--                        {{order.orderAmount.acutalAmount}}-->
-<!--                      </p>-->
-<!--                    </td>-->
-<!--                    <td class="order-quantity">-->
-<!--                      <p>-->
-<!--                        {{order.orderAmount.acutalAmount}}-->
-<!--                      </p>-->
-<!--                    </td>-->
                     <td class="order-receive">
-                      <p>
-                        {{order.orderBase.buyerName}}
-                      </p>
+                      <div>{{ order.orderBase.buyerName }}</div>
                     </td>
                     <td class="order-amount">
-                      <p>
-                        {{order.orderAmount.acutalAmount}}
-                      </p>
+                      {{ $filters.formatShowPrice(order.orderAmount.actualAmount) }}
                     </td>
                     <td class="order-actions">
                       <a v-if="order.orderBase.orderStatus === DICT_ORDER_STATUS_WAIT_PAY"
@@ -290,18 +284,8 @@ const {
   list-style-type: none;
 }
 
-
-.order-list-box .goods-list li {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-
-}
-
 .order-list-box .goods-list .figure-thumb {
-  position: absolute;
-  left: 0;
-  top: 0;
+  margin-right: 15px;
 }
 
 .figure-thumb img {
@@ -321,18 +305,15 @@ const {
 }
 
 .order-list-box .order-detail-table .order-actions {
-  display: flex;
-  flex-direction: column;
-  width: 10%;
-}
-.order-list-box .order-detail-table .order-actions .btn {
-  display: block;
-  margin: 0 0 10px auto;
 }
 
 .order-list-box .order-detail-table .order-actions .btn-small {
   width: 80px;
-  padding: 0;
+  margin-bottom: 10px;
+}
+
+.order-list-box .order-detail-table .order-actions .btn-small:last-child {
+  margin-bottom: 0;
 }
 
 .order-list-box .order-detail-table .order-receive {
@@ -344,7 +325,7 @@ const {
 }
 
 .order-list-box .order-detail-table .order-items {
-  /*width: 70%;*/
+  width: 70%;
 }
 
 .order-list-box .btn-line-gray {
@@ -358,22 +339,32 @@ const {
   margin-right: 20px;
 }
 
+.order-list-box .goods-list .name .spec{
+  color: #999999;
+}
+
 .order-list-box .goods-list .name a {
   color: #333;
 }
 
 .order-list-box .goods-list li {
-  position: relative;
-  height: 44px;
-  margin: 5px 0 20px 0;
-  padding: 18px 18px 18px 100px;
+  display: flex;
+  margin-bottom: 15px;
   line-height: 22px;
   color: #333;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.order-list-box .goods-list li:last-child {
+  margin-bottom: 0;
 }
 
 .order-list-box .order-detail-table td {
-  padding: 0 15px;
+  padding: 10px 15px;
   border-right: 1px solid #F1F1F1;
+  vertical-align: middle;
 }
 
 .order-list-box .order-detail-table th .num {
@@ -401,9 +392,6 @@ const {
   color: #ff6700;
 }
 
-.order-list-box .order-list .uc-order-item .order-status {
-  /*font-size: 18px;*/
-}
 
 .order-list-box .order-detail-table th p {
   margin: 0;
