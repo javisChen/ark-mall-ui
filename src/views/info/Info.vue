@@ -22,7 +22,7 @@ onMounted(async () => {
   try {
     const result = await getInfo({id: route.query.id});
     data.product = result.data
-    data.product.specList.forEach((item, idx) => {
+    data.product.specs.forEach((item, idx) => {
       data.selectedSpecValue[idx] = {attrId: item.attrId}
       data.attrCount++;
     })
@@ -70,10 +70,10 @@ const onAttrClick = (item, specItem) => {
 }
 
 const findSKU = () => {
-  const skuArr = data.product.skuList.map(sku => {
+  const skuArr = data.product.skus.map(sku => {
     return {
       ...sku,
-      values: sku.specList.map(spec => {
+      values: sku.specs.map(spec => {
         return spec.attrValue
       })
     }
@@ -126,7 +126,7 @@ const {
         <div class="line"></div>
         <div class="spec">
           <div class="spec-item"
-               v-for="specItem in product.specList">
+               v-for="specItem in product.specs">
             <div class="attr-name">
               选择{{ specItem.attrName }}
             </div>

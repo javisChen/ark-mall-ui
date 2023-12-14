@@ -5,7 +5,6 @@ import {useRoute, useRouter} from 'vue-router';
 import CommonTopBar from "@/views/common/CommonTopBar.vue";
 import {getList} from "@/api/commodity/category-api.js"
 import {search} from "@/api/commodity/commodity-api.js"
-import {fenToYuan} from '@/utils/util';
 
 const route = useRoute();
 const router = useRouter();
@@ -42,64 +41,12 @@ onMounted(async () => {
 
 const data = reactive({
   categories: [],
-  productList: [
-    {
-      title: 'Redmi Note 11T Pro+',
-      desc: '天玑8100｜真旗舰芯',
-      price: 2099
-    },
-    {
-      title: 'Redmi Note 11T Pro+',
-      desc: '天玑8100｜真旗舰芯',
-      price: 2099
-    },
-    {
-      title: 'Redmi Note 11T Pro+',
-      desc: '天玑8100｜真旗舰芯',
-      price: 2099
-    },
-    {
-      title: 'Redmi Note 11T Pro+',
-      desc: '天玑8100｜真旗舰芯',
-      price: 2099
-    },
-    {
-      title: 'Redmi Note 11T Pro+',
-      desc: '天玑8100｜真旗舰芯',
-      price: 2099
-    },
-    {
-      title: 'Redmi Note 11T Pro+',
-      desc: '天玑8100｜真旗舰芯',
-      price: 2099
-    },
-    {
-      title: 'Redmi Note 11T Pro+',
-      desc: '天玑8100｜真旗舰芯',
-      price: 2099
-    },
-    {
-      title: 'Redmi Note 11T Pro+',
-      desc: '天玑8100｜真旗舰芯',
-      price: 2099
-    },
-    {
-      title: 'Redmi Note 11T Pro+',
-      desc: '天玑8100｜真旗舰芯',
-      price: 2099
-    },
-    {
-      title: 'Redmi Note 11T Pro+',
-      desc: '天玑8100｜真旗舰芯',
-      price: 2099
-    },
-  ]
+  productList: []
 })
 
 const {
   categories,
-  productList,
-  login,
+  productList
 } = toRefs(data)
 
 
@@ -169,7 +116,7 @@ const {
                 class="item">
               <a class="item-a-tag" href="#">
                 <div class="product-img">
-                  <img width="160" height="160" src="@/assets/test-prod.webp" alt="">
+                  <img width="160" height="160" :src="item.pic" alt="">
                 </div>
                 <h3 class="title">{{ item.name }}</h3>
                 <p class="desc">{{ item.desc }}</p>

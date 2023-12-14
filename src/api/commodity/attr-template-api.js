@@ -1,5 +1,5 @@
 import {post, get, del, put} from '@/utils/request'
-import Base  from './commodity-base-api'
+import Base  from './product-base-api'
 
 const api = {
   pageList: Base.serviceName + '/v1/attr/template/page',

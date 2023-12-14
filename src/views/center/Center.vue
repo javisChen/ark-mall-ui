@@ -28,26 +28,10 @@ const {} = toRefs(data)
             <li class="active"><a href="//www.mi.com/shop/user/orderList?r=1701067386">我的订单</a></li>
           </ul>
         </div>
-        <div class="menu-box">
-          <h3 class="title">个人中心</h3>
-          <ul class="list">
-            <li><a href="//www.mi.com/shop/user/portal?r=1701067386">我的个人中心</a></li>
-          </ul>
-        </div>
-        <div class="menu-box"><h3 class="title">售后服务</h3>
-          <ul class="list">
-            <li><a href="//www.mi.com/service/aftersale/list?r=1701067386">服务记录</a></li>
-          </ul>
-        </div>
         <div class="menu-box"><h3 class="title">账户管理</h3>
           <ul class="list">
-            <li><a href="//account.xiaomi.com" target="_blank">个人信息</a></li>
-            <li><a href="//account.xiaomi.com/pass/auth/security/home#service=setPassword" target="_blank">修改密码</a>
-            </li>
-            <li>
-              <a id="J_cancleService" href="https://m.mi.com/userdelete?from=pc"
-                 data-log_code="bpm=70.497.3944901.*&amp;cdm=&amp;uni=&amp;next=" target="_blank" data-settrack="true"
-                 onclick="_msq.push(['trackEvent','bpm=70.497.3944901.*&amp;cdm=&amp;uni=&amp;next=','https://m.mi.com/userdelete?from=pc','&quot;&quot;']);">注销服务</a>
+            <li><a href="javascript:void(0)">地址管理</a></li>
+            <li><a href="javascript:void(0)">修改密码</a>
             </li>
           </ul>
         </div>

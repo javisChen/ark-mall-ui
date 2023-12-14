@@ -18,6 +18,14 @@ export default defineConfig({
     },
     server: {
         proxy: {
+            '/minio': {
+                target: 'http://localhost:9000',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/minio/, ''),
+                configure: (proxy, options) => {
+
+                }
+            },
             '/api': {
                 target: 'http://localhost:8082',
                 changeOrigin: true,

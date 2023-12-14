@@ -56,9 +56,7 @@ const {
       <div class="more clearfix">
         <div class="actions">
           <div class="status-btn-box">
-            <a href="javascript:void(0)"
-               class="btn btn-small btn-line-gray btn-contract">联系客服</a><a
-              title="取消订单" class="btn btn-small btn-line-gray">取消订单</a>
+            <a title="取消订单" class="btn btn-small btn-line-gray">取消订单</a>
             <a v-if="order.orderBase.orderStatus === DICT_ORDER_STATUS_WAIT_PAY"
                 @click="toCashier"
                 title="立即付款"

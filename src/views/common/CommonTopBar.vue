@@ -19,7 +19,7 @@ const toCartPage = () => {
 const doLogout = async () => {
   const result = await authStore.logout()
   if (result) {
-    window.location.reload();
+    toLoginPage()
   }
 }
 

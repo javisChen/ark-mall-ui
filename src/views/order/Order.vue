@@ -242,8 +242,6 @@ const {
                       <a @click="toOrderDetailPage(order)"
                          href="javascript:void(0)"
                          class="btn btn-small btn-line-gray">订单详情</a>
-                      <a href="javascript:void(0)"
-                         class="btn btn-small btn-line-gray btn-contract">联系客服</a>
                     </td>
                   </tr>
                   </tbody>

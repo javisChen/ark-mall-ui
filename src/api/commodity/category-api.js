@@ -1,8 +1,8 @@
 import {post, get, del, put} from '@/utils/request'
-import Base  from './commodity-base-api'
+import Base  from './product-base-api'
 
 const api = {
-  list: Base.serviceName + '/v1/commodity/categories',
+  list: Base.serviceName + '/v1/goods/categories',
 }
 
 export default api
