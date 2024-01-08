@@ -51,7 +51,7 @@ export const useCartStore
                 const result = await getCartItems()
                 this.carts = result.data
                 this.carts.forEach(item => {
-                    item.specData = JSON.parse(item.specData)
+                    item.specs = JSON.parse(item.specs)
                     item.showProductName = buildProductDesc(item)
                 })
                 console.log('cart loaded successfully')
@@ -141,7 +141,7 @@ class Cart {
     /**
      * 规格数据
      */
-    specData: Array<{
+    specs: Array<{
         /**
          * 属性名称
          */

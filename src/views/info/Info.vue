@@ -78,13 +78,19 @@ const findSKU = () => {
       })
     }
   })
+  let foundSKU;
   for (let idx in skuArr) {
     const sku = skuArr[idx]
     const match = data.selectedSpecValue.every(spec => sku.values.includes(spec.value));
     if (match) {
-      data.currentSku = sku
+      foundSKU = sku
       break;
     }
+  }
+  if (foundSKU) {
+    data.currentSku = foundSKU
+  } else {
+    data.currentSku = {}
   }
 }
 

@@ -154,7 +154,7 @@ const {
         <div class="goods-list">
           <div class="good-item" v-for="item in cartStore.checkedCartItems">
             <div class="item-desc good-img">
-              <img :src="item.picUrl">
+              <img :src="item.picUrl" alt="">
             </div>
             <div class="item-desc good-name">
               <a href="javascript:void(0)">
@@ -374,9 +374,12 @@ const {
 }
 
 .good-item .good-img {
-  width: 30px;
-  height: 30px;
-  margin: 0 10px 0 0;
+  width: 80px;
+  height: 80px;
+}
+
+.good-item .good-img img {
+  width: 100%;
 }
 
 .good-item .good-name {

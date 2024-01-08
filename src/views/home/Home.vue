@@ -13,7 +13,7 @@ const toInfoPage = (item: object) => {
   router.push({
     name: 'info',
     query: {
-      id: item.id,
+      id: item.spuId,
     },
   })
 }
@@ -116,7 +116,7 @@ const {
                 class="item">
               <a class="item-a-tag" href="#">
                 <div class="product-img">
-                  <img width="160" height="160" :src="item.pic" alt="">
+                  <img width="160" height="160" :src="item.pictures?.[0]" alt="">
                 </div>
                 <h3 class="title">{{ item.skuName }}</h3>
                 <p class="desc">{{ item.desc }}</p>
@@ -140,7 +140,7 @@ const {
                  v-for="(item, idx) in productList">
               <a class="item-a-tag" href="#">
                 <div class="product-img">
-                  <img width="160" height="160" src="@/assets/test-prod.webp" alt="">
+                  <img width="160" height="160" :src="item.pictures?.[0]" alt="">
                 </div>
                 <h3 class="title">{{ item.name }}</h3>
                 <p class="desc">{{ item.desc }}</p>
@@ -164,7 +164,7 @@ const {
                  v-for="(item, idx) in productList">
               <a class="item-a-tag" href="#">
                 <div class="product-img">
-                  <img width="160" height="160" src="@/assets/test-prod.webp" alt="">
+                  <img width="160" height="160" :src="item.pictures?.[0]" alt="">
                 </div>
                 <h3 class="title">{{ item.name }}</h3>
                 <p class="desc">{{ item.desc }}</p>

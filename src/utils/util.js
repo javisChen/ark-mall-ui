@@ -73,14 +73,14 @@ export const fenToYuan = (value) => {
  * @returns {string}
  */
 export const buildProductDesc = (item) => {
-  if (typeof item.specData === 'string') {
-    item.specData = JSON.parse(item.specData)
+  if (typeof item.specs === 'string') {
+    item.specs = JSON.parse(item.specs)
   }
   let name = item.productName + ' '
-  for (let i = 0; i < item.specData.length; i++) {
-    const spec = item.specData[i];
+  for (let i = 0; i < item.specs.length; i++) {
+    const spec = item.specs[i];
     name += spec.attrValue
-    if (i < item.specData.length - 1) {
+    if (i < item.specs.length - 1) {
       name += ' '
     }
   }
@@ -92,14 +92,14 @@ export const buildProductDesc = (item) => {
  * @returns {string}
  */
 export const buildSpecDesc = (item) => {
-  if (typeof item.specData === 'string') {
-    item.specData = JSON.parse(item.specData)
+  if (typeof item.specs === 'string') {
+    item.specs = JSON.parse(item.specs)
   }
   let name = ''
-  for (let i = 0; i < item.specData.length; i++) {
-    const spec = item.specData[i];
+  for (let i = 0; i < item.specs.length; i++) {
+    const spec = item.specs[i];
     name += spec.attrName + ':' + spec.attrValue
-    if (i < item.specData.length - 1) {
+    if (i < item.specs.length - 1) {
       name += ' '
     }
   }
