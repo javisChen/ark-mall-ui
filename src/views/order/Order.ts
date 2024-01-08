@@ -60,5 +60,5 @@ export class OrderItemDTO {
     expectAmount?: number;
     actualAmount?: number;
     picUrl?: string;
-    specData?: string;
+    specs?: string;
 }

@@ -41,7 +41,7 @@ async function loadOrder() {
   try {
     const result = await getOrderInfo({id: route.query.id});
     result.data.orderItems.forEach(item => {
-      item.specData = JSON.parse(item.specData)
+      item.specs = JSON.parse(item.specs)
     })
     data.order = result.data
     data.receive = data.order.orderReceive
