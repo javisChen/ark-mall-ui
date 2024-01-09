@@ -175,7 +175,7 @@ const {
             <li class="clearfix">
               <div class="label"> 商品名称：</div>
               <div class="content">
-                <span v-for="item in order.orderItems">{{ buildProductDesc(item) }}</span>
+                <span v-for="item in order.orderItems">{{ item.skuName }}</span>
               </div>
             </li>
             <li class="clearfix hide">
