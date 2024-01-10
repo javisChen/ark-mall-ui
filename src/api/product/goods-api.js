@@ -10,4 +10,4 @@ export default api
 
 export const getInfo = (params) => get({url: api.info, params})
 
-export const search = (params) => post({url: api.search, params})
+export const search = (params) => get({url: api.search, params})

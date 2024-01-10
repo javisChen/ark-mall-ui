@@ -20,11 +20,22 @@ import {
     NCard,
     NSpin,
     NEllipsis,
-    NPagination, NSpace, NSelect, NForm, NRow, NCol, NFormItem, NInput, NDataTable, NTable,
+    NPagination,
+    NSpace,
+    NSelect,
+    NForm,
+    NRow,
+    NCol,
+    NFormItem,
+    NInput,
+    NDataTable,
+    NTable,
+    NIcon,
 } from 'naive-ui'
 
 const naive = create({
     components: [
+        NIcon,
         NButton,
         NEllipsis,
         NInputNumber,

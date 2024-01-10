@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 const info = () => import(`../views/info/Info.vue`)
-const home = () => import(`../views/home/Home.vue`)
+const shop = () => import(`../views/shop/Shop.vue`)
+const search = () => import(`../views/shop/Search.vue`)
 const login = () => import(`../views/login/Login.vue`)
 const cart = () => import(`../views/cart/Cart.vue`)
 const cartSuccess = () => import(`../views/cart/CartSuccess.vue`)
@@ -39,9 +40,14 @@ export const routes = [
     component: cartSuccess,
   },
   {
-    path: '/home',
-    name: 'home',
-    component: home,
+    path: '/shop',
+    name: 'shop',
+    component: shop,
+  },
+  {
+    path: '/shop/search',
+    name: 'search',
+    component: search,
   },
   {
     path: '/info',
