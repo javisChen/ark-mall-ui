@@ -7,8 +7,6 @@ import './common.css'
 // 通用字体
 import 'vfonts/Lato.css'
 // 等宽字体
-import {fenToYuan} from '@/utils/util';
-import accounting from 'accounting'
 import 'vfonts/FiraCode.css'
 import {initFilters} from "@/filter";
 
@@ -31,6 +29,7 @@ import {
     NDataTable,
     NTable,
     NIcon,
+    NCheckbox
 } from 'naive-ui'
 
 const naive = create({
@@ -51,7 +50,8 @@ const naive = create({
         NRow,
         NCol,
         NDataTable,
-        NTable
+        NTable,
+        NCheckbox
     ]
 })
 

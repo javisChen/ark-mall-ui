@@ -28,7 +28,7 @@ const data = reactive({
       })
       if (result) {
         router.push({
-          name: 'home'
+          name: 'shop'
         })
       }
     } catch (e) {
