@@ -2,16 +2,20 @@
   <div class="search-filter">
     <div class="filter-wrap">
       <div class="filter-list">
-        <div class="item choose-item"><span class="label">已选：</span>
+
+        <div v-if="selectedParams.length > 0" class="item choose-item"><span class="label">已选：</span>
           <div
-              v-for="item in selectedParams"
+              v-for="param in selectedParams"
               class="item-option selected-item">
-            <a href="javascript: void(0);">{{ item.label }}：{{ item.valuesFormat() }}<i
-                class="iconfont">×</i></a></div>
+            <a @click="removeSelectedParam(param)"
+               href="javascript: void(0);">{{ param.label }}：{{ formatSelectedOptions(param.options) }}
+              <i class="iconfont">×</i>
+            </a>
+          </div>
         </div>
 
         <div
-            v-for="param in filterParamData"
+            v-for="param in filteredSearchParams"
             class="item"
             :class="param.showMore || param.inCheckedMode ? '' : 'show-less'">
           <div class="label">{{ param.label }}：</div>
@@ -51,7 +55,7 @@
               <n-button
                   secondary
                   @click="cancelChecked(param)"
-                        size="small">取消
+                  size="small">取消
               </n-button>
             </div>
             <!-- 多选模式的按钮组 -->
@@ -59,15 +63,14 @@
           </div>
           <div class="operation-bar">
             <div class="operation"
-                 v-if="param.options.length >= 12"
+                 v-if="param.options.length >= 12 && !param.inCheckedMode"
                  @click="param.showMore = !param.showMore">
               更多
               <n-icon>
                 <md-arrow-dropup v-if="param.showMore"/>
                 <md-arrow-dropdown v-else/>
               </n-icon>
-            </div>&nbsp;
-
+            </div>
             <!-- 参数支持多选且当前不在多选模式下才展示多选按钮 -->
             <div v-if="param.multiple && !param.inCheckedMode"
                  @click="param.inCheckedMode = true;param.showMore = true"
@@ -118,10 +121,20 @@
 import {computed, onMounted, reactive, toRefs} from "vue";
 import {search} from "@/api/product/goods-api";
 import {MdArrowDropdown, MdArrowDropup, IosAdd} from '@vicons/ionicons4'
+import {useRoute, useRouter} from "vue-router";
 
-// brandIds=2^3^4^5&attrs=attrId_attrValueA||attrValueB^attrId_attrValue^attrId_attrValue
+const route = useRoute();
+const router = useRouter();
 
+const createSearchParamIndex = () => {
+  data.searchParams.forEach((param, idx) => {
+    data.selectedParamIndexMap.set(param.key, idx)
+  })
+  console.log(data.selectedParamIndexMap)
+};
 onMounted(async () => {
+  createSearchParamIndex()
+  parseSearchQuery();
   try {
     const result = await search();
     data.productList = result.data
@@ -129,13 +142,55 @@ onMounted(async () => {
   }
 })
 
+
+/**
+ * 解析查询字符串，添加到已选参数里面
+ */
+const parseSearchQuery = () => {
+  const routeQuery = route.query;
+  console.log('search query', routeQuery)
+  if (!routeQuery) {
+    return;
+  }
+
+  // 这样Hard code的性能和可读性比较好，整个过滤条件组件的结构相对还是比较固定的，所以个人认为没必要太抽象。
+
+  if (routeQuery.brand) {
+    const searchParam = data.searchParams[data.selectedParamIndexMap.get('brandIds')];
+    let params = routeQuery.brand.split('^');
+    const selectedOptions = searchParam.options.filter(option => params.includes(option.value))
+    addParam(searchParam, selectedOptions)
+  }
+
+  if (routeQuery.category) {
+    const searchParam = data.searchParams[data.selectedParamIndexMap.get('categoryIds')];
+    let params = routeQuery.category.split('^');
+    const selectedOptions = searchParam.options.filter(option => params.includes(option.value))
+    addParam(searchParam, selectedOptions)
+  }
+
+  if (routeQuery.attr) {
+    let params = routeQuery.attr.split('^');
+    params.forEach(param => {
+      const attrInfo = param.split('_');
+      const attrId = attrInfo[0];
+      const searchParam = data.searchParams[data.selectedParamIndexMap.get(`attr_${attrId}`)];
+      const attrValues = attrInfo[1].split('||');
+      const selectedOptions = searchParam.options.filter(option => attrValues.includes(option.value))
+      addParam(searchParam, selectedOptions)
+    })
+  }
+};
+
 const selectOther = (item) => {
   data.selectedOther = item
 }
 
 
-const filterParamData = computed(() => {
-  return data.filterParams.filter(item => !item.hide)
+const filteredSearchParams = computed(() => {
+  return data.searchParams.filter(item => {
+    return !data.selectedParamKeys.has(item.key)
+  })
 })
 
 
@@ -151,7 +206,16 @@ const checkOption = (checked, param, option) => {
   } else {
     param.selected = param.selected.filter(o => o.value !== option.value)
   }
-  console.log(param.selected)
+}
+
+/**
+ * 取消选中的参数
+ * @param param
+ */
+const removeSelectedParam = (param) => {
+  data.selectedParamKeys.delete(param.key)
+  data.selectedParams = data.selectedParams.filter(o => o.key !== param.key)
+  rebuildSearchQuery()
 }
 
 /**
@@ -168,7 +232,7 @@ const cancelChecked = (param) => {
  * @param param
  */
 const confirmChecked = (param) => {
-  const {label, key, selected} = param
+  const {selected} = param
   addParam(param, selected)
   param.inCheckedMode = false
 }
@@ -181,86 +245,132 @@ const selectParam = (param, option) => {
 }
 
 /**
- * 选中过滤参数
+ * 构建规格属性的查询字符串
+ * @param param
+ * @returns attrId_attrValueA||attrValueB
+ *
  */
-const addParam = (param, options) => {
-  const {label, key} = param
-  data.selectedParams.push({
-    label,
-    key,
-    options,
-    valuesFormat() {
-      console.log(this.options)
-      return this.options.map(value => value.label).join('、');
-    },
+const buildAttrSearchQuery = param => {
+  const attrId = param.key.split('_')[1];
+  const attrValues = param.options.map(option => option.value);
+  return attrId + '_' + attrValues.join('||');
+};
+
+/**
+ * 构建Uri的查询字符串
+ */
+const rebuildSearchQuery = () => {
+  data.searchQuery = {}
+  data.selectedParams.forEach(param => {
+    if (param.type === 'attr') {
+      if (data.searchQuery[param.type]) {
+        data.searchQuery[param.type] += '^' + buildAttrSearchQuery(param)
+      } else {
+        data.searchQuery[param.type] = buildAttrSearchQuery(param)
+      }
+    } else {
+      data.searchQuery[param.type] = param.options.map(option => option.value).join('^')
+    }
+  })
+  console.log(data.searchQuery)
+
+  router.push({
+    name: 'search',
+    query: data.searchQuery
   })
 
-  param.hide = true
+}
+
+
+/**
+ * 选中过滤参数
+ */
+const addParam = (selectedParam, selectOptions) => {
+  const {label, key, type} = selectedParam
+  if (!data.selectedParamKeys.has(key)) {
+    data.selectedParams.push({
+      label,
+      key,
+      type,
+      options: selectOptions,
+      formatValues: selectOptions.map(value => value.label).join('、')
+    })
+    // 把已选择条件的key保存起来
+    data.selectedParamKeys.add(key)
+  } else {
+    const found = data.selectedParams[data.selectedParamIndexMap[key]];
+    found.options = found.options.concat(selectOptions)
+  }
+
+  rebuildSearchQuery();
+
 }
 
 const data = reactive({
+  searchQuery: {},
   /**
    * 已选中的参数
    */
   selectedParams: [],
-  filterParams: [
+  /**
+   * 保存已经选中的参数keys，方便做判断
+   */
+  selectedParamKeys: new Set(),
+
+  /**
+   * 索引表
+   */
+  selectedParamIndexMap: new Map(),
+
+  searchParams: [
     {
       label: '品牌',
+      type: 'brand',
       key: 'brandIds',
       showMore: false,
       inCheckedMode: false,
       multiple: true,
       options: [{value: '1', label: '小米'}, {value: '2', label: '华为'}],
       selected: [],
-      hide: false
     },
     {
       label: '分类',
+      type: 'category',
       key: 'categoryIds',
       showMore: false,
       inCheckedMode: false,
       multiple: false,
       options: [{value: '1', label: '手机'}, {value: '2', label: '冰箱'}],
       selected: [],
-      hide: false
     },
     {
       id: 1,
+      type: 'attr',
       label: '运行内存',
-      key: 'attrs',
+      key: 'attr_1',
       showMore: false,
       inCheckedMode: false,
-      multiple: false,
+      multiple: true,
       options: [
         {value: '16G', label: '16G'},
         {value: '32G', label: '32G'}
       ],
       selected: [],
-      hide: false
     },
     {
       id: 2,
+      type: 'attr',
       label: '电池续航',
-      key: 'attrs',
+      key: 'attr_2',
       showMore: false,
       inCheckedMode: false,
-      multiple: false,
+      multiple: true,
       options: [
-        {value: '4050mAh', label: '4050mAh'},
-        {value: '4500mAh', label: '4500mAh'},
-        {value: '4600mAh', label: '4600mAh'},
-        {value: '4610mAh', label: '4610mAh'},
-        {value: '4800mAh', label: '4800mAh'},
-        {value: '4820mAh', label: '4820mAh'},
-        {value: '4880mAh', label: '4880mAh'},
-        {value: '4600mAh', label: '4600mAh'},
-        {value: '4610mAh', label: '4610mAh'},
         {value: '4800mAh', label: '4800mAh'},
         {value: '4830mAh', label: '4830mAh'},
         {value: '4890mAh', label: '4890mAh'},
       ],
       selected: [],
-      hide: false
     },
   ],
   otherAttrs: [
@@ -292,14 +402,17 @@ const data = reactive({
       ]
     },
   ],
-  selectedOther: {}
+  selectedOther: {},
+  formatSelectedOptions: (selectOptions) => {
+    return selectOptions.map(value => value.label).join('、')
+  }
 })
 
 const {
   otherAttrs,
   selectedOther,
   selectedParams,
-  filterParams
+  formatSelectedOptions
 } = toRefs(data)
 
 </script>
@@ -325,18 +438,22 @@ const {
 }
 
 .search-filter .filter-list .item.choose-item {
-  padding-bottom: 14px;
   min-width: 148px;
+  //min-height: 41px;
 }
 
 .search-filter .filter-list .item {
   position: relative;
   overflow: hidden;
   border-top: 1px solid #ededed;
-  padding: 0 60px 0 124px;
+  padding: 0 60px 0 118px;
   margin: 0;
   list-style: none;
   font-size: 0;
+}
+
+.search-filter .filter-list .item:first-child {
+  border-top: none;
 }
 
 .search-filter .filter-list .label {

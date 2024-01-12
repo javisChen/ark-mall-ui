@@ -795,8 +795,3 @@ vueuc@^0.4.37:
     seemly "^0.3.1"
     vdirs "^0.1.4"
     vooks "^0.2.4"
-
-yarn@^1.22.21:
-  version "1.22.21"
-  resolved "https://registry.npmjs.org/yarn/-/yarn-1.22.21.tgz"
-  integrity sha512-ynXaJsADJ9JiZ84zU25XkPGOvVMmZ5b7tmTSpKURYwgELdjucAOydqIOrOfTxVYcNXe91xvLZwcRh68SR3liCg==

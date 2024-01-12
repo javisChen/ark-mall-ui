@@ -14,8 +14,7 @@
     "pinia": "^2.1.7",
     "store": "^2.0.12",
     "vue": "^3.4.5",
-    "vue-router": "^4.2.5",
-    "yarn": "^1.22.21"
+    "vue-router": "^4.2.5"
   },
   "devDependencies": {
     "@vicons/antd": "^0.12.0",
