@@ -126,20 +126,31 @@ import {useRoute, useRouter} from "vue-router";
 const route = useRoute();
 const router = useRouter();
 
+/**
+ * 构建搜索条件的索引，提升性能
+ */
 const createSearchParamIndex = () => {
   data.searchParams.forEach((param, idx) => {
     data.selectedParamIndexMap.set(param.key, idx)
   })
-  console.log(data.selectedParamIndexMap)
 };
-onMounted(async () => {
-  createSearchParamIndex()
-  parseSearchQuery();
+
+async function performSearch() {
   try {
     const result = await search();
     data.productList = result.data
   } catch (e) {
   }
+}
+
+onMounted(async () => {
+  // 构建索引
+  createSearchParamIndex()
+  // 解析查询语句
+  parseSearchQuery();
+
+  await performSearch();
+
 })
 
 
