@@ -119,7 +119,6 @@
 
 <script setup>
 import {computed, onMounted, reactive, toRefs} from "vue";
-import {search} from "@/api/product/goods-api";
 import {MdArrowDropdown, MdArrowDropup, IosAdd} from '@vicons/ionicons4'
 import {useRoute, useRouter} from "vue-router";
 
@@ -135,22 +134,11 @@ const createSearchParamIndex = () => {
   })
 };
 
-async function performSearch() {
-  try {
-    const result = await search();
-    data.productList = result.data
-  } catch (e) {
-  }
-}
-
-onMounted(async () => {
+onMounted(() => {
   // 构建索引
   createSearchParamIndex()
   // 解析查询语句
   parseSearchQuery();
-
-  await performSearch();
-
 })
 
 
@@ -167,21 +155,22 @@ const parseSearchQuery = () => {
   // 这样Hard code的性能和可读性比较好，整个过滤条件组件的结构相对还是比较固定的，所以个人认为没必要太抽象。
 
   if (routeQuery.brand) {
-    const searchParam = data.searchParams[data.selectedParamIndexMap.get('brandIds')];
+    const searchParam = data.searchParams[data.selectedParamIndexMap.get('brand')];
     let params = routeQuery.brand.split('^');
     const selectedOptions = searchParam.options.filter(option => params.includes(option.value))
     addParam(searchParam, selectedOptions)
   }
 
   if (routeQuery.category) {
-    const searchParam = data.searchParams[data.selectedParamIndexMap.get('categoryIds')];
+    const searchParam = data.searchParams[data.selectedParamIndexMap.get('category')];
     let params = routeQuery.category.split('^');
     const selectedOptions = searchParam.options.filter(option => params.includes(option.value))
     addParam(searchParam, selectedOptions)
   }
 
-  if (routeQuery.attr) {
-    let params = routeQuery.attr.split('^');
+  if (routeQuery.attrs) {
+    const attrs = decodeURIComponent(routeQuery.attrs)
+    let params = attrs.split('^');
     params.forEach(param => {
       const attrInfo = param.split('_');
       const attrId = attrInfo[0];
@@ -273,7 +262,7 @@ const buildAttrSearchQuery = param => {
 const rebuildSearchQuery = () => {
   data.searchQuery = {}
   data.selectedParams.forEach(param => {
-    if (param.type === 'attr') {
+    if (param.type === 'attrs') {
       if (data.searchQuery[param.type]) {
         data.searchQuery[param.type] += '^' + buildAttrSearchQuery(param)
       } else {
@@ -285,9 +274,16 @@ const rebuildSearchQuery = () => {
   })
   console.log(data.searchQuery)
 
+  if (data.searchQuery.attrs) {
+    data.searchQuery.attrs = encodeURIComponent(data.searchQuery.attrs)
+  }
+
   router.push({
     name: 'search',
-    query: data.searchQuery
+    query: {
+      keyword: route.query.keyword,
+      ...data.searchQuery
+    }
   })
 
 }
@@ -337,7 +333,7 @@ const data = reactive({
     {
       label: '品牌',
       type: 'brand',
-      key: 'brandIds',
+      key: 'brand',
       showMore: false,
       inCheckedMode: false,
       multiple: true,
@@ -347,7 +343,7 @@ const data = reactive({
     {
       label: '分类',
       type: 'category',
-      key: 'categoryIds',
+      key: 'category',
       showMore: false,
       inCheckedMode: false,
       multiple: false,
@@ -356,7 +352,7 @@ const data = reactive({
     },
     {
       id: 1,
-      type: 'attr',
+      type: 'attrs',
       label: '运行内存',
       key: 'attr_1',
       showMore: false,
@@ -370,7 +366,7 @@ const data = reactive({
     },
     {
       id: 2,
-      type: 'attr',
+      type: 'attrs',
       label: '电池续航',
       key: 'attr_2',
       showMore: false,

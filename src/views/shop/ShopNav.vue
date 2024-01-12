@@ -11,9 +11,11 @@
 
         <!-- 搜索 -->
         <div class="header-search">
-          <input type="search" id="search"
-                 autocomplete="off"
-                 class="search-text" placeholder="耳机">
+          <input
+              v-model="keyword"
+              type="search" id="search"
+              autocomplete="off"
+              class="search-text" placeholder="手机">
           <n-button @click="toSearchPage" class="search-btn" :round="false" type="tertiary">
             <template #icon>
               <n-icon>
@@ -31,6 +33,7 @@
 
 import {MdSearch} from '@vicons/ionicons4'
 import {useRoute, useRouter} from 'vue-router';
+import {reactive, toRefs} from "vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -38,8 +41,19 @@ const router = useRouter();
 const toSearchPage = (item) => {
   router.push({
     name: 'search',
+    query: {
+      keyword: data.keyword || '手机'
+    }
   })
 }
+
+const data = reactive({
+  keyword: ''
+})
+
+const {
+  keyword
+} = toRefs(data)
 
 
 </script>

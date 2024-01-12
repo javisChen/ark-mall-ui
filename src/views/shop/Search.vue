@@ -6,27 +6,19 @@ import CommonTopBar from "@/views/common/CommonTopBar.vue";
 import {search} from "@/api/product/goods-api"
 import ShopNav from "@/views/shop/ShopNav.vue";
 import SearchFilter from "@/views/shop/SearchFilter.vue";
+import SearchResult from "@/views/shop/SearchResult.vue";
 
 const route = useRoute();
 const router = useRouter();
 
 
 onMounted(async () => {
-  try {
-    const result = await search();
-    data.productList = result.data
-  } catch (e) {
-  }
 })
 
 const data = reactive({
-  categories: [],
-  productList: []
 })
 
 const {
-  categories,
-  productList
 } = toRefs(data)
 
 
@@ -48,6 +40,7 @@ const {
         </div>
       </div>
       <search-filter/>
+      <search-result/>
     </div>
   </div>
 </template>
