@@ -2,63 +2,110 @@
   <div class="search-filter">
     <div class="filter-wrap">
       <div class="filter-list">
-        <ul class="item choose-item"><span class="label">已选：</span>
-          <li
+        <div class="item choose-item"><span class="label">已选：</span>
+          <div
               v-for="item in selectedParams"
-              class="selected-item">
+              class="item-option selected-item">
             <a href="javascript: void(0);">{{ item.label }}：{{ item.valuesFormat() }}<i
-                class="iconfont">×</i></a></li>
-        </ul>
+                class="iconfont">×</i></a></div>
+        </div>
 
-        <!-- 品牌 -->
-        <ul
-            v-for="param in filterParams"
+        <div
+            v-for="param in filterParamData"
             class="item"
-            :class="param.showMore ? '' : 'show-less'">
-          <span class="label">{{ param.label }}：</span>
-          <li class="" v-for="option in param.options">
-            <a @click="selectParam(param, option)" href="javascript: void(0);">{{ option.name }}</a>
-          </li>
+            :class="param.showMore || param.inCheckedMode ? '' : 'show-less'">
+          <div class="label">{{ param.label }}：</div>
+          <div class="item-wrapper">
+            <!-- 参数选项 -->
+            <div class="item-option"
+                 v-for="option in param.options">
+
+              <!-- 单选模式 -->
+              <div v-if="!param.inCheckedMode">
+                <a @click="selectParam(param, option)"
+                   href="javascript: void(0);">{{ option.label }}
+                </a>
+              </div>
+              <!-- 单选模式 -->
+
+              <!-- 复选模式 -->
+              <div v-else>
+                <n-checkbox size="small"
+                            @update:checked="checkOption($event, param, option)"
+                            :label="option.label">
+                </n-checkbox>
+              </div>
+              <!-- 复选模式 -->
+
+            </div>
+            <!-- 参数选项 -->
+
+            <!-- 多选模式的按钮组 -->
+            <div class="item-confirm" v-if="param.inCheckedMode">
+              <n-button style="margin-right: 5px"
+                        secondary
+                        :disabled="param.selected.length === 0"
+                        @click="confirmChecked(param)"
+                        size="small">确定
+              </n-button>
+              <n-button
+                  secondary
+                  @click="cancelChecked(param)"
+                        size="small">取消
+              </n-button>
+            </div>
+            <!-- 多选模式的按钮组 -->
+
+          </div>
           <div class="operation-bar">
             <div class="operation"
                  v-if="param.options.length >= 12"
                  @click="param.showMore = !param.showMore">
               更多
-              <n-icon><md-arrow-dropdown v-if="!param.showMore"/><md-arrow-dropup v-else/></n-icon>
+              <n-icon>
+                <md-arrow-dropup v-if="param.showMore"/>
+                <md-arrow-dropdown v-else/>
+              </n-icon>
             </div>&nbsp;
-            <div v-if="param.multiple"
-                 @click="param.showMore = !param.showMore"
-                 class="operation">多选<n-icon><ios-add/></n-icon>
+
+            <!-- 参数支持多选且当前不在多选模式下才展示多选按钮 -->
+            <div v-if="param.multiple && !param.inCheckedMode"
+                 @click="param.inCheckedMode = true;param.showMore = true"
+                 class="operation">多选
+              <n-icon>
+                <ios-add/>
+              </n-icon>
             </div>
+
           </div>
-          <div class=""></div>
-        </ul>
+        </div>
 
         <div class="fix-position-box">
-          <ul class="item level-item show-less">
-            <span class="label">其他选项：</span>
-            <li
+          <div class="item level-item show-less">
+            <div class="label">其他选项：</div>
+            <div
                 v-for="item in otherAttrs"
                 @mouseleave="selectOther({})"
                 @mouseenter="selectOther(item)"
                 :class="selectedOther.id === item.id ? 'show-child' : ''"
-                class="level-menu">
+                class="item-option level-menu">
               <a href="javascript: void(0);">{{ item.label }}
                 <n-icon>
                   <md-arrow-dropdown/>
                 </n-icon>
               </a>
-            </li>
-          </ul>
+            </div>
+          </div>
 
           <ul
               v-for="item in otherAttrs"
               class="item-child"
               @mouseenter="selectOther(item)"
+              @mouseleave="selectOther({})"
               :style="[{display: selectedOther.id === item.id ? 'block':'none'}]">
             <li class="child-list" v-for="option in item.options">
               <a class="product-filter-item"
-                 href="javascript: void(0);">{{ option.name }}</a>
+                 href="javascript: void(0);">{{ option.label }}</a>
             </li>
           </ul>
         </div>
@@ -68,11 +115,9 @@
 </template>
 
 <script setup>
-import {onMounted, reactive, toRefs} from "vue";
+import {computed, onMounted, reactive, toRefs} from "vue";
 import {search} from "@/api/product/goods-api";
 import {MdArrowDropdown, MdArrowDropup, IosAdd} from '@vicons/ionicons4'
-import ShowMore from "@/views/shop/ShowMore.vue";
-
 
 // brandIds=2^3^4^5&attrs=attrId_attrValueA||attrValueB^attrId_attrValue^attrId_attrValue
 
@@ -86,164 +131,136 @@ onMounted(async () => {
 
 const selectOther = (item) => {
   data.selectedOther = item
-  console.log(data.selectedOther)
 }
 
-const selectParam = (param, selectedOption) => {
+
+const filterParamData = computed(() => {
+  return data.filterParams.filter(item => !item.hide)
+})
+
+
+/**
+ * 多选模式下，选中参数选项
+ * @param checked 是否选中 true or false
+ * @param param
+ * @param option
+ */
+const checkOption = (checked, param, option) => {
+  if (checked) {
+    param.selected.push(option)
+  } else {
+    param.selected = param.selected.filter(o => o.value !== option.value)
+  }
+  console.log(param.selected)
+}
+
+/**
+ * 取消多选
+ * @param param
+ */
+const cancelChecked = (param) => {
+  param.selected = []
+  param.inCheckedMode = false
+}
+
+/**
+ * 提交多选项
+ * @param param
+ */
+const confirmChecked = (param) => {
+  const {label, key, selected} = param
+  addParam(param, selected)
+  param.inCheckedMode = false
+}
+
+/**
+ * 选中过滤参数
+ */
+const selectParam = (param, option) => {
+  addParam(param, [option])
+}
+
+/**
+ * 选中过滤参数
+ */
+const addParam = (param, options) => {
   const {label, key} = param
   data.selectedParams.push({
     label,
     key,
-    values: [{id: '1', name: '小米'}, {id: '2', name: '华为'}],
+    options,
     valuesFormat() {
-      return this.values.map(value => value.name).join('、');
+      console.log(this.options)
+      return this.options.map(value => value.label).join('、');
     },
   })
+
+  param.hide = true
 }
 
 const data = reactive({
   /**
    * 已选中的参数
    */
-  selectedParams: [
-    {
-      label: '品牌',
-      key: 'brandId',
-      values: [{id: '1', name: '小米'}, {id: '2', name: '华为'}],
-      valuesFormat() {
-        return this.values.map(value => value.name).join('、');
-      },
-    },
-    {
-      label: '品牌',
-      key: 'brandId',
-      values: [{id: '1', name: '小米'}, {id: '2', name: '华为'}],
-      valuesFormat() {
-        return this.values.map(value => value.name).join('、');
-      },
-    },
-    {
-      label: '品牌',
-      key: 'brandId',
-      values: [{id: '1', name: '小米'}, {id: '2', name: '华为'}],
-      valuesFormat() {
-        return this.values.map(value => value.name).join('、');
-      },
-    },
-    {
-      label: '品牌',
-      key: 'brandId',
-      values: [{id: '1', name: '小米'}, {id: '2', name: '华为'}],
-      valuesFormat() {
-        return this.values.map(value => value.name).join('、');
-      },
-    },
-    {
-      label: '品牌',
-      key: 'brandId',
-      values: [{id: '1', name: '小米'}, {id: '2', name: '华为'}],
-      valuesFormat() {
-        return this.values.map(value => value.name).join('、');
-      },
-    },
-    {
-      label: '品牌',
-      key: 'brandId',
-      values: [{id: '1', name: '小米'}, {id: '2', name: '华为'}],
-      valuesFormat() {
-        return this.values.map(value => value.name).join('、');
-      },
-    },
-    {
-      label: '品牌',
-      key: 'brandId',
-      values: [{id: '1', name: '小米'}, {id: '2', name: '华为'}],
-      valuesFormat() {
-        return this.values.map(value => value.name).join('、');
-      },
-    },
-    {
-      label: '品牌',
-      key: 'brandId',
-      values: [{id: '1', name: '小米'}, {id: '2', name: '华为'}],
-      valuesFormat() {
-        return this.values.map(value => value.name).join('、');
-      },
-    },
-    {
-      label: '品牌',
-      key: 'brandId',
-      values: [{id: '1', name: '小米'}, {id: '2', name: '华为'}],
-      valuesFormat() {
-        return this.values.map(value => value.name).join('、');
-      },
-    },
-    {
-      label: '品牌',
-      key: 'brandId',
-      values: [{id: '1', name: '小米'}, {id: '2', name: '华为'}],
-      valuesFormat() {
-        return this.values.map(value => value.name).join('、');
-      },
-    },
-    {
-      label: '品牌',
-      key: 'brandId',
-      values: [{id: '1', name: '小米'}, {id: '2', name: '华为'}],
-      valuesFormat() {
-        return this.values.map(value => value.name).join('、');
-      },
-    },
-    {
-      label: '品牌',
-      key: 'brandId',
-      values: [{id: '1', name: '小米'}, {id: '2', name: '华为'}],
-      valuesFormat() {
-        return this.values.map(value => value.name).join('、');
-      },
-    },
-  ],
+  selectedParams: [],
   filterParams: [
     {
       label: '品牌',
       key: 'brandIds',
       showMore: false,
+      inCheckedMode: false,
       multiple: true,
-      options: [{id: '1', name: '小米'}, {id: '2', name: '华为'}]
+      options: [{value: '1', label: '小米'}, {value: '2', label: '华为'}],
+      selected: [],
+      hide: false
     },
     {
       label: '分类',
       key: 'categoryIds',
       showMore: false,
+      inCheckedMode: false,
       multiple: false,
-      options: [{id: '1', name: '手机'}, {id: '2', name: '冰箱'}]
+      options: [{value: '1', label: '手机'}, {value: '2', label: '冰箱'}],
+      selected: [],
+      hide: false
     },
     {
+      id: 1,
       label: '运行内存',
       key: 'attrs',
       showMore: false,
+      inCheckedMode: false,
       multiple: false,
-      options: [{id: '1', name: '16G'}, {id: '2', name: '32G'}]
+      options: [
+        {value: '16G', label: '16G'},
+        {value: '32G', label: '32G'}
+      ],
+      selected: [],
+      hide: false
     },
     {
+      id: 2,
       label: '电池续航',
       key: 'attrs',
       showMore: false,
+      inCheckedMode: false,
       multiple: false,
       options: [
-        {id: '1', name: '4050mAh'},
-        {id: '2', name: '4500mAh'},
-        {id: '3', name: '4600mAh'},
-        {id: '4', name: '4610mAh'},
-        {id: '5', name: '4800mAh'},
-        {id: '6', name: '4820mAh'},
-        {id: '7', name: '4880mAh'},
-        {id: '3', name: '4600mAh'},
-        {id: '4', name: '4610mAh'},
-        {id: '5', name: '4800mAh'},
-        {id: '6', name: '4830mAh'},
-        {id: '7', name: '4890mAh'},
-      ]
+        {value: '4050mAh', label: '4050mAh'},
+        {value: '4500mAh', label: '4500mAh'},
+        {value: '4600mAh', label: '4600mAh'},
+        {value: '4610mAh', label: '4610mAh'},
+        {value: '4800mAh', label: '4800mAh'},
+        {value: '4820mAh', label: '4820mAh'},
+        {value: '4880mAh', label: '4880mAh'},
+        {value: '4600mAh', label: '4600mAh'},
+        {value: '4610mAh', label: '4610mAh'},
+        {value: '4800mAh', label: '4800mAh'},
+        {value: '4830mAh', label: '4830mAh'},
+        {value: '4890mAh', label: '4890mAh'},
+      ],
+      selected: [],
+      hide: false
     },
   ],
   otherAttrs: [
@@ -251,19 +268,28 @@ const data = reactive({
       label: 'CPU型号',
       key: 'other',
       id: 1,
-      options: [{id: '1', name: '骁龙'}, {id: '2', name: '骁龙8'}]
+      options: [
+        {value: '1', label: '骁龙'},
+        {value: '2', label: '骁龙8'}
+      ]
     },
     {
       label: 'CPU主频',
       key: 'other',
       id: 2,
-      options: [{id: '1', name: '3.3'}, {id: '2', name: '3.6'}]
+      options: [
+        {value: '3.3', label: '3.3'},
+        {value: '3.6', label: '3.6'}
+      ]
     },
     {
       label: 'CPU型号',
       key: 'other',
       id: 3,
-      options: [{id: '1', name: '骁龙'}, {id: '2', name: '骁龙8'}]
+      options: [
+        {value: '骁龙8', label: '骁龙'},
+        {value: '骁龙8', label: '骁龙8'}
+      ]
     },
   ],
   selectedOther: {}
@@ -324,15 +350,19 @@ const {
   height: 20px;
   line-height: 20px;
   padding: 10px 0;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .search-filter .filter-list .item .selected-item {
   height: auto;
-  margin: 3px 10px 3px 0;
+  margin: 0 10px 0 0;
   padding: 0;
   width: auto;
-  max-width: 100%;
+  min-width: 148px;
+}
+
+.search-filter .filter-list .item .selected-item.item-option {
+  padding: 0;
 }
 
 .search-filter .filter-list .item .selected-item a {
@@ -340,6 +370,7 @@ const {
   border: 1px solid #b0b0b0;
   display: inline-block;
   padding: 5px 58px 5px 20px;
+  min-width: 138px;
 }
 
 .search-filter .filter-list .item .selected-item a .iconfont {
@@ -355,20 +386,29 @@ const {
   color: #fff;
 }
 
-.search-filter .filter-list .item li {
+.search-filter .filter-list .item .item-wrapper {
+  //border: 1px solid blue;
+}
+
+.search-filter .filter-list .item .item-confirm {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.search-filter .filter-list .item .item-option {
   display: inline-block;
   text-overflow: ellipsis;
   overflow: hidden;
   color: #424242;
-  font-size: 12px;
-  max-width: 148px;
-  min-width: 90px;
+  font-size: 13px;
+  min-width: 85px;
   padding: 10px 0;
-  height: 20px;
+  height: auto;
   line-height: 20px;
+  margin-right: 10px;
 }
 
-.search-filter .filter-list .item a {
+.search-filter .filter-list .item .item-option a {
   max-width: 138px;
   display: inline-block;
   overflow: hidden;
@@ -419,7 +459,7 @@ const {
   display: inline-block;
   height: 40px;
   line-height: 40px;
-  font-size: 12px;
+  font-size: 13px;
   min-width: 100px;
 }
 
@@ -445,7 +485,7 @@ const {
   height: 20px;
   line-height: 20px;
   padding: 10px 0;
-  font-size: 12px;
+  font-size: 13px;
   width: auto;
   display: flex;
   flex-direction: row;

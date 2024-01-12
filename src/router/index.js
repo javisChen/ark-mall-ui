@@ -17,7 +17,7 @@ const orderDetail = () => import(`../views/order/OrderDetail.vue`)
 export const routes = [
   {
     path: '/',
-    redirect: '/home'
+    redirect: '/shop'
   },
   {
     path: '/login',

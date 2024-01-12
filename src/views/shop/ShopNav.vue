@@ -14,7 +14,7 @@
           <input type="search" id="search"
                  autocomplete="off"
                  class="search-text" placeholder="耳机">
-          <n-button @click="toSearchPage" class="search-btn" round="false" type="tertiary">
+          <n-button @click="toSearchPage" class="search-btn" :round="false" type="tertiary">
             <template #icon>
               <n-icon>
                 <md-search/>
