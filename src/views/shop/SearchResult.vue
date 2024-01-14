@@ -93,11 +93,11 @@
                   </li>
                 </ul>
               </div>
-<!--              <div class="flags">-->
-<!--                <span class="salel-label">-->
-<!--                  <img width="42" height="18" class="sale-icon" alt="" src="">-->
-<!--                </span>-->
-<!--              </div>-->
+              <!--              <div class="flags">-->
+              <!--                <span class="salel-label">-->
+              <!--                  <img width="42" height="18" class="sale-icon" alt="" src="">-->
+              <!--                </span>-->
+              <!--              </div>-->
             </a>
           </div>
         </div>
@@ -107,45 +107,80 @@
 </template>
 <script setup>
 
-import {onMounted, reactive, toRefs} from "vue";
+import {onMounted, reactive, toRefs, watch, ref, toRaw} from "vue";
 import {search} from "@/api/product/goods-api";
 import {useRoute, useRouter} from "vue-router";
 
 const route = useRoute();
 const router = useRouter();
 
+watch(
+    () => route.query,
+    async newQuery => {
+      console.log('query change', newQuery)
+      const {keyword} = newQuery
+      searchQueryParams.value = {
+        keyword
+      }
+      await performSearch();
+    }
+)
+
 onMounted(async () => {
-  console.log('search query', route.query)
   if (!route.query) {
     return;
   }
+  const {keyword, brand, category, attrs} = route.query;
+  data.searchQueryParams = {
+    keyword,
+    attrs,
+    brand,
+    category
+  }
+  console.log(data.searchQueryParams)
   await performSearch();
 })
 
 const performSearch = async () => {
-  const {keyword, brand, category, attrs} = route.query;
+  const {keyword, brand, category, attrs} = data.searchQueryParams;
+  console.log(keyword)
   try {
-    const result = await search({
-      attrs: encodeURIComponent(attrs),
-      brand,
-      category,
-      current: 1,
-      keyword,
-      // priceRange: "",
-      size: 20,
-      // sortAsc: "",
-      // sortDesc: "",
-      // sortDirection: "",
-      // sortField: ""
-    });
+    const result = await search({keyword});
     data.goods = result.data
   } catch (e) {
 
   }
 };
 
+const searchQueryParams = ref({
+  attrs: null,
+  brand: null,
+  category: null,
+  current: 1,
+  keyword: '',
+  // priceRange: "",
+  size: 20,
+  // sortAsc: "",
+  // sortDesc: "",
+  // sortDirection: "",
+  // sortField: ""
+})
+
 const data = reactive({
-  goods: []
+  goods: [],
+  // searchQueryParams: {
+  //   attrs: null,
+  //   brand: null,
+  //   category: null,
+  //   current: 1,
+  //   keyword: '',
+  //   // priceRange: "",
+  //   size: 20,
+  //   // sortAsc: "",
+  //   // sortDesc: "",
+  //   // sortDirection: "",
+  //   // sortField: ""
+  // }
 })
 
 const {

@@ -33,12 +33,18 @@
 
 import {MdSearch} from '@vicons/ionicons4'
 import {useRoute, useRouter} from 'vue-router';
-import {reactive, toRefs} from "vue";
+import {onMounted, reactive, toRefs, watch} from "vue";
 
 const route = useRoute();
 const router = useRouter();
 
-const toSearchPage = (item) => {
+onMounted(async () => {
+  const {keyword} = route.query;
+  data.keyword = keyword
+})
+
+
+const toSearchPage = () => {
   router.push({
     name: 'search',
     query: {

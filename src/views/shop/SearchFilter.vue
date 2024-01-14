@@ -118,7 +118,7 @@
 </template>
 
 <script setup>
-import {computed, onMounted, reactive, toRefs} from "vue";
+import {computed, onMounted, reactive, toRefs, watch} from "vue";
 import {MdArrowDropdown, MdArrowDropup, IosAdd} from '@vicons/ionicons4'
 import {useRoute, useRouter} from "vue-router";
 
