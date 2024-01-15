@@ -215,7 +215,7 @@ const {
                               </div>
                             </div>
                             <span class="price flex-column">
-                              {{ $filters.formatShowPrice(orderItem.price) }}
+                              {{ $filters.formatPrice(orderItem.price) }}
                             </span>
                             <span class="quantity flex-column">
                               ×{{ orderItem.quantity }}
@@ -228,7 +228,7 @@ const {
                       <div>{{ order.orderBase.buyerName }}</div>
                     </td>
                     <td class="order-amount">
-                      {{ $filters.formatShowPrice(order.orderAmount.actualAmount) }}
+                      {{ $filters.formatPrice(order.orderAmount.actualAmount) }}
                     </td>
                     <td class="order-actions">
                       <a v-if="order.orderBase.orderStatus === DICT_ORDER_STATUS_WAIT_PAY"

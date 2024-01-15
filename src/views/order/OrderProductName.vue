@@ -35,7 +35,7 @@
 <!--                </div>-->
 <!--              </td>-->
 <!--              <td class="col col-price">-->
-<!--                <p class="price">{{ $filters.formatShowPrice(orderItem.price) }} × {{ orderItem.quantity }}</p>-->
+<!--                <p class="price">{{ $filters.formatPrice(orderItem.price) }} × {{ orderItem.quantity }}</p>-->
 <!--              </td>-->
 <!--              <td class="col col-actions">-->
 <!--              </td>-->
@@ -82,7 +82,7 @@ const data = reactive({
         title: "单价",
         key: "price",
         render(row) {
-          return (h('span', proxy.$filters.formatShowPrice(row.price)))
+          return (h('span', proxy.$filters.formatPrice(row.price)))
         }
       },
       {

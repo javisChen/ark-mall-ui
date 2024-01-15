@@ -2,12 +2,8 @@ import axios from 'axios'
 import storage from 'store'
 import {VueAxios} from './axios'
 import {SUCCESS_CODE} from './code'
-import {ACCESS_TOKEN} from '@/store/mutation-types'
-import {useMessage} from 'naive-ui'
 import {useAuthStore} from '@/store/auth'
 
-
-console.log(import.meta.env)
 // 创建 axios 实例
 const request = axios.create({
     // API 请求的默认前缀

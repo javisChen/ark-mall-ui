@@ -16,7 +16,7 @@
             <n-ellipsis :line-clamp="1">{{buildSpecDesc(item)}}</n-ellipsis>
           </div>
         </td>
-        <td>{{ $filters.formatShowPrice(item.price) }}</td>
+        <td>{{ $filters.formatPrice(item.price) }}</td>
         <td>{{ item.quantity }}</td>
       </tr>
       </tbody>
@@ -58,7 +58,7 @@ const data = reactive({
         title: "单价",
         key: "price",
         render(row) {
-          return (h('span', proxy.$filters.formatShowPrice(row.price)))
+          return (h('span', proxy.$filters.formatPrice(row.price)))
         }
       },
       {

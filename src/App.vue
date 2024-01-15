@@ -6,7 +6,6 @@ import {onMounted} from "vue";
 import {useCartStore} from "@/store/cart";
 
 onMounted(() => {
-  console.log(import.meta.env)
   // 尝试初始化购物车信息
   try {
     useCartStore().loadCartInfo();

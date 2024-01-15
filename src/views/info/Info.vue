@@ -153,10 +153,10 @@ const {
         <div class="selected-list">
           <div class="selected-info">
             <span class="selected-product">{{ selectedFullName }}</span>
-            <span class="selected-product-price">{{ $filters.formatShowPrice(currentSku.salesPrice) }} </span>
+            <span class="selected-product-price">{{ $filters.formatPrice(currentSku.salesPrice) }} </span>
           </div>
           <div class="total-price">
-            总计：{{ $filters.formatShowPrice(currentSku.salesPrice) }}
+            总计：{{ $filters.formatPrice(currentSku.salesPrice) }}
           </div>
         </div>
         <div class="btn-box">

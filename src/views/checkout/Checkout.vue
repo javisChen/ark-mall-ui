@@ -162,9 +162,9 @@ const {
               </a>
             </div>
             <div class="item-desc price-box">
-              <div class="item-desc good-price">{{ $filters.formatShowPrice(item.price) }} x {{ item.quantity }}</div>
+              <div class="item-desc good-price">{{ $filters.formatPrice(item.price) }} x {{ item.quantity }}</div>
               <div class="item-desc good-status"></div>
-              <div class="item-desc good-total">{{ $filters.formatShowPrice(item.price * item.quantity) }}</div>
+              <div class="item-desc good-total">{{ $filters.formatPrice(item.price * item.quantity) }}</div>
             </div>
           </div>
         </div>
@@ -206,23 +206,23 @@ const {
           </div>
           <div class="bill-item">
             <div class="bill-name">商品总价：</div>
-            <div class="bill-money">{{ $filters.formatShowPrice(cartStore.totalPrice) }}</div>
+            <div class="bill-money">{{ $filters.formatPrice(cartStore.totalPrice) }}</div>
           </div>
           <div class="bill-item">
             <div class="bill-name">活动优惠：</div>
-            <div class="bill-money">- {{ $filters.formatShowPrice(0) }}</div>
+            <div class="bill-money">- {{ $filters.formatPrice(0) }}</div>
           </div>
           <div class="bill-item">
             <div class="bill-name">优惠券抵扣：</div>
-            <div class="bill-money">- {{ $filters.formatShowPrice(0) }}</div>
+            <div class="bill-money">- {{ $filters.formatPrice(0) }}</div>
           </div>
           <div class="bill-item">
             <div class="bill-name">运费：</div>
-            <div class="bill-money">- {{ $filters.formatShowPrice(0) }}</div>
+            <div class="bill-money">- {{ $filters.formatPrice(0) }}</div>
           </div>
           <div class="bill-item total-price">
             <div class="bill-name">应付总额：</div>
-            <div class="bill-money"><em>{{ $filters.formatShowPrice(cartStore.totalPrice) }}</em></div>
+            <div class="bill-money"><em>{{ $filters.formatPrice(cartStore.totalPrice) }}</em></div>
           </div>
         </div>
       </div>

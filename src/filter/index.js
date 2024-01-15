@@ -7,8 +7,11 @@ import {
 
 export function initFilters(app) {
     app.config.globalProperties.$filters = {
-        formatShowPrice(value) {
-            return '¥' + accounting.format(fenToYuan(value))
+        formatPrice(value) {
+            return accounting.formatMoney(fenToYuan(value), '¥', 2, '', '.', '%s%v')
+        },
+        formatRawPrice(value) {
+            return accounting.formatMoney(fenToYuan(value), '', 2, '', '.', '%s%v')
         },
         translateOrderStatus(value) {
             return DICT_ORDER_STATUS[value]

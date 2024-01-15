@@ -125,6 +125,36 @@ import {useRoute, useRouter} from "vue-router";
 const route = useRoute();
 const router = useRouter();
 
+const changeEmit = 'change';
+const emit = defineEmits([changeEmit])
+
+const props = defineProps({
+  keyword: {
+    type: String,
+    default: '',
+    required: false
+  }
+});
+
+watch(
+    () => props.keyword,
+    (newKeyword, old) => {
+      // old为空表示第一次变更，不触发事件
+      if (!old) {
+        return
+      }
+      data.searchQuery.keyword = newKeyword
+      emit(changeEmit, data.searchQuery)
+    }
+)
+
+onMounted(() => {
+  // 构建索引
+  createSearchParamIndex()
+  // 解析查询语句
+  parseSearchQuery();
+})
+
 /**
  * 构建搜索条件的索引，提升性能
  */
@@ -134,20 +164,12 @@ const createSearchParamIndex = () => {
   })
 };
 
-onMounted(() => {
-  // 构建索引
-  createSearchParamIndex()
-  // 解析查询语句
-  parseSearchQuery();
-})
-
 
 /**
  * 解析查询字符串，添加到已选参数里面
  */
 const parseSearchQuery = () => {
   const routeQuery = route.query;
-  console.log('search query', routeQuery)
   if (!routeQuery) {
     return;
   }
@@ -180,6 +202,13 @@ const parseSearchQuery = () => {
       addParam(searchParam, selectedOptions)
     })
   }
+
+  if (routeQuery.keyword) {
+    data.searchQuery.keyword = routeQuery.keyword
+  }
+
+  emit(changeEmit, data.searchQuery)
+
 };
 
 const selectOther = (item) => {
@@ -260,6 +289,7 @@ const buildAttrSearchQuery = param => {
  * 构建Uri的查询字符串
  */
 const rebuildSearchQuery = () => {
+  const {keyword} = data.searchQuery
   data.searchQuery = {}
   data.selectedParams.forEach(param => {
     if (param.type === 'attrs') {
@@ -278,13 +308,16 @@ const rebuildSearchQuery = () => {
     data.searchQuery.attrs = encodeURIComponent(data.searchQuery.attrs)
   }
 
-  router.push({
-    name: 'search',
-    query: {
-      keyword: route.query.keyword,
-      ...data.searchQuery
-    }
-  })
+  data.searchQuery.keyword = keyword
+  emit(changeEmit, data.searchQuery)
+
+  // router.push({
+  //   name: 'search',
+  //   query: {
+  //     keyword: route.query.keyword,
+  //     ...data.searchQuery,
+  //   }
+  // })
 
 }
 

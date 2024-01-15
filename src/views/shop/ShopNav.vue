@@ -38,6 +38,10 @@ import {onMounted, reactive, toRefs, watch} from "vue";
 const route = useRoute();
 const router = useRouter();
 
+
+const keywordChangeEmit = 'keywordChange';
+const emit = defineEmits([keywordChangeEmit])
+
 onMounted(async () => {
   const {keyword} = route.query;
   data.keyword = keyword
@@ -45,12 +49,17 @@ onMounted(async () => {
 
 
 const toSearchPage = () => {
-  router.push({
-    name: 'search',
-    query: {
-      keyword: data.keyword || '手机'
-    }
-  })
+  if (route.name === 'shop') {
+    router.push({
+      name: 'search',
+      query: {
+        keyword: data.keyword || '手机'
+      }
+    })
+  } else {
+    emit(keywordChangeEmit, data.keyword)
+  }
+
 }
 
 const data = reactive({

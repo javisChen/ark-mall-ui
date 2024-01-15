@@ -150,7 +150,7 @@ const {
               {{ receive.street }} {{ receive.address }}</p></div>
           <div class="fr">
             <div class="total">应付总额：<span class="money">
-              <em>{{ $filters.formatShowPrice(order.orderAmount.actualAmount) }}</em>
+              <em>{{ $filters.formatPrice(order.orderAmount.actualAmount) }}</em>
               <span></span>
             </span>
             </div>

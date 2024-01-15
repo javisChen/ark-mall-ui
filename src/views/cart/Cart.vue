@@ -114,7 +114,7 @@ const {
                   {{ item.showProductName }}
                 </n-ellipsis>
               </div>
-              <div class="cart-table-col price">{{ $filters.formatShowPrice(item.price) }}</div>
+              <div class="cart-table-col price">{{ $filters.formatPrice(item.price) }}</div>
               <div class="cart-table-col num">
                 <n-input-number
                     min="1"
@@ -124,7 +124,7 @@ const {
                     v-model:value="item.quantity"
                     button-placement="both"/>
               </div>
-              <div class="cart-table-col total">{{ $filters.formatShowPrice(item.price * item.quantity) }}</div>
+              <div class="cart-table-col total">{{ $filters.formatPrice(item.price * item.quantity) }}</div>
               <div class="cart-table-col">
                 <n-button
                     @click="removeCartItems($event, item)"
@@ -145,7 +145,7 @@ const {
             <span class="quantity primary">{{ cartStore.totalQuantity }}</span> 件
           </div>
           <div class="total-price primary">合计：<span
-              class="money">{{ $filters.formatShowPrice(cartStore.totalPrice) }}</span>
+              class="money">{{ $filters.formatPrice(cartStore.totalPrice) }}</span>
           </div>
           <div class="btn-box">
             <n-button

@@ -84,7 +84,7 @@ const {
           <tbody>
           <tr>
             <th>商品总价：</th>
-            <td><span class="num">{{ $filters.formatShowPrice(order.orderAmount.actualAmount) }}</span></td>
+            <td><span class="num">{{ $filters.formatPrice(order.orderAmount.actualAmount) }}</span></td>
           </tr>
           <tr>
             <th>运费：</th>
@@ -92,7 +92,7 @@ const {
           </tr>
           <tr>
             <th class="total">应付金额：</th>
-            <td class="total"><span class="num">{{ $filters.formatShowPrice(order.orderAmount.actualAmount) }}</span>
+            <td class="total"><span class="num">{{ $filters.formatPrice(order.orderAmount.actualAmount) }}</span>
             </td>
           </tr>
           </tbody>
