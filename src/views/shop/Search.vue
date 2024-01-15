@@ -24,7 +24,8 @@ onMounted(async () => {
 const performSearch = async () => {
   try {
     const result = await search({...data.searchQueryParams});
-    data.goods = result.data
+    data.goods = result.data.skus
+    data.agg = result.data.agg
   } catch (e) {
 
   }
@@ -32,6 +33,7 @@ const performSearch = async () => {
 
 const data = reactive({
   goods: [],
+  agg: [],
   searchQueryParams: {
     attrs: null,
     brand: null,
@@ -62,6 +64,7 @@ const data = reactive({
 })
 
 const {
+  agg,
   goods,
   onKeywordChange,
   onSearchQueryChange,
@@ -91,6 +94,7 @@ const {
       </div>
 
       <search-filter @change="onSearchQueryChange"
+                     :agg="agg"
                      :keyword="data.searchQueryParams.keyword"/>
 
       <search-order @change="onOrderQueryChange"/>

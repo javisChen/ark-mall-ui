@@ -53,8 +53,7 @@
 </template>
 <script setup>
 
-import {onMounted, reactive, toRefs, watch, ref, toRaw} from "vue";
-import {search} from "@/api/product/goods-api";
+import {onMounted, reactive, toRefs} from "vue";
 import {useRoute, useRouter} from "vue-router";
 
 const route = useRoute();
@@ -72,11 +71,9 @@ onMounted(async () => {
 })
 
 const data = reactive({
-  // goods: [],
 })
 
 const {
-  // goods
 } = toRefs(data)
 
 

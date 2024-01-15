@@ -133,7 +133,12 @@ const props = defineProps({
     type: String,
     default: '',
     required: false
-  }
+  },
+  agg: {
+    type: Array,
+    default: [],
+    required: false
+  },
 });
 
 watch(
@@ -145,6 +150,39 @@ watch(
       }
       data.searchQuery.keyword = newKeyword
       emit(changeEmit, data.searchQuery)
+    }
+)
+
+function createParam(label, type, key, options) {
+  return {
+    label,
+    type,
+    key,
+    showMore: false,
+    inCheckedMode: false,
+    multiple: true,
+    options,
+    selected: [],
+  };
+}
+
+watch(
+    () => props.agg,
+    (agg, old) => {
+      // old为空表示第一次变更，不触发事件
+      if (!old) {
+        return
+      }
+      data.searchParams = []
+      const brand = agg.filter(a => a.type === 'brand')[0];
+      const category = agg.filter(a => a.type === 'category')[0];
+      const attrs = agg.filter(a => a.type === 'attrs')
+
+      data.searchParams.push(createParam('品牌', 'brand', 'brand', brand.options))
+      data.searchParams.push(createParam('分类', 'category', 'category', category.options))
+      attrs.forEach(attr => {
+        data.searchParams.push(createParam(attr.label, 'attrs', `attr_${attr.id}`, attr.options))
+      })
     }
 )
 
@@ -305,19 +343,11 @@ const rebuildSearchQuery = () => {
   console.log(data.searchQuery)
 
   if (data.searchQuery.attrs) {
-    data.searchQuery.attrs = encodeURIComponent(data.searchQuery.attrs)
+    data.searchQuery.attrs = data.searchQuery.attrs
   }
 
   data.searchQuery.keyword = keyword
   emit(changeEmit, data.searchQuery)
-
-  // router.push({
-  //   name: 'search',
-  //   query: {
-  //     keyword: route.query.keyword,
-  //     ...data.searchQuery,
-  //   }
-  // })
 
 }
 
@@ -370,7 +400,7 @@ const data = reactive({
       showMore: false,
       inCheckedMode: false,
       multiple: true,
-      options: [{value: '1', label: '小米'}, {value: '2', label: '华为'}],
+      options: [],
       selected: [],
     },
     {
@@ -380,67 +410,38 @@ const data = reactive({
       showMore: false,
       inCheckedMode: false,
       multiple: false,
-      options: [{value: '1', label: '手机'}, {value: '2', label: '冰箱'}],
-      selected: [],
-    },
-    {
-      id: 1,
-      type: 'attrs',
-      label: '运行内存',
-      key: 'attr_1',
-      showMore: false,
-      inCheckedMode: false,
-      multiple: true,
-      options: [
-        {value: '16G', label: '16G'},
-        {value: '32G', label: '32G'}
-      ],
-      selected: [],
-    },
-    {
-      id: 2,
-      type: 'attrs',
-      label: '电池续航',
-      key: 'attr_2',
-      showMore: false,
-      inCheckedMode: false,
-      multiple: true,
-      options: [
-        {value: '4800mAh', label: '4800mAh'},
-        {value: '4830mAh', label: '4830mAh'},
-        {value: '4890mAh', label: '4890mAh'},
-      ],
+      options: [],
       selected: [],
     },
   ],
   otherAttrs: [
-    {
-      label: 'CPU型号',
-      key: 'other',
-      id: 1,
-      options: [
-        {value: '1', label: '骁龙'},
-        {value: '2', label: '骁龙8'}
-      ]
-    },
-    {
-      label: 'CPU主频',
-      key: 'other',
-      id: 2,
-      options: [
-        {value: '3.3', label: '3.3'},
-        {value: '3.6', label: '3.6'}
-      ]
-    },
-    {
-      label: 'CPU型号',
-      key: 'other',
-      id: 3,
-      options: [
-        {value: '骁龙8', label: '骁龙'},
-        {value: '骁龙8', label: '骁龙8'}
-      ]
-    },
+    // {
+    //   label: 'CPU型号',
+    //   key: 'other',
+    //   id: 1,
+    //   options: [
+    //     {value: '1', label: '骁龙'},
+    //     {value: '2', label: '骁龙8'}
+    //   ]
+    // },
+    // {
+    //   label: 'CPU主频',
+    //   key: 'other',
+    //   id: 2,
+    //   options: [
+    //     {value: '3.3', label: '3.3'},
+    //     {value: '3.6', label: '3.6'}
+    //   ]
+    // },
+    // {
+    //   label: 'CPU型号',
+    //   key: 'other',
+    //   id: 3,
+    //   options: [
+    //     {value: '骁龙8', label: '骁龙'},
+    //     {value: '骁龙8', label: '骁龙8'}
+    //   ]
+    // },
   ],
   selectedOther: {},
   formatSelectedOptions: (selectOptions) => {
