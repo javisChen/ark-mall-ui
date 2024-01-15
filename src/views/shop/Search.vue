@@ -24,6 +24,7 @@ onMounted(async () => {
 const performSearch = async () => {
   try {
     const result = await search({...data.searchQueryParams});
+    console.log(result.data)
     data.goods = result.data.skus
     data.agg = result.data.agg
   } catch (e) {

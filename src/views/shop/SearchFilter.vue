@@ -1,8 +1,7 @@
 <template>
   <div class="search-filter">
     <div class="filter-wrap">
-      <div class="filter-list">
-
+      <div class="filter-list" v-if="agg.length > 0">
         <div v-if="selectedParams.length > 0" class="item choose-item"><span class="label">已选：</span>
           <div
               v-for="param in selectedParams"
@@ -169,11 +168,12 @@ function createParam(label, type, key, options) {
 watch(
     () => props.agg,
     (agg, old) => {
+      console.log('agg', agg)
       // old为空表示第一次变更，不触发事件
-      if (!old) {
+      data.searchParams = []
+      if (!agg || agg.length === 0) {
         return
       }
-      data.searchParams = []
       const brand = agg.filter(a => a.type === 'brand')[0];
       const category = agg.filter(a => a.type === 'category')[0];
       const attrs = agg.filter(a => a.type === 'attrs')

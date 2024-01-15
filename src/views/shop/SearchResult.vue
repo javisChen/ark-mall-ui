@@ -1,10 +1,10 @@
 <template>
   <div class="search-result">
     <div class="result-order">
-      <div class="goods-list-box">
+      <div v-if="goods && goods.length > 0"
+           class="goods-list-box">
         <div class="goods-list clearfix">
           <div
-              v-if="goods"
               v-for="(item, idx) in goods"
               class="goods-item">
             <a target="_blank"
@@ -48,6 +48,9 @@
           </div>
         </div>
       </div>
+      <div class="no-goods" v-else>
+        抱歉，没有找到与关键词相关的商品
+      </div>
     </div>
   </div>
 </template>
@@ -70,11 +73,9 @@ defineProps({
 onMounted(async () => {
 })
 
-const data = reactive({
-})
+const data = reactive({})
 
-const {
-} = toRefs(data)
+const {} = toRefs(data)
 
 
 </script>
@@ -239,6 +240,14 @@ const {
 
 .search-result .result-order .goods-list-box .goods-list .goods-item .flags .sale-icon:first-child {
   margin: 0;
+}
+
+.search-result .no-goods {
+  display: flex;
+  justify-content: center;
+  color: #ff6700;;
+  font-weight: bold;
+  font-size: 16px;
 }
 
 
