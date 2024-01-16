@@ -48,7 +48,10 @@
         </div>
       </div>
       <div class="no-goods" v-else>
-        抱歉，没有找到与关键词相关的商品
+        <div class="content">
+        <h3>非常抱歉！没有找到符合条件的商品</h3>
+        您可以尝试：修改筛选条件或输入新的关键词重新查找
+        </div>
       </div>
     </div>
   </div>
@@ -242,11 +245,25 @@ const {} = toRefs(data)
 }
 
 .search-result .no-goods {
+  font-weight: bold;
+  font-size: 12px;
+  color: #666;
+  height: 100px;
+  background-color: #F8F8FA;
+  margin-top: 20px;
   display: flex;
   justify-content: center;
-  color: #ff6700;;
-  font-weight: bold;
+  align-items: center;
+}
+
+.search-result .no-goods .content {
+
+}
+
+.search-result .no-goods h3 {
   font-size: 16px;
+  color: #666;
+  margin-bottom: 10px;
 }
 
 

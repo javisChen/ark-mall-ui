@@ -11,18 +11,24 @@
 
         <!-- 搜索 -->
         <div class="header-search">
-          <input
-              v-model="keyword"
-              type="search" id="search"
-              autocomplete="off"
-              class="search-text" placeholder="手机">
-          <n-button @click="toSearchPage" class="search-btn" :round="false" type="tertiary">
-            <template #icon>
-              <n-icon>
-                <md-search/>
-              </n-icon>
-            </template>
-          </n-button>
+          <div class="input-wrapper">
+            <input
+                v-model="keyword"
+                type="search" id="search"
+                autocomplete="off"
+                class="search-text" placeholder="手机">
+          </div>
+          <div class="search-btn-wrapper">
+            <button @click="toSearchPage"
+                      class="search-btn"
+                      type="tertiary">搜索
+              <!--            <template #icon>-->
+              <!--              <n-icon>-->
+              <!--                <md-search/>-->
+              <!--              </n-icon>-->
+              <!--            </template>-->
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -101,29 +107,63 @@ const {
 
 .header .navs .wrapper .header-search {
   position: absolute;
-  right: 0;
-  width: 296px;
+  right: 100px;
+  display: flex;
 }
 
-.header .navs .wrapper .header-search input {
-  width: 224px;
-  height: 51px;
-  border: 1px solid #e0e0e0;
+.header .navs .wrapper .header-search .input-wrapper {
+  width: 400px;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+  border: 2px solid #ff8000;
   border-right: 0;
-  outline: 0;
-  padding-left: 10px;
+}
+.header .navs .wrapper .header-search input {
+  box-sizing: content-box;
+  width: 300px;
+  padding: 9px 10px 9px 10px;
+  height: 18px;
+  line-height: 18px;
+  margin-top: 0;
+  border: 0;
+  background: #FFF;
+  color: #BBB;
+  font-size: 12px;
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  display: inline-block;
 }
 
 .header .navs .wrapper .header-search input::-ms-clear {
   display: none;
 }
 
+.search-btn-wrapper {
+}
+
 .header .navs .wrapper .header-search .search-btn {
-  width: 51px;
-  height: 51px;
-  position: relative;
-  top: 4px;
+  -webkit-appearance: none;
   border-radius: 0;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  position: relative;
+  height: 40px;
+  width: 100px;
+  outline: none;
+  right: 0;
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-indent: 2px;
+  color: #FFF;
+  border: 0;
+  cursor: pointer;
+  background: #ff8000;
+}
+
+.search-btn:hover {
+  outline: none;
+  border: 0;
 }
 
 .header .navs .wrapper .header-search .search-btn:hover {

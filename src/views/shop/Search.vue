@@ -7,7 +7,8 @@ import {search} from "@/api/product/goods-api"
 import ShopNav from "@/views/shop/ShopNav.vue";
 import SearchFilter from "@/views/shop/SearchFilter.vue";
 import SearchResult from "@/views/shop/SearchResult.vue";
-import SearchOrder from "@/views/shop/SearchOrder.vue";
+import SearchSort from "@/views/shop/SearchSort.vue";
+import SearchBreadcrumbs from "@/views/shop/SearchBreadcrumbs.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -24,7 +25,6 @@ onMounted(async () => {
 const performSearch = async () => {
   try {
     const result = await search({...data.searchQueryParams});
-    console.log(result.data)
     data.goods = result.data.skus
     data.agg = result.data.agg
   } catch (e) {
@@ -46,7 +46,6 @@ const data = reactive({
     sortField: ""
   },
   onSearchQueryChange: (query) => {
-    console.log('search query change', query)
     data.searchQueryParams.attrs = query.attrs
     data.searchQueryParams.brand = query.brand
     data.searchQueryParams.category = query.category
@@ -59,7 +58,7 @@ const data = reactive({
   onOrderQueryChange: (orderQuery) => {
     const {sortField, sortDirection} = orderQuery
     data.searchQueryParams.sortField = sortField
-    data.searchQueryParams.sortDirection= sortDirection
+    data.searchQueryParams.sortDirection = sortDirection
     performSearch();
   }
 })
@@ -82,23 +81,21 @@ const {
   <shop-nav @keywordChange="onKeywordChange"/>
 
   <div class="search-container">
-    <div class="loading" style="display: none;">
-      <div class="loader"></div>
-    </div>
-    <div class="container-main" style="">
 
-      <div class="breadcrumbs">
-        <div class="container">
-          <a href="javascript:void(0)">首页</a><span class="sep">&gt;</span>
-          <a href="javascript:void(0)">搜索结果</a>
-        </div>
-      </div>
+    <div class="container-main">
 
+      <!-- 面包屑 -->
+      <search-breadcrumbs/>
+      <!-- 面包屑 -->
+
+      <!-- 搜索条件 -->
       <search-filter @change="onSearchQueryChange"
                      :agg="agg"
                      :keyword="data.searchQueryParams.keyword"/>
+      <!-- 搜索条件 -->
 
-      <search-order @change="onOrderQueryChange"/>
+
+      <search-sort @change="onOrderQueryChange"/>
 
       <search-result :goods="goods"/>
     </div>
@@ -110,18 +107,12 @@ const {
 
 .search-container {
   width: 100%;
+  background-color: #ffffff;
+  padding-bottom: 20px;
 }
 
 .search-container .container-main {
   position: relative;
-}
-
-.search-container .container-main .breadcrumbs {
-  height: 40px;
-  font-size: 12px;
-  line-height: 40px;
-  background: #f5f5f5;
-  color: #757575;
 }
 
 .search-container a {
@@ -130,17 +121,6 @@ const {
 
 .breadcrumbs a {
   color: #757575;
-}
-
-.search-container .container-main .breadcrumbs .container {
-  width: 1226px;
-  margin-right: auto;
-  margin-left: auto;
-}
-
-.search-container .container-main .breadcrumbs .sep {
-  margin: 0 0.5em;
-  color: #b0b0b0;
 }
 
 
