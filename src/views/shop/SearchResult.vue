@@ -29,8 +29,7 @@
               </div>
               <div class="title-wrapper">
                 <h2 class="title">
-                  <n-ellipsis :line-clamp="2">
-                    {{ item.skuName }}
+                  <n-ellipsis :line-clamp="2" v-html="item.skuName">
                   </n-ellipsis>
                 </h2>
               </div>
