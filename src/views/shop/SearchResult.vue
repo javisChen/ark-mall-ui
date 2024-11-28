@@ -7,7 +7,7 @@
           <div
               v-for="(item, idx) in goods"
               class="goods-item">
-            <a target="_blank"
+            <a @click.prevent="toInfoPage(item)"
                href="javascript: void(0);">
               <div class="figure figure-img">
                 <img :src="item.pictures?.[0]"
@@ -49,14 +49,15 @@
       </div>
       <div class="no-goods" v-else>
         <div class="content">
-        <h3>非常抱歉！没有找到符合条件的商品</h3>
-        您可以尝试：修改筛选条件或输入新的关键词重新查找
+          <h3>非常抱歉！没有找到符合条件的商品</h3>
+          您可以尝试：修改筛选条件或输入新的关键词重新查找
         </div>
       </div>
     </div>
   </div>
 </template>
-<script setup>
+
+<script setup lang="ts">
 
 import {onMounted, reactive, toRefs} from "vue";
 import {useRoute, useRouter} from "vue-router";
@@ -71,6 +72,15 @@ defineProps({
     required: true
   },
 })
+
+const toInfoPage = (item: object) => {
+  router.push({
+    name: 'info',
+    query: {
+      id: item.spuId,
+    },
+  })
+}
 
 onMounted(async () => {
 })

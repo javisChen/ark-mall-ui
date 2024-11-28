@@ -76,7 +76,8 @@ export const buildProductDesc = (item) => {
   if (typeof item.specs === 'string') {
     item.specs = JSON.parse(item.specs)
   }
-  let name = item.productName + ' '
+  // console.log('spec', item.specs)
+  let name = ''
   for (let i = 0; i < item.specs.length; i++) {
     const spec = item.specs[i];
     name += spec.attrValue
@@ -95,6 +96,7 @@ export const buildSpecDesc = (item) => {
   if (typeof item.specs === 'string') {
     item.specs = JSON.parse(item.specs)
   }
+
   let name = ''
   for (let i = 0; i < item.specs.length; i++) {
     const spec = item.specs[i];

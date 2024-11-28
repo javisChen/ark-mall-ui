@@ -52,7 +52,9 @@ export const useCartStore
                 this.carts = result.data
                 this.carts.forEach(item => {
                     item.specs = JSON.parse(item.specs)
+                    console.log('cart', item.specs)
                     item.showProductName = buildProductDesc(item)
+                    console.log(item.showProductName)
                 })
                 console.log('cart loaded successfully')
             } catch (e) {
